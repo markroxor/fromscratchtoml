@@ -1,13 +1,26 @@
-''' Installation script for python wAlnut package'''
+''' Installation script for python omega package'''
 
 import os
 import sys
 from setuptools import find_packages, setup
 
+win_testenv = [
+    'pytest',
+],
+linux_testenv = win_testenv
+
 setup(
     name='omega',
     version='0.0.1',
     description=' An intuitive machine learning library for python.',
+
+    install_requires=[
+        'numpy >= 1.14.2',
+    ],
+    extras_require={
+        'test-win': win_testenv,
+        'test': linux_testenv,
+    },
     classifiers=[
         'Development Status :: Pre-Alpha',
         'Intended Audience :: Developers',
@@ -17,6 +30,5 @@ setup(
     ],
     url='https://github.com/jellAIfish/omega',
     license='GPL-3.0',
-    # Automatically find packages inside wAlnut to install
     packages=find_packages(),
 )
