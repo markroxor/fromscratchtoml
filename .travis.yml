@@ -9,6 +9,8 @@ cache:
 dist: trusty
 language: python
 
+notifications:
+  email: false
 
 matrix:
   include:
@@ -27,6 +29,7 @@ matrix:
 install:
     - pip install tox
     - pip install python-coveralls
+
 script: tox -vv
 after_success:
   - coveralls
