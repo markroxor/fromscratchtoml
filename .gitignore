@@ -1,4 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
+# tox
+.pytest_cache/
+
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
