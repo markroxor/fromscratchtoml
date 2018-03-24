@@ -24,5 +24,9 @@ matrix:
     - python: '3.6'
       env: TOXENV="py36-linux"
 
-install: pip install tox
+install:
+    - pip install tox
+    - pip install python-coveralls
 script: tox -vv
+after_success:
+  - coveralls

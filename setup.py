@@ -5,7 +5,8 @@ import sys
 from setuptools import find_packages, setup
 
 win_testenv = [
-    'pytest',
+    'pytest-cov',
+    'python-coveralls',
 ],
 linux_testenv = win_testenv
 
