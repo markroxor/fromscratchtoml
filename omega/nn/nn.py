@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Copyright (C) 2017 Dikshant Gupta <dikshantgupta2210@gmail.com>
+# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+
 import torch as ch
 from omega.toolbox import sigmoid, deriv_sigmoid
 
@@ -8,8 +15,6 @@ class NetworkMesh(object):
         self.num_layers = len(layer_architecture)
         self.layerwise_biases = [ch.randn(1, x) for x in layer_architecture[1:]]
         self.layerwise_weights = [ch.randn(x, y) for x, y in zip(layer_architecture[:-1], layer_architecture[1:])]
-        print(self.layerwise_biases)
-        print(self.layerwise_weights)
 
     def feedforward(self, x):
         x = x.view(1, ch.numel(x))
