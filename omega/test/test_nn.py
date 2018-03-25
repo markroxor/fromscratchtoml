@@ -1,5 +1,5 @@
 import unittest
-import pytorch as ch # noqa:F401
+import torch as ch # noqa:F401
 
 
 class TestNN(unittest.TestCase):

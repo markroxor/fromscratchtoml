@@ -27,7 +27,6 @@ matrix:
       env: TOXENV="py36-linux"
 
 install:
-    - ./scripts/install_torch.sh
     - pip install tox
     - pip install python-coveralls
 
