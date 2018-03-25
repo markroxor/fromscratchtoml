@@ -1,7 +1,5 @@
 ''' Installation script for python omega package'''
 
-import os
-import sys
 from setuptools import find_packages, setup
 
 win_testenv = [
