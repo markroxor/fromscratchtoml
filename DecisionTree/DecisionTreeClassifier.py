@@ -7,11 +7,11 @@ class DecisionTreeClassifier:
                  max_depth=100,
                  min_size=100,
                  split_metric='gini_index'):
-        self.use_cuda = torch.cuda.is_available()
-        self.max_depth = max_depth
-        self.min_size = min_size
-        self.split_metric = split_metric
-        self.root = {}
+        self.__use_cuda = torch.cuda.is_available()
+        self.__max_depth = max_depth
+        self.__min_size = min_size
+        self.__split_metric = split_metric
+        self.__root = {}
 
     def __gini_index(self, left, right, classes):
         num_instances = sum([len(left[1]), len(right[1])])
@@ -50,11 +50,11 @@ class DecisionTreeClassifier:
     def fit(self, input, target):
         x = torch.from_numpy(input)
         y = torch.from_numpy(target)
-        if self.use_cuda:
+        if self.__use_cuda:
             x = x.cuda()
             y = y.cuda()
-        self.root = self.__build_tree(x, y)
-        return self.root
+        self.__root = self.__build_tree(x, y)
+        return self.__root
 
     def __build_tree(self, x, y):
         root = self.__get_split(x, y)
@@ -85,18 +85,18 @@ class DecisionTreeClassifier:
             node['left'] = node['right'] = self.__to_terminal(left + right)
             return
 
-        if depth >= self.max_depth:
+        if depth >= self.__max_depth:
             node['left'] = self.__to_terminal(left)
             node['right'] = self.__to_terminal(right)
             return
 
-        if left[1].size()[0] < self.min_size:
+        if left[1].size()[0] < self.__min_size:
             node['left'] = self.__to_terminal(left)
         else:
             node['left'] = self.__get_split(left[0], left[1])
             self.__split(node['left'], depth + 1)
 
-        if right[1].size()[0] < self.min_size:
+        if right[1].size()[0] < self.__min_size:
             node['right'] = self.__to_terminal(right)
         else:
             node['right'] = self.__get_split(right[0], right[1])
