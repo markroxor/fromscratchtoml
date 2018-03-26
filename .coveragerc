@@ -1,0 +1,10 @@
+[run]
+branch = True
+source = omega
+
+[report]
+omit =
+    */python?.?/*
+    */python?.?-dev/*
+    */site-packages/nose/*
+    */test
