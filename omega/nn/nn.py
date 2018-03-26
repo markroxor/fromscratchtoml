@@ -130,7 +130,6 @@ class NetworkMesh(object):
             _, target = ch.max(Y, 1)
             if (prediction == target).numpy():
                 correct_evaluation += 1
-        print(self.activations)
 
         logger.info("Accuracy is {}".format(correct_evaluation * 100.0 / len(test_data)))
         return correct_evaluation

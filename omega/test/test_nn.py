@@ -13,6 +13,12 @@ import torch.utils.data
 
 from omega.test.toolbox import _tempfile, _test_data_path
 
+import logging
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 class TestNN(unittest.TestCase):
     def setUp(self):
@@ -21,13 +27,15 @@ class TestNN(unittest.TestCase):
         self.train_data = torch.utils.data.TensorDataset(x, y)
 
     def model_equal(self, m1, m2):
+
         for wt1, wt2 in zip(m1.layerwise_weights, m2.layerwise_weights):
             self.assertTrue(torch.equal(wt1, wt2))
 
         for b1, b2 in zip(m1.layerwise_biases, m2.layerwise_biases):
             self.assertTrue(torch.equal(b1, b2))
 
-    def test_persistence(self):
+    def test_consistency(self):
+        # model load save
         old_nw = omg.nn.NetworkMesh([2, 5, 2], seed=100)
         old_nw.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
 
@@ -38,7 +46,7 @@ class TestNN(unittest.TestCase):
         new_nw.load_model(fname)
         self.model_equal(old_nw, new_nw)
 
-    def test_persistence1(self):
+    def test_persistence(self):
         # backward compatiblity
         model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
         model.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
@@ -48,18 +56,16 @@ class TestNN(unittest.TestCase):
 
         self.model_equal(model, saved_model)
 
+    def test_inconsistency(self):
         # raise error when architecture not defined
         model = omg.nn.NetworkMesh()
         with self.assertRaises(NotImplementedError):
             model.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
 
-        # test y as number TODO working?
-        x = ch.Tensor([[0, 0], [0, 1], [1, 0], [1, 1]])
-        y = ch.Tensor([[0], [1], [1], [0]])
-        self.train_data_new = torch.utils.data.TensorDataset(x, y)
+    def test_different_input_types(self):
+        # test when y is a list of integers (as in torch's dataloader implementation)
+        X = ch.Tensor([[0, 0], [0, 1], [1, 0], [1, 1]])
+        Y = [0, 1, 1, 0]
+        self.train_data_new = [(x, y) for x, y in zip(X, Y)]
         model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
-        model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, eta=3)
-
-        # evaluation consistency
-        model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
-        model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, eta=3, test_data=self.train_data)
+        model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, eta=3, test_data=self.train_data_new)
