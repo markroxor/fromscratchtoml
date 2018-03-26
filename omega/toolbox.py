@@ -8,10 +8,6 @@
 import torch as ch
 
 
-def save_model(x, file_path):
-    ch.save(x, file_path)
-
-
 def sigmoid(x):
     return 1.0 / (1.0 + ch.exp(-x))
 
