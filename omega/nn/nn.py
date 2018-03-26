@@ -2,19 +2,43 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Copyright (C) 2017 Dikshant Gupta <dikshantgupta2210@gmail.com>
+# Copyright (C) 2017 Dikshant Gupta <dikshant2210@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import torch as ch
 from omega.toolbox import sigmoid, deriv_sigmoid
 
+import logging
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 class NetworkMesh(object):
-    def __init__(self, layer_architecture):
+    def __init__(self, layer_architecture=None, seed=None):
+        if layer_architecture is None:
+            logger.warning(
+                "Network initialized without architecture definition,\
+                 Expecting the model to be loaded."
+            )
+            return
+
+        if seed:
+            ch.manual_seed(seed)
+
         self.layer_architecture = layer_architecture
         self.num_layers = len(layer_architecture)
         self.layerwise_biases = [ch.randn(1, x) for x in layer_architecture[1:]]
         self.layerwise_weights = [ch.randn(x, y) for x, y in zip(layer_architecture[:-1], layer_architecture[1:])]
+
+    def save_model(self, file_path):
+        ch.save(self.__dict__, file_path)
+        return
+
+    def load_model(self, file_path):
+        self.__dict__ = ch.load(file_path)
+        return
 
     def feedforward(self, x):
         x = x.view(1, ch.numel(x))
@@ -22,13 +46,19 @@ class NetworkMesh(object):
             x = sigmoid(ch.mm(x, weights) + biases)
         return x
 
-    def SGD(self, train_data, epochs, batch_size, eta, test_data):
+    def SGD(self, train_data, epochs, batch_size, eta, test_data=None):
+        if not hasattr(self, "layer_architecture"):
+            raise NotImplementedError("Define layer architecture before calling SGD.")
+
         for i in range(epochs):
             batches = ch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
             for batch in batches:
                 self.update_batch(batch, eta)
 
-            print("Epoch {0}: {1}/{2}".format(i, self.evaluate(test_data), len(test_data)))
+            logger.info("Epoch {0}:".format(i))
+
+            if test_data:
+                self.evaluate(test_data), len(test_data)
 
     def update_batch(self, batch, eta):
         nabla_b = [ch.zeros(biases.size()) for biases in self.layerwise_biases]
@@ -81,6 +111,8 @@ class NetworkMesh(object):
 
     def evaluate(self, test_data):
         correct_evaluation = 0
+
+        self.activations = []
         for d in test_data:
             X, Y = d
             X = X.view(1, ch.numel(X))
@@ -88,14 +120,19 @@ class NetworkMesh(object):
                 _y = ch.zeros(self.layer_architecture[-1])
                 _y[Y] = 1
                 Y = _y
+
             Y = Y.view(1, ch.numel(Y))
             a = self.feedforward(X)
+
+            self.activations.append(a)
 
             _, prediction = ch.max(a, 1)
             _, target = ch.max(Y, 1)
             if (prediction == target).numpy():
                 correct_evaluation += 1
+        print(self.activations)
 
+        logger.info("Accuracy is {}".format(correct_evaluation * 100.0 / len(test_data)))
         return correct_evaluation
 
     def cost_derivative(self, output_activations, y):

@@ -5,16 +5,15 @@
 # Copyright (C) 2017 Dikshant Gupta <dikshant2210@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import torch as ch
+import tempfile
+import os
+
+pwd_path = os.path.dirname(__file__)
 
 
-def save_model(x, file_path):
-    ch.save(x, file_path)
+def _tempfile(fname):
+    return os.path.join(tempfile.gettempdir(), fname)
 
 
-def sigmoid(x):
-    return 1.0 / (1.0 + ch.exp(-x))
-
-
-def deriv_sigmoid(x):
-    return sigmoid(x) * (1 - sigmoid(x))
+def _test_data_path(fname):
+    return os.path.join(pwd_path, "test_data", fname)
