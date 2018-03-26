@@ -26,7 +26,7 @@ class DecisionTreeClassifier:
         gini = 0.0
         for group in [left, right]:
             y = group[1]
-            size = len(y)
+            size = len(y) * 1.0
             if size == 0:
                 continue
             score = 0.0

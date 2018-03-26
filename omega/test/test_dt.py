@@ -17,22 +17,22 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestNN(unittest.TestCase):
+class TestDecisionTree(unittest.TestCase):
     def setUp(self):
         self.x = torch.Tensor([[2.771244718, 1.784783929],
-                       [1.728571309, 1.169761413],
-                       [3.678319846, 2.81281357],
-                       [3.961043357, 2.61995032],
-                       [2.999208922, 2.209014212],
-                       [7.497545867, 3.162953546],
-                       [9.00220326, 3.339047188],
-                       [7.444542326, 0.476683375],
-                       [10.12493903, 3.234550982],
-                       [6.642287351, 3.319983761]])
+                               [1.728571309, 1.169761413],
+                               [3.678319846, 2.81281357],
+                               [3.961043357, 2.61995032],
+                               [2.999208922, 2.209014212],
+                               [7.497545867, 3.162953546],
+                               [9.00220326, 3.339047188],
+                               [7.444542326, 0.476683375],
+                               [10.12493903, 3.234550982],
+                               [6.642287351, 3.319983761]])
         self.y = torch.Tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
 
     def model_equal(self, observed, expected):
-        self.assertTrue(torch.equal(observed, expected))
+        self.assertEqual(observed, expected)
 
     def test_model(self):
         dt = DecisionTreeClassifier(2, 1)
@@ -51,3 +51,16 @@ class TestNN(unittest.TestCase):
             if not nodes:
                 break
         self.model_equal(observed, expected)
+
+    def test_predict(self):
+        dt = DecisionTreeClassifier(2, 1)
+        dt.fit(self.x, self.y)
+
+        x1 = torch.Tensor([1.728571309, 1.169761413])
+        y1 = torch.Tensor([0])
+
+        x2 = torch.Tensor([10.12493903, 3.234550982])
+        y2 = torch.Tensor([1])
+
+        self.assertEqual(y1[0], dt.predict(x1))
+        self.assertEqual(y2[0], dt.predict(x2))
