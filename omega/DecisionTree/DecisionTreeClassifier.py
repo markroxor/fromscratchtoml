@@ -1,11 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Copyright (C) 2017 Dikshant Gupta <dikshant2210@gmail.com>
+# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+
 import torch
+import numpy as np
 
 
 class DecisionTreeClassifier:
 
     def __init__(self,
                  max_depth=100,
-                 min_size=100,
+                 min_size=2,
                  split_metric='gini_index'):
         self.__use_cuda = torch.cuda.is_available()
         self.__max_depth = max_depth
@@ -28,6 +36,7 @@ class DecisionTreeClassifier:
             gini += (1.0 - score) * (size / num_instances)
         return gini
 
+    # TODO: Implement entropy loss
     def __entropy_loss(self):
         pass
 
@@ -47,9 +56,11 @@ class DecisionTreeClassifier:
             right = (torch.DoubleTensor(), torch.DoubleTensor())
         return left, right
 
-    def fit(self, input, target):
-        x = torch.from_numpy(input)
-        y = torch.from_numpy(target)
+    def fit(self, x, y):
+        if isinstance(x, np.ndarray):
+            x = torch.from_numpy(x)
+        if isinstance(y, np.ndarray):
+            y = torch.from_numpy(y)
         if self.__use_cuda:
             x = x.cuda()
             y = y.cuda()
@@ -83,7 +94,6 @@ class DecisionTreeClassifier:
 
     def __split(self, node, depth):
         left, right = node['groups']
-        # print(not left[1].size(), not right[1].size())
         del(node['groups'])
         if not left[1].size() or not right[1].size():
             group = left if left[1].size() else right
@@ -109,7 +119,7 @@ class DecisionTreeClassifier:
 
     def predict(self, row):
         node = self.__root
-        while(True):
+        while True:
             if isinstance(node, dict):
                 if row[node['index']] < node['value']:
                     node = node['left']
