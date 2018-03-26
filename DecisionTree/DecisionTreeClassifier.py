@@ -1,8 +1,8 @@
 import torch
-import numpy as np
 
 
 class DecisionTreeClassifier:
+
     def __init__(self,
                  max_depth=100,
                  min_size=100,
@@ -17,13 +17,13 @@ class DecisionTreeClassifier:
         num_instances = sum([len(left[1]), len(right[1])])
         gini = 0.0
         for group in [left, right]:
-            y = group[1].numpy()
+            y = group[1]
             size = len(y)
             if size == 0:
                 continue
             score = 0.0
             for cl in classes:
-                proportion = np.count_nonzero(y == cl) / size
+                proportion = sum(y == cl) / size
                 score += proportion ** 2
             gini += (1.0 - score) * (size / num_instances)
         return gini
@@ -32,19 +32,19 @@ class DecisionTreeClassifier:
         pass
 
     def __test_split(self, index, value, x, y):
-        mask = torch.nonzero(torch.gt(x[:, index], value))
-        if mask.size():
-            mask = mask.view(mask.size()[0])
-            right = (torch.index_select(x, 0, mask), torch.index_select(y, 0, mask))
-        else:
-            right = (torch.DoubleTensor(), torch.DoubleTensor())
-
-        mask = torch.nonzero(1 - torch.gt(x[:, index], value))
+        mask = torch.nonzero(torch.lt(x[:, index], value))
         if mask.size():
             mask = mask.view(mask.size()[0])
             left = (torch.index_select(x, 0, mask), torch.index_select(y, 0, mask))
         else:
             left = (torch.DoubleTensor(), torch.DoubleTensor())
+
+        mask = torch.nonzero(1 - torch.lt(x[:, index], value))
+        if mask.size():
+            mask = mask.view(mask.size()[0])
+            right = (torch.index_select(x, 0, mask), torch.index_select(y, 0, mask))
+        else:
+            right = (torch.DoubleTensor(), torch.DoubleTensor())
         return left, right
 
     def fit(self, input, target):
@@ -63,26 +63,31 @@ class DecisionTreeClassifier:
 
     def __get_split(self, x, y):
         b_index, b_value, b_score, b_groups = 999, 999, 999, None
+
+        classes = list()
+        for val in y:
+            if val not in classes:
+                classes.append(val)
+
         for index in range(x.size()[1]):
             for row in x:
                 groups = self.__test_split(index, row[index], x, y)
-                score = self.__gini_index(groups[0], groups[1], np.unique(y.numpy()))
-                print('X%d < %.3f Gini=%.3f' % ((index + 1), row[index], score))
+                score = self.__gini_index(groups[0], groups[1], classes)
                 if score < b_score:
                     b_index, b_value, b_score, b_groups = index, row[index], score, groups
         return {'index': b_index, 'value': b_value, 'groups': b_groups}
 
     def __to_terminal(self, group):
-        outcomes = group[1].numpy()
-        values, counts = np.unique(outcomes, return_counts=True)
-        ind = np.argmax(counts)
-        return values[ind]
+        res = torch.mode(group[1])[0][0]
+        return res
 
     def __split(self, node, depth):
         left, right = node['groups']
+        # print(not left[1].size(), not right[1].size())
         del(node['groups'])
-        if not left or not right:
-            node['left'] = node['right'] = self.__to_terminal(left + right)
+        if not left[1].size() or not right[1].size():
+            group = left if left[1].size() else right
+            node['left'] = node['right'] = self.__to_terminal(group)
             return
 
         if depth >= self.__max_depth:
@@ -102,10 +107,13 @@ class DecisionTreeClassifier:
             node['right'] = self.__get_split(right[0], right[1])
             self.__split(node['right'], depth + 1)
 
-    def print_tree(self, node, depth=0):
-        if isinstance(node, dict):
-            print('%s[X%d < %.3f]' % (depth * 4 * ' ', (node['index'] + 1), node['value']))
-            self.print_tree(node['left'], depth + 1)
-            self.print_tree(node['right'], depth + 1)
-        else:
-            print('%s[%s]' % (depth * 4 * ' ', node))
+    def predict(self, row):
+        node = self.__root
+        while(True):
+            if isinstance(node, dict):
+                if row[node['index']] < node['value']:
+                    node = node['left']
+                else:
+                    node = node['right']
+            else:
+                return node
