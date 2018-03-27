@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'omega'
-copyright = u'2018, omega'
-author = u'omega'
+project = u'Omega'
+copyright = u'2018, Mohit Rathore'
+author = u'Mohit Rathore'
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u''
+release = u'0.0.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -39,6 +39,15 @@ release = u''
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -101,7 +110,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'omegadoc'
+htmlhelp_basename = 'Omegadoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -128,8 +137,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'omega.tex', u'omega Documentation',
-     u'omega', 'manual'),
+    (master_doc, 'Omega.tex', u'Omega Documentation',
+     u'Mohit Rathore', 'manual'),
 ]
 
 
@@ -138,7 +147,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'omega', u'omega Documentation',
+    (master_doc, 'omega', u'Omega Documentation',
      [author], 1)
 ]
 
@@ -149,7 +158,20 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'omega', u'omega Documentation',
-     author, 'omega', 'One line description of project.',
+    (master_doc, 'Omega', u'Omega Documentation',
+     author, 'Omega', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+
+# -- Extension configuration -------------------------------------------------
+
+# -- Options for intersphinx extension ---------------------------------------
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {'https://docs.python.org/': None}
+
+# -- Options for todo extension ----------------------------------------------
+
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = True

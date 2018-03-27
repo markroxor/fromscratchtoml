@@ -12,19 +12,10 @@ language: python
 notifications:
   email: false
 
-env:
-  global:
-    # Doctr deploy key for jellAIfish/omega
-    - secure: "GpQGdC9wYlYE73kjTl0FLVnpt9wUB19WqNEuYrgq+0gKQ9nU/VCCX1xBzLFF1mieMcyO+wfAOa5rpbYdzwntnXGHe78kJNXG3k3BiKeKoT/6azs9eNle3/IY1dRF4GNT/jM7FtqNRJsvFbikdthrdC+SKKiW9SVWuvdGTwcjiqqNSzQaoWz8DIEPyV+26qWJmrmVh6VIiSvAy7T6CpLn+qi6g9cNGB1AAgh0e3Nli7WKmpDdoL0nNpuoL36dT4LtTGg2BKL4X5w060+wxKE6to/0/Hd1Q0abx7QcsF/gEuq3S17+u0SqRG1QjIQti2eFmMo3PxTvcv0JPWr2+lYzroDcDfIrjE1FhzfUpKEnVQ1gSpCziX0lIo9jpHR44wpi8jykyJUGcKmFj8MecsvR3bSSCaXuL54501pfBdjGlAvrvInssDvej2+sGQnWanFWbmVdWFkjaCt2036J0Qc4i/gN0tWWWC2/MCw9acCCh1LJF6TFzeTuxgwH1MWCy2W/BcGr+cp9yKlmeYK+FjMLofg36a3sgYVY37qYDXdhpDU1cCwCfVut8eWXAIoHa4NznWreBD/YtTKiwc1jcklRdi8VaTx6U5ypAJGNDPQMlkxOChwJ0quyjtBxw3qhgd1vMZLjhoY+7Ecf45mAe6ZmkOyOpX7xAlxsJHKeKQ/3O7o="
-
-
 matrix:
   include:
     - python: '2.7'
       env: TOXENV="flake8"
-
-    - python: '3.5'
-      env: TOXENV="docs"
 
     - python: '2.7'
       env: TOXENV="py27-linux"
@@ -37,10 +28,13 @@ matrix:
 
 install:
     - pip install tox
+    - pip install travis-sphinx
     - pip install python-coveralls
 
 script:
   - tox -vv
+  - travis-sphinx build
 
 after_success:
   - coveralls
+  - travis-sphinx deploy

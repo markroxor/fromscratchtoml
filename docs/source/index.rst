@@ -1,9 +1,9 @@
-.. omega documentation master file, created by
-   sphinx-quickstart on Tue Mar 27 02:16:37 2018.
+.. Omega documentation master file, created by
+   sphinx-quickstart on Tue Mar 27 12:29:45 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to omega's documentation!
+Welcome to Omega's documentation!
 =================================
 
 .. toctree::
