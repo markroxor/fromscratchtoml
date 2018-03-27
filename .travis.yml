@@ -23,6 +23,9 @@ matrix:
     - python: '2.7'
       env: TOXENV="flake8"
 
+    - python: '3.5'
+      env: TOXENV="docs"
+
     - python: '2.7'
       env: TOXENV="py27-linux"
 
@@ -38,10 +41,6 @@ install:
 
 script:
   - tox -vv
-  - set -e
-  - pip install doctr
-  - cd docs
-  - doctr deploy . --built-docs build/html
 
 after_success:
   - coveralls
