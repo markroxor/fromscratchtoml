@@ -28,8 +28,13 @@ matrix:
 
 install:
     - pip install tox
+    - pip install travis-sphinx
     - pip install python-coveralls
 
-script: tox -vv
+script:
+  - tox -vv
+  - travis-sphinx build
+
 after_success:
   - coveralls
+  - travis-sphinx deploy
