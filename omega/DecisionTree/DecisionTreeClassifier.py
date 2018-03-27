@@ -36,10 +36,6 @@ class DecisionTreeClassifier:
             gini += (1.0 - score) * (size / num_instances)
         return gini
 
-    # TODO: Implement entropy loss
-    def __entropy_loss(self):
-        pass
-
     def __test_split(self, index, value, x, y):
         mask = torch.nonzero(torch.lt(x[:, index], value))
         if mask.size():

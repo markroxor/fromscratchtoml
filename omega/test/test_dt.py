@@ -34,12 +34,29 @@ class TestDecisionTree(unittest.TestCase):
     def model_equal(self, observed, expected):
         self.assertEqual(observed, expected)
 
-    def test_model(self):
+    def test_model_depth_2(self):
         dt = DecisionTreeClassifier(2, 1)
         root = dt.fit(self.x, self.y)
 
         nodes = [root]
         expected = [6.64229, 2.77124, 7.49755]
+        observed = list()
+        while True:
+            if isinstance(nodes[0], dict):
+                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
+                nodes.append(nodes[0]['left'])
+                nodes.append(nodes[0]['right'])
+
+            nodes = nodes[1:]
+            if not nodes:
+                break
+        self.model_equal(observed, expected)
+
+    def test_model_depth_3(self):
+        dt = DecisionTreeClassifier(3, 1)
+        root = dt.fit(self.x, self.y)
+        nodes = [root]
+        expected = [6.64229, 2.77124, 7.49755, 1.72857, 2.77124, 7.44454, 7.49755]
         observed = list()
         while True:
             if isinstance(nodes[0], dict):
@@ -64,3 +81,39 @@ class TestDecisionTree(unittest.TestCase):
 
         self.assertEqual(y1[0], dt.predict(x1))
         self.assertEqual(y2[0], dt.predict(x2))
+
+    def test_numpy_input(self):
+        dt = DecisionTreeClassifier(2, 1)
+        root = dt.fit(self.x.numpy(), self.y.numpy())
+
+        nodes = [root]
+        expected = [6.64229, 2.77124, 7.49755]
+        observed = list()
+        while True:
+            if isinstance(nodes[0], dict):
+                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
+                nodes.append(nodes[0]['left'])
+                nodes.append(nodes[0]['right'])
+
+            nodes = nodes[1:]
+            if not nodes:
+                break
+        self.model_equal(observed, expected)
+
+    def test_min_size(self):
+        dt = DecisionTreeClassifier(2, 6)
+        root = dt.fit(self.x, self.y)
+
+        nodes = [root]
+        expected = [6.64229]
+        observed = list()
+        while True:
+            if isinstance(nodes[0], dict):
+                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
+                nodes.append(nodes[0]['left'])
+                nodes.append(nodes[0]['right'])
+
+            nodes = nodes[1:]
+            if not nodes:
+                break
+        self.model_equal(observed, expected)
