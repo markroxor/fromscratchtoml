@@ -21,7 +21,7 @@ class NetworkMesh(object):
     Examples
     --------
     >>> import omega as omg
-    >>>
+    >>> import torch as ch
     >>> x = ch.Tensor([[0, 0],[0, 1],[1, 0], [1, 1]])
     >>> y = ch.Tensor([[1,0], [0,1], [0,1], [1,0]])
     >>> train_datax = ch.utils.data.TensorDataset(x, y)
