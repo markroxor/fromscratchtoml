@@ -34,11 +34,9 @@ install:
     - pip install sphinxcontrib.programoutput
     - pip install travis-sphinx
     - pip install python-coveralls
-    - pip install -q -e .
 
 script:
   - tox -vv
-  - travis-sphinx build
 
 after_success:
   - coveralls
