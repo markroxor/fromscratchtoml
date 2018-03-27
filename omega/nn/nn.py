@@ -32,17 +32,8 @@ class NetworkMesh(object):
 
     """
     def __init__(self, layer_architecture=None, seed=None):
-        """Compute tf-idf by multiplying a local component (term frequency) with a global component
-        (inverse document frequency), and normalizing the resulting documents to unit length.
-        Formula for non-normalized weight of term :math:`i` in document :math:`j` in a corpus of :math:`D` documents
-
-        .. math:: weight_{i,j} = frequency_{i,j} * log_2 \\frac{D}{document\_freq_{i}}
-
-        or, more generally
-
-        .. math:: weight_{i,j} = wlocal(frequency_{i,j}) * wglobal(document\_freq_{i}, D)
-
-        so you can plug in your own custom :math:`wlocal` and :math:`wglobal` functions.
+        """Forms the network architecture defining the number of layers and the
+        number of neurons in each layer of the network.
 
         Parameters
         ----------
@@ -165,6 +156,23 @@ class NetworkMesh(object):
                 self.evaluate(test_data), len(test_data)
 
     def update_batch(self, batch, lr):
+        """Updates the weights after iterating through the complete input batch
+
+        Parameters
+        ----------
+        batch : list of (torch.Tensor, torch.Tensor) or a similar data type.
+            Batch is a contiguous sample of training data after processing which,
+            the weights are updated.
+        lr : float
+            This is the learning rate of the network, higher learning rate implies
+            higher change in weights after each updation but this might overshoot
+            the weights from their optimum values.
+
+        Returns
+        -------
+        None
+
+        """
         nabla_b = [ch.zeros(biases.size()) for biases in self.layerwise_biases]
         nabla_w = [ch.zeros(weights.size()) for weights in self.layerwise_weights]
 
@@ -180,15 +188,57 @@ class NetworkMesh(object):
             nabla_b = [ch.add(nb, dnb) for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [ch.add(nw, dnw) for nw, dnw in zip(nabla_w, delta_nabla_w)]
 
-        self.update_weights(lr, nabla_b, nabla_w, len(batch))
+        self.update_weights(lr, nabla_b, nabla_w)
 
-    def update_weights(self, lr, nabla_b, nabla_w, batch_size):
+    def update_weights(self, lr, nabla_b, nabla_w):
+        """Updates the weights by following the learning rate equation.
+
+        Parameters
+        ----------
+        lr : float
+            This is the learning rate of the network, higher learning rate implies
+            higher change in weights after each updation but this might overshoot
+            the weights from their optimum values
+
+        nabla_b : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to biases.
+
+        nabla_w : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to weights.
+
+        Returns
+        -------
+        None
+
+        """
         self.layerwise_biases = [b - (lr) * nb
                                  for b, nb in zip(self.layerwise_biases, nabla_b)]
         self.layerwise_weights = [w - (lr) * nw
                                  for w, nw in zip(self.layerwise_weights, nabla_w)]
 
     def backprop(self, x, y):
+        """Backpropogates the weights and biases to find the derivative of cost function with
+        respect to weights and biases, and following the chain rule of derivation .
+
+        Parameters
+        x : torch.Tensor
+            The input variable on which the model is trained.
+        y : torch.Tensor
+            The expected output when the input is x
+
+        Returns
+        -------
+        nabla_b : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to biases.
+
+        nabla_w : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to weights.
+
+        """
         nabla_b = [ch.zeros(biases.size()) for biases in self.layerwise_biases]
         nabla_w = [ch.zeros(weights.size()) for weights in self.layerwise_weights]
 
@@ -255,4 +305,24 @@ class NetworkMesh(object):
         return correct_evaluation
 
     def cost_derivative(self, output_activations, y):
+        """If our cost function is sum of mean of squares of errors then the
+        out cost derivative function becomes the error or output_activations - y.
+
+        Parameters
+        output_activations : torch.Tensor
+            The output produced by feedforwarding the input through the netowrk.
+        y : torch.Tensor
+            The expected output of the network
+
+        Returns
+        -------
+        nabla_b : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to biases.
+
+        nabla_w : list of torch.Tensor matrices
+            This contains the accumulated derivative of the cost function with
+            respect to weights.
+
+        """
         return (output_activations - y)
