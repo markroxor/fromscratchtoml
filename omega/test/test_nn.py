@@ -22,12 +22,13 @@ logger.setLevel(logging.INFO)
 
 class TestNN(unittest.TestCase):
     def setUp(self):
+        # sets up a basic input dataset which implements a XOR gate.
         x = ch.Tensor([[0, 0], [0, 1], [1, 0], [1, 1]])
         y = ch.Tensor([[1, 0], [0, 1], [0, 1], [1, 0]])
         self.train_data = torch.utils.data.TensorDataset(x, y)
 
     def model_equal(self, m1, m2):
-
+        # compares two omg.nn models by comparing their weights and biases
         for wt1, wt2 in zip(m1.layerwise_weights, m2.layerwise_weights):
             self.assertTrue(torch.equal(wt1, wt2))
 
@@ -35,7 +36,7 @@ class TestNN(unittest.TestCase):
             self.assertTrue(torch.equal(b1, b2))
 
     def test_consistency(self):
-        # model load save
+        # tests for model's load save consistency.
         old_nw = omg.nn.NetworkMesh([2, 5, 2], seed=100)
         old_nw.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
@@ -47,7 +48,7 @@ class TestNN(unittest.TestCase):
         self.model_equal(old_nw, new_nw)
 
     def test_persistence(self):
-        # backward compatiblity
+        # ensure backward compatiblity and persistence of the model.
         model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
         model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
@@ -57,13 +58,15 @@ class TestNN(unittest.TestCase):
         self.model_equal(model, saved_model)
 
     def test_inconsistency(self):
-        # raise error when architecture not defined
+        # ensure that NotImplementedError is raised when the netowrk architecture
+        # is not defined.
         model = omg.nn.NetworkMesh()
         with self.assertRaises(NotImplementedError):
             model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
-    def test_different_input_types(self):
-        # test when y is a list of integers (as in torch's dataloader implementation)
+    def test_model_sanity(self):
+        # test when y is a list of integers (as in torch's dataloader implementation) our
+        # model is still sane.
         X = ch.Tensor([[0, 0], [0, 1], [1, 0], [1, 1]])
         Y = [0, 1, 1, 0]
         self.train_data_new = [(x, y) for x, y in zip(X, Y)]

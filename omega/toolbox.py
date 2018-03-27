@@ -9,8 +9,30 @@ import torch as ch
 
 
 def sigmoid(x):
+    """Returns the sigmoid of x.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+
+    Returns
+    -------
+    sigmoid of x
+
+    """
     return 1.0 / (1.0 + ch.exp(-x))
 
 
 def deriv_sigmoid(x):
+    """Returns the derivative of sigmoid of x.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+
+    Returns
+    -------
+    derivative of sigmoid of x
+
+    """
     return sigmoid(x) * (1 - sigmoid(x))
