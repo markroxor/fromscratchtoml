@@ -28,6 +28,8 @@ matrix:
 
 install:
     - pip install tox
+    - pip install sphinxcontrib-napoleon
+    - pip install sphinxcontrib.programoutput
     - pip install travis-sphinx
     - pip install python-coveralls
 
