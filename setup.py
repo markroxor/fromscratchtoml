@@ -17,7 +17,7 @@ setup(
     ],
     extras_require={
         'test': linux_testenv,
-        'docs': linux_testenv + ['sphinx', 'sphinxcontrib-napoleon', 'doctr', 'pattern', 'sphinxcontrib.programoutput']
+        'docs': linux_testenv + ['sphinx', 'sphinxcontrib-napoleon', 'doctr', 'sphinxcontrib.programoutput']
     },
     classifiers=[
         'Development Status :: Pre-Alpha',
