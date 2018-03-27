@@ -33,7 +33,6 @@ install:
 
 script:
   - tox -vv
-  - travis-sphinx build
 
 after_success:
   - coveralls
