@@ -2,11 +2,10 @@
 
 from setuptools import find_packages, setup
 
-win_testenv = [
+linux_testenv = [
     'pytest-cov',
     'python-coveralls',
-],
-linux_testenv = win_testenv
+]
 
 setup(
     name='omega',
@@ -17,8 +16,8 @@ setup(
         'numpy >= 1.14.2',
     ],
     extras_require={
-        'test-win': win_testenv,
         'test': linux_testenv,
+        'docs': linux_testenv + ['sphinx', 'sphinxcontrib-napoleon', 'travis-sphinx', 'sphinxcontrib.programoutput']
     },
     classifiers=[
         'Development Status :: Pre-Alpha',
