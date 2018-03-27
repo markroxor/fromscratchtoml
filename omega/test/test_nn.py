@@ -37,7 +37,7 @@ class TestNN(unittest.TestCase):
     def test_consistency(self):
         # model load save
         old_nw = omg.nn.NetworkMesh([2, 5, 2], seed=100)
-        old_nw.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
+        old_nw.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
         fname = _tempfile("model.omg")
         old_nw.save_model(fname)
@@ -49,7 +49,7 @@ class TestNN(unittest.TestCase):
     def test_persistence(self):
         # backward compatiblity
         model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
-        model.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
+        model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
         saved_model = omg.nn.NetworkMesh()
         saved_model.load_model(_test_data_path("xor_15_4_3_100.ch"))
@@ -60,7 +60,7 @@ class TestNN(unittest.TestCase):
         # raise error when architecture not defined
         model = omg.nn.NetworkMesh()
         with self.assertRaises(NotImplementedError):
-            model.SGD(train_data=self.train_data, epochs=15, batch_size=4, eta=3)
+            model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
     def test_different_input_types(self):
         # test when y is a list of integers (as in torch's dataloader implementation)
@@ -68,4 +68,4 @@ class TestNN(unittest.TestCase):
         Y = [0, 1, 1, 0]
         self.train_data_new = [(x, y) for x, y in zip(X, Y)]
         model = omg.nn.NetworkMesh([2, 5, 2], seed=100)
-        model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, eta=3, test_data=self.train_data_new)
+        model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, lr=3, test_data=self.train_data_new)
