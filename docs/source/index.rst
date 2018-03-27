@@ -8,7 +8,9 @@ Welcome to Omega's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+   nn/nn
+
 
 
 
