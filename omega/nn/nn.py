@@ -40,7 +40,6 @@ class NetworkMesh(object):
         seed : int, optional
             a pytorch random number seed for mantaining reproducability of weights.
 
-
         """
         if layer_architecture is None:
             logger.warning(
@@ -65,10 +64,6 @@ class NetworkMesh(object):
         file_path : str
             The path to file where the model should be saved.
 
-        Returns
-        -------
-        None.
-
         """
         ch.save(self.__dict__, file_path)
         return
@@ -80,10 +75,6 @@ class NetworkMesh(object):
         ----------
         file_path : str
             The path of file from where the model should be retrieved.
-
-        Returns
-        -------
-        None.
 
         """
         self.__dict__ = ch.load(file_path)
@@ -134,10 +125,6 @@ class NetworkMesh(object):
             The test data on which the results are evaluated generally after each
             epoch.
 
-        Returns
-        -------
-        None
-
         """
 
         if not hasattr(self, "layer_architecture"):
@@ -165,10 +152,6 @@ class NetworkMesh(object):
             This is the learning rate of the network, higher learning rate implies
             higher change in weights after each updation but this might overshoot
             the weights from their optimum values.
-
-        Returns
-        -------
-        None
 
         """
         der_cost_bias = [ch.zeros(biases.size()) for biases in self.layerwise_biases]
@@ -205,10 +188,6 @@ class NetworkMesh(object):
         der_cost_weight : list of torch.Tensor matrices
             This contains the accumulated derivative of the cost function with
             respect to weights.
-
-        Returns
-        -------
-        None
 
         """
         self.layerwise_biases = [b - (lr) * nb
@@ -271,10 +250,6 @@ class NetworkMesh(object):
         test_data : list of (torch.Tensor, torch.Tensor) or a similar data type.
             The test data on which the results are evaluated generally after each
             epoch.
-
-        Returns
-        -------
-        None
 
         """
 
