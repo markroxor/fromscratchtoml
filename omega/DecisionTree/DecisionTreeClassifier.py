@@ -5,7 +5,7 @@
 # Copyright (C) 2017 Dikshant Gupta <dikshant2210@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import torch
+import torch as ch
 import numpy as np
 
 
@@ -25,12 +25,12 @@ class DecisionTreeClassifier(object):
     Examples
     --------
     >>> from omega.DecisionTree import DecisionTreeClassifier
-    >>> import torch
-    >>> x = torch.Tensor([[2.771244718, 1.784783929], [1.728571309, 1.169761413], [7.444542326, 0.476683375])
-    >>> y = torch.Tensor([0, 0 ,1])
+    >>> import torch as ch
+    >>> x = ch.Tensor([[2.771244718, 1.784783929], [1.728571309, 1.169761413], [7.444542326, 0.476683375]])
+    >>> y = ch.Tensor([0, 0 ,1])
     >>> dt = DecisionTreeClassifier()
     >>> dt.fit(x, y)
-    >>> dt.predict(torch.Tensor([10.12493903, 3.234550982]))
+    >>> dt.predict(ch.Tensor([10.12493903, 3.234550982]))
     1.0
     """
 
@@ -52,20 +52,20 @@ class DecisionTreeClassifier(object):
             possible values - gini_index, entropy_loss(under development)
             Represents the metrics to compare each split point.
         """
-        self.__use_cuda = torch.cuda.is_available()
+        self.__use_cuda = ch.cuda.is_available()
         self.__max_depth = max_depth
         self.__min_size = min_size
         self.__split_metric = split_metric
-        self.__root = {}
+        self.root = {}
 
     def __gini_index(self, left, right, classes):
         """Calculates the value of gini index for each split.
 
         Parameters
         ----------
-        left :  torch.Tensor
+        left :  ch.Tensor
             a fraction of the original data
-        right : torch.Tensor
+        right : ch.Tensor
             a fraction of the original data
         classes : list
             list of all possible values to target labels.
@@ -91,22 +91,22 @@ class DecisionTreeClassifier(object):
         ----------
         index :  int, index of the attribute on which to split
         value : float, attribute value on which to split
-        x : torch.tensor, training data
-        y : torch.tensor, training labels
+        x : ch.tensor, training data
+        y : ch.tensor, training labels
         """
-        mask = torch.nonzero(torch.lt(x[:, index], value))
+        mask = ch.nonzero(ch.lt(x[:, index], value))
         if mask.size():
             mask = mask.view(mask.size()[0])
-            left = (torch.index_select(x, 0, mask), torch.index_select(y, 0, mask))
+            left = (ch.index_select(x, 0, mask), ch.index_select(y, 0, mask))
         else:
-            left = (torch.DoubleTensor(), torch.DoubleTensor())
+            left = (ch.DoubleTensor(), ch.DoubleTensor())
 
-        mask = torch.nonzero(1 - torch.lt(x[:, index], value))
+        mask = ch.nonzero(1 - ch.lt(x[:, index], value))
         if mask.size():
             mask = mask.view(mask.size()[0])
-            right = (torch.index_select(x, 0, mask), torch.index_select(y, 0, mask))
+            right = (ch.index_select(x, 0, mask), ch.index_select(y, 0, mask))
         else:
-            right = (torch.DoubleTensor(), torch.DoubleTensor())
+            right = (ch.DoubleTensor(), ch.DoubleTensor())
         return left, right
 
     def fit(self, x, y):
@@ -114,9 +114,9 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        x : torch.tensor
+        x : ch.tensor
             training data
-        y : torch.tensor
+        y : ch.tensor
             training labels
 
         Returns
@@ -125,23 +125,23 @@ class DecisionTreeClassifier(object):
             A dictionary containing the tree.
         """
         if isinstance(x, np.ndarray):
-            x = torch.from_numpy(x)
+            x = ch.from_numpy(x)
         if isinstance(y, np.ndarray):
-            y = torch.from_numpy(y)
+            y = ch.from_numpy(y)
         if self.__use_cuda:
             x = x.cuda()
             y = y.cuda()
-        self.__root = self.__build_tree(x, y)
-        return self.__root
+        self.root = self.__build_tree(x, y)
+        return self.root
 
     def __build_tree(self, x, y):
         """Initiates the tree building process by calling for the first split.
 
         Parameters
         ----------
-        x : torch.tensor
+        x : ch.tensor
             training data
-        y : torch.tensor
+        y : ch.tensor
             training labels
 
         Returns
@@ -158,9 +158,9 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        x : torch.tensor
+        x : ch.tensor
             training data
-        y : torch.tensor
+        y : ch.tensor
             training labels
 
         Returns
@@ -196,7 +196,7 @@ class DecisionTreeClassifier(object):
         res : float
             target label of a terminal node.
         """
-        res = torch.mode(group[1])[0][0]
+        res = ch.mode(group[1])[0][0]
         return res
 
     def __split(self, node, depth):
@@ -243,7 +243,7 @@ class DecisionTreeClassifier(object):
         node : float
             Predicted class of the input data.
         """
-        node = self.__root
+        node = self.root
         while True:
             if isinstance(node, dict):
                 if row[node['index']] < node['value']:
@@ -252,3 +252,27 @@ class DecisionTreeClassifier(object):
                     node = node['right']
             else:
                 return node
+
+    def save_model(self, file_path):
+        """This function saves the model in a file for loading it in future.
+
+        Parameters
+        ----------
+        file_path : str
+            The path to file where the model should be saved.
+
+        """
+        ch.save(self.__dict__, file_path)
+        return
+
+    def load_model(self, file_path):
+        """This function loads the saved model from a file.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of file from where the model should be retrieved.
+
+        """
+        self.__dict__ = ch.load(file_path)
+        return

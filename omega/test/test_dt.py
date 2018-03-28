@@ -7,8 +7,9 @@
 
 import unittest
 
-import torch
+import torch as ch
 from omega.DecisionTree import DecisionTreeClassifier
+from omega.test.toolbox import _tempfile
 
 import logging
 
@@ -19,7 +20,7 @@ logger.setLevel(logging.INFO)
 
 class TestDecisionTree(unittest.TestCase):
     def setUp(self):
-        self.x = torch.Tensor([[2.771244718, 1.784783929],
+        self.x = ch.Tensor([[2.771244718, 1.784783929],
                                [1.728571309, 1.169761413],
                                [3.678319846, 2.81281357],
                                [3.961043357, 2.61995032],
@@ -29,7 +30,7 @@ class TestDecisionTree(unittest.TestCase):
                                [7.444542326, 0.476683375],
                                [10.12493903, 3.234550982],
                                [6.642287351, 3.319983761]])
-        self.y = torch.Tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+        self.y = ch.Tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
 
     def model_equal(self, observed, expected):
         self.assertEqual(observed, expected)
@@ -76,11 +77,11 @@ class TestDecisionTree(unittest.TestCase):
         dt = DecisionTreeClassifier(2, 1)
         dt.fit(self.x, self.y)
 
-        x1 = torch.Tensor([1.728571309, 1.169761413])
-        y1 = torch.Tensor([0])
+        x1 = ch.Tensor([1.728571309, 1.169761413])
+        y1 = ch.Tensor([0])
 
-        x2 = torch.Tensor([10.12493903, 3.234550982])
-        y2 = torch.Tensor([1])
+        x2 = ch.Tensor([10.12493903, 3.234550982])
+        y2 = ch.Tensor([1])
 
         self.assertEqual(y1[0], dt.predict(x1))
         self.assertEqual(y2[0], dt.predict(x2))
@@ -121,4 +122,31 @@ class TestDecisionTree(unittest.TestCase):
             nodes = nodes[1:]
             if not nodes:
                 break
+        self.model_equal(observed, expected)
+
+    def test_consistency(self):
+        # tests for model's load save consistency.
+        dt = DecisionTreeClassifier(2, 1)
+        dt.fit(self.x, self.y)
+
+        fname = _tempfile("model.omg")
+        dt.save_model(fname)
+
+        dt_load = DecisionTreeClassifier()
+        dt_load.load_model(fname)
+        root = dt_load.root
+
+        nodes = [root]
+        expected = [6.64229, 2.77124, 7.49755]
+        observed = list()
+        while True:
+            if isinstance(nodes[0], dict):
+                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
+                nodes.append(nodes[0]['left'])
+                nodes.append(nodes[0]['right'])
+
+            nodes = nodes[1:]
+            if not nodes:
+                break
+
         self.model_equal(observed, expected)
