@@ -9,8 +9,18 @@ import torch
 import numpy as np
 
 
-class DecisionTreeClassifier:
+class DecisionTreeClassifier(object):
     """Objects of this class are decision tree based classifiers.
+
+    Parameters
+    ----------
+    max_depth : int, optional, default value 100
+        Represents maximum allowed depth of the binary tree.
+    min_size : int, optional, default value 2
+        Represents minimum number of data points associated with each node.
+    split_metric : str, optional, default value gini_index
+        possible values - gini_index, entropy_loss(under development)
+        Represents the metrics to compare each split point.
 
     Examples
     --------
@@ -24,10 +34,11 @@ class DecisionTreeClassifier:
     1.0
     """
 
-    def __init__(self,
-                 max_depth=100,
-                 min_size=2,
-                 split_metric='gini_index'):
+    def __init__(
+             self,
+             max_depth=100,
+             min_size=2,
+             split_metric='gini_index'):
         """Initializes the parameters of a decision tree and create root node
         the decision as an empty dictionary.
 
@@ -76,10 +87,10 @@ class DecisionTreeClassifier:
 
         Parameters
         ----------
-        index :  index of the attribute on which to split
-        value : attribute value on which to split
-        x : training data
-        y : training labels
+        index :  int, index of the attribute on which to split
+        value : float, attribute value on which to split
+        x : torch.tensor, training data
+        y : torch.tensor, training labels
         """
         mask = torch.nonzero(torch.lt(x[:, index], value))
         if mask.size():
@@ -101,12 +112,15 @@ class DecisionTreeClassifier:
 
         Parameters
         ----------
-        x : training data
-        y : training labels
+        x : torch.tensor
+            training data
+        y : torch.tensor
+            training labels
 
         Returns
         -------
-        A dictionary containing the tree.
+        root : dict
+            A dictionary containing the tree.
         """
         if isinstance(x, np.ndarray):
             x = torch.from_numpy(x)
@@ -123,12 +137,15 @@ class DecisionTreeClassifier:
 
         Parameters
         ----------
-        x : training data
-        y : training labels
+        x : torch.tensor
+            training data
+        y : torch.tensor
+            training labels
 
         Returns
         -------
-        A dictionary containing the tree.
+        root : dict
+            A dictionary containing the tree.
         """
         root = self.__get_split(x, y)
         self.__split(root, 1)
@@ -139,12 +156,15 @@ class DecisionTreeClassifier:
 
         Parameters
         ----------
-        x : training data
-        y : training labels
+        x : torch.tensor
+            training data
+        y : torch.tensor
+            training labels
 
         Returns
         -------
-        A node for the tree with best split value given the data.
+        dict : dict
+            A node for the tree with best split value given the data.
         """
         b_index, b_value, b_score, b_groups = 999, 999, 999, None
 
@@ -171,7 +191,8 @@ class DecisionTreeClassifier:
 
         Returns
         -------
-        target label of a terminal node.
+        res : float
+            target label of a terminal node.
         """
         res = torch.mode(group[1])[0][0]
         return res
@@ -217,7 +238,8 @@ class DecisionTreeClassifier:
 
         Returns
         -------
-        Predicted class of the input data.
+        node : float
+            Predicted class of the input data.
         """
         node = self.__root
         while True:
