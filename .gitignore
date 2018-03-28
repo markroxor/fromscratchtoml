@@ -1,7 +1,12 @@
 # Created by .ignore support plugin (hsz.mobi)
+# regulars
+data/*
+
 # tox
 .pytest_cache/
 
+# regulars
+data/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
