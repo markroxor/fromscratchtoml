@@ -63,9 +63,11 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        left :  a fraction of the original data
-        right : a fraction of the original data
-        classes : list of integers
+        left :  torch.Tensor
+            a fraction of the original data
+        right : torch.Tensor
+            a fraction of the original data
+        classes : list
             list of all possible values to target labels.
         """
         num_instances = sum([len(left[1]), len(right[1])])
