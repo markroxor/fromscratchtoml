@@ -35,6 +35,7 @@ class TestDecisionTree(unittest.TestCase):
         self.assertEqual(observed, expected)
 
     def test_model_depth_2(self):
+        """Tests the tree for maximum depth parameter value 2"""
         dt = DecisionTreeClassifier(2, 1)
         root = dt.fit(self.x, self.y)
 
@@ -53,6 +54,7 @@ class TestDecisionTree(unittest.TestCase):
         self.model_equal(observed, expected)
 
     def test_model_depth_3(self):
+        """Tests the tree for maximum depth parameter value 3"""
         dt = DecisionTreeClassifier(3, 1)
         root = dt.fit(self.x, self.y)
         nodes = [root]
@@ -70,6 +72,7 @@ class TestDecisionTree(unittest.TestCase):
         self.model_equal(observed, expected)
 
     def test_predict(self):
+        """Tests the predict functionality of the decision tree classifier"""
         dt = DecisionTreeClassifier(2, 1)
         dt.fit(self.x, self.y)
 
@@ -83,6 +86,7 @@ class TestDecisionTree(unittest.TestCase):
         self.assertEqual(y2[0], dt.predict(x2))
 
     def test_numpy_input(self):
+        """Tests the numpy input for the decision tree classifier"""
         dt = DecisionTreeClassifier(2, 1)
         root = dt.fit(self.x.numpy(), self.y.numpy())
 
@@ -101,6 +105,7 @@ class TestDecisionTree(unittest.TestCase):
         self.model_equal(observed, expected)
 
     def test_min_size(self):
+        """Tests the minimum node size parameter of the decision tree classifier"""
         dt = DecisionTreeClassifier(2, 6)
         root = dt.fit(self.x, self.y)
 
