@@ -69,6 +69,10 @@ class DecisionTreeClassifier(object):
             a fraction of the original data
         classes : list
             list of all possible values to target labels.
+        Returns
+        -------
+        gini : float
+            gini index of the split
         """
         num_instances = sum([len(left[1]), len(right[1])])
         gini = 0.0
@@ -97,6 +101,12 @@ class DecisionTreeClassifier(object):
             training data
         y : ch.tensor
             training labels
+
+        Returns
+        -------
+        left : torch.Tensor
+        right : torch.Tensor
+            Two parts of the dataset x and y after split
         """
         mask = ch.nonzero(ch.lt(x[:, feature_index], value))
         if mask.size():
