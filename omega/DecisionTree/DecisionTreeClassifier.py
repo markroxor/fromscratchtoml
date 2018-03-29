@@ -84,24 +84,28 @@ class DecisionTreeClassifier(object):
             gini += (1.0 - score) * (size / num_instances)
         return gini
 
-    def __test_split(self, index, value, x, y):
+    def __test_split(self, feature_index, value, x, y):
         """Splits the dataset into two parts on the basis of a value.
 
         Parameters
         ----------
-        index :  int, index of the attribute on which to split
-        value : float, attribute value on which to split
-        x : ch.tensor, training data
-        y : ch.tensor, training labels
+        index :  int
+            index of the attribute on which to split
+        value : float
+            attribute value on which to split
+        x : ch.tensor
+            training data
+        y : ch.tensor
+            training labels
         """
-        mask = ch.nonzero(ch.lt(x[:, index], value))
+        mask = ch.nonzero(ch.lt(x[:, feature_index], value))
         if mask.size():
             mask = mask.view(mask.size()[0])
             left = (ch.index_select(x, 0, mask), ch.index_select(y, 0, mask))
         else:
             left = (ch.DoubleTensor(), ch.DoubleTensor())
 
-        mask = ch.nonzero(1 - ch.lt(x[:, index], value))
+        mask = ch.nonzero(1 - ch.lt(x[:, feature_index], value))
         if mask.size():
             mask = mask.view(mask.size()[0])
             right = (ch.index_select(x, 0, mask), ch.index_select(y, 0, mask))
@@ -149,11 +153,11 @@ class DecisionTreeClassifier(object):
         root : dict
             A dictionary containing the tree.
         """
-        root = self.__get_split(x, y)
+        root = self.__get_best_split(x, y)
         self.__split(root, 1)
         return root
 
-    def __get_split(self, x, y):
+    def __get_best_split(self, x, y):
         """Finds the best split given the training data and labels
 
         Parameters
@@ -170,17 +174,14 @@ class DecisionTreeClassifier(object):
         """
         b_index, b_value, b_score, b_groups = 999, 999, 999, None
 
-        classes = list()
-        for val in y:
-            if val not in classes:
-                classes.append(val)
+        classes = set(y)
 
-        for index in range(x.size()[1]):
+        for feature_index in range(x.size()[1]):
             for row in x:
-                groups = self.__test_split(index, row[index], x, y)
+                groups = self.__test_split(feature_index, row[feature_index], x, y)
                 score = self.__gini_index(groups[0], groups[1], classes)
                 if score < b_score:
-                    b_index, b_value, b_score, b_groups = index, row[index], score, groups
+                    b_index, b_value, b_score, b_groups = feature_index, row[feature_index], score, groups
         return {'index': b_index, 'value': b_value, 'groups': b_groups}
 
     def __to_terminal(self, group):
@@ -204,8 +205,10 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        node : node for which the subtree is built
-        depth : depth of the node
+        node : dict
+            node for which the subtree is built
+        depth : int
+            depth of the node
         """
         left, right = node['groups']
         del(node['groups'])
@@ -222,13 +225,13 @@ class DecisionTreeClassifier(object):
         if left[1].size()[0] < self.__min_size:
             node['left'] = self.__to_terminal(left)
         else:
-            node['left'] = self.__get_split(left[0], left[1])
+            node['left'] = self.__get_best_split(left[0], left[1])
             self.__split(node['left'], depth + 1)
 
         if right[1].size()[0] < self.__min_size:
             node['right'] = self.__to_terminal(right)
         else:
-            node['right'] = self.__get_split(right[0], right[1])
+            node['right'] = self.__get_best_split(right[0], right[1])
             self.__split(node['right'], depth + 1)
 
     def predict(self, row):
@@ -236,7 +239,8 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        row : row similar to the training data
+        row : torch.Tensor
+            row similar to the training data
 
         Returns
         -------
