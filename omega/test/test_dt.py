@@ -35,13 +35,8 @@ class TestDecisionTree(unittest.TestCase):
     def model_equal(self, observed, expected):
         self.assertEqual(observed, expected)
 
-    def test_model_depth_2(self):
-        """Tests the tree for maximum depth parameter value 2"""
-        dt = DecisionTreeClassifier(2, 1)
-        root = dt.fit(self.x, self.y)
-
+    def get_level_order(self, root):
         nodes = [root]
-        expected = [6.64229, 2.77124, 7.49755]
         observed = list()
         while True:
             if isinstance(nodes[0], dict):
@@ -52,24 +47,26 @@ class TestDecisionTree(unittest.TestCase):
             nodes = nodes[1:]
             if not nodes:
                 break
+        return observed
+
+    def test_model_depth_2(self):
+        """Tests the tree for maximum depth parameter value 2"""
+        dt = DecisionTreeClassifier(2, 1)
+        root = dt.fit(self.x, self.y)
+
+        expected = [6.64229, 2.77124, 7.49755]
+        observed = self.get_level_order(root)
+
         self.model_equal(observed, expected)
 
     def test_model_depth_3(self):
         """Tests the tree for maximum depth parameter value 3"""
         dt = DecisionTreeClassifier(3, 1)
         root = dt.fit(self.x, self.y)
-        nodes = [root]
-        expected = [6.64229, 2.77124, 7.49755, 1.72857, 2.77124, 7.44454, 7.49755]
-        observed = list()
-        while True:
-            if isinstance(nodes[0], dict):
-                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
-                nodes.append(nodes[0]['left'])
-                nodes.append(nodes[0]['right'])
 
-            nodes = nodes[1:]
-            if not nodes:
-                break
+        expected = [6.64229, 2.77124, 7.49755, 1.72857, 2.77124, 7.44454, 7.49755]
+        observed = self.get_level_order(root)
+
         self.model_equal(observed, expected)
 
     def test_predict(self):
@@ -91,18 +88,9 @@ class TestDecisionTree(unittest.TestCase):
         dt = DecisionTreeClassifier(2, 1)
         root = dt.fit(self.x.numpy(), self.y.numpy())
 
-        nodes = [root]
         expected = [6.64229, 2.77124, 7.49755]
-        observed = list()
-        while True:
-            if isinstance(nodes[0], dict):
-                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
-                nodes.append(nodes[0]['left'])
-                nodes.append(nodes[0]['right'])
+        observed = self.get_level_order(root)
 
-            nodes = nodes[1:]
-            if not nodes:
-                break
         self.model_equal(observed, expected)
 
     def test_min_size(self):
@@ -110,18 +98,9 @@ class TestDecisionTree(unittest.TestCase):
         dt = DecisionTreeClassifier(2, 6)
         root = dt.fit(self.x, self.y)
 
-        nodes = [root]
         expected = [6.64229]
-        observed = list()
-        while True:
-            if isinstance(nodes[0], dict):
-                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
-                nodes.append(nodes[0]['left'])
-                nodes.append(nodes[0]['right'])
+        observed = self.get_level_order(root)
 
-            nodes = nodes[1:]
-            if not nodes:
-                break
         self.model_equal(observed, expected)
 
     def test_consistency(self):
@@ -136,17 +115,7 @@ class TestDecisionTree(unittest.TestCase):
         dt_load.load_model(fname)
         root = dt_load.root
 
-        nodes = [root]
         expected = [6.64229, 2.77124, 7.49755]
-        observed = list()
-        while True:
-            if isinstance(nodes[0], dict):
-                observed.append(float("{0:.5f}".format(nodes[0]['value'])))
-                nodes.append(nodes[0]['left'])
-                nodes.append(nodes[0]['right'])
-
-            nodes = nodes[1:]
-            if not nodes:
-                break
+        observed = self.get_level_order(root)
 
         self.model_equal(observed, expected)

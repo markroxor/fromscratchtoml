@@ -93,7 +93,7 @@ class DecisionTreeClassifier(object):
 
         Parameters
         ----------
-        index :  int
+        feature_index :  int
             index of the attribute on which to split
         value : float
             attribute value on which to split
