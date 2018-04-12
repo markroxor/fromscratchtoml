@@ -21,5 +21,10 @@ We currently do not provide installation via `pip` but you can still install the
 * Clone - `git clone https://github.com/jellAIfish/omega.git`
 * Install - `python setup.py install`
 
+## Tutorials and support
+* The well documented API usage is available at [https://jellaifish.github.io/omega/](https://jellaifish.github.io/omega/)
+* For discussion and support visit - [the slack channel](https://jellaifish.slack.com)
+* Development discussions and bugs reports can be tracked on [issue tracker](https://github.com/jellAIfish/omega/issues).
+
 ## Future endeavours
 * This library will form a back-bone for teaching and guiding budding machine learning developers via vBlogs.
