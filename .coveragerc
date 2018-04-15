@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = omega
+source = fromscratchtoml
 
 [report]
 omit =

@@ -1,4 +1,4 @@
-''' Installation script for python omega package'''
+''' Installation script for python fromscratchtoml package'''
 
 from setuptools import find_packages, setup
 
@@ -8,7 +8,7 @@ linux_testenv = [
 ]
 
 setup(
-    name='omega',
+    name='fromscratchtoml',
     version='0.0.1',
     description=' An intuitive machine learning library for python.',
 
@@ -26,7 +26,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
-    url='https://github.com/jellAIfish/omega',
+    url='https://github.com/jellAIfish/fromscratchtoml',
     license='GPL-3.0',
     packages=find_packages(),
 )
