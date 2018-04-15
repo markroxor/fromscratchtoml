@@ -1,6 +1,5 @@
 import torch as ch
 import logging
-from torch.autograd import Variable
 
 
 logging.basicConfig()
@@ -24,80 +23,59 @@ class LinearRegressionClassifier(object):
 
    """
 
-    def __init__(self, x, y):
-        """instanciate an object with two parameters.
-
-        Parameters
-        ----------
-        x : a float tensor having area of house in square meter.
-        y : a float tensor having price on the basis of area of house.
+    def __init__(self, seed=None):
+        """instantiate a linear regression object.
 
         """
-        self.x = x
-        self.y = y
+        if seed:
+            ch.manual_seed(seed)
 
-    def fit(self, option):
+    def fit(self, train_x, train_y, optimizer):
         """ Finds suitable value of parameters which best fit the given output values.
 
         Parameters
         ----------
-        option : We have implemented in two ways. The first approach is the Analytical approach
-                 which computes the value of slope and intercept by finding the covariance
-                 and variance of the (x, y) pair. The second approach uses two optimizers namely
-                 stochastic gradient descent (SGD) and Adam. Therefore, the options are 'Analytical'
-                 'SGD' and 'Adam'.
-
+        train_x : list of (int/float torch.Tensor).
+                  The input values on which linear regression is performed.
+        train_y : list of (int/float torch.Tensor).
+                  The target labels corresponding to the input values.
+        optimizers : Analytical
+                     Trains parameters to minimize the loss function.
         """
 
-        self.option = option
-        if option == 'Analytical':
-            self.cov_x_y = []
-            self.var_x = []
-            mean_x = ch.mean(self.x)
-            mean_y = ch.mean(self.y)
-            for i in range(len(self.x)):
-                self.cov_x_y.append((self.x[i] - mean_x) * (self.y[i] - mean_y))
-                self.var_x.append((self.x[i] - mean_x) ** 2)
-            self.beta = sum(self.cov_x_y) / sum(self.var_x)
+        if optimizer == 'Analytical':
+            cov_x_y = []
+            var_x = []
+
+            mean_x = ch.mean(train_x)
+            mean_y = ch.mean(train_y)
+
+            for x, y in zip(train_x, train_y):
+                cov_x_y.append((x - mean_x) * (y - mean_y))
+                var_x.append((x - mean_x) ** 2)
+
+            self.beta = sum(cov_x_y) / sum(var_x)
             self.alpha = mean_y - self.beta * mean_x
-            return
-        ch.manual_seed(2)
-        x_data = Variable(ch.FloatTensor(self.x), requires_grad=False)
-        y_data = Variable(ch.FloatTensor(self.y), requires_grad=False)
-        self.beta = Variable(ch.randn(1, 1), requires_grad=True)
-        self.alpha = Variable(ch.randn(1), requires_grad=True)
-
-        if option == 'SGD':
-            optimizer = ch.optim.SGD([self.beta, self.alpha], lr=0.01)
-        elif option == 'Adam':
-            optimizer = ch.optim.Adam([self.beta, self.alpha], lr=0.01)
-
-        for i in range(1000):
-            y_pred = x_data.mm(self.beta).add(self.alpha)
-            loss = (y_pred - y_data).pow(2).sum()
-            if i % 50 == 0:
-                logger.info("iteration {} loss {}".format(i, loss.data[0]))
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
 
     def predict(self, test_data):
-            """This function evaluates the test dataset by feed forwarding the learned
-            weights across the network and calculating the number of correct evaluations
-            by the network on test data.
+            """This function predicts the target label on the test dataset.
 
             Parameters
             ----------
-            test_data : list of (torch.Tensor, torch.Tensor) or a similar data type.
+            test_data : list of (int/float torch.Tensor).
                 The test data on which the results are evaluated generally after each
                 epoch.
 
             """
-            self.test_data = Variable(ch.FloatTensor(self.x), requires_grad=False)
-            for td in self.test_data:
+            if not hasattr(self, "alpha") or not hasattr(self, "beta"):
+                raise NotImplementedError("Predict is called before fit."
+                                          "Did you wish to load the load the model?")
+
+            for td in test_data:
                     predicted_value = float(self.beta) * float(td) + float(self.alpha)
-                    logger.info("Predicted value for test_data {} slope {} and bias "
-                            "{} is {}".format(td, self.alpha, self.beta, predicted_value))
+                    logger.info("Predicted value for test_data {} bias {} and slope "
+                            "{} is {}".format(float(td), float(self.alpha), float(self.beta),
+                            predicted_value))
 
     def save_model(self, file_path):
         """This function saves the model in a file for loading it in future.
