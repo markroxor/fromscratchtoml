@@ -24,14 +24,13 @@ class TestLinearRegression(unittest.TestCase):
 
     def model_equal(self, m1, m2):
         # compares two omg.nn models by comparing their weights and biases
-        print(type(m1.alpha), m1.alpha)
         self.assertTrue(ch.equal(m1.alpha, m2.alpha))
         self.assertTrue(ch.equal(m1.beta, m2.beta))
 
     def test_consistency(self):
         # tests for model's load save consistency.
         old_model = omg.linear_regression.LinearRegressionClassifier()
-        old_model.fit(self.x, self.y, optimizer='Analytical')
+        old_model.fit(self.x, self.y, optimizer='analytical')
 
         fname = _tempfile("model.omg")
         old_model.save_model(fname)
@@ -44,7 +43,7 @@ class TestLinearRegression(unittest.TestCase):
     def test_persistence(self):
         # ensure backward compatiblity and persistence of the model.
         new_model = omg.linear_regression.LinearRegressionClassifier()
-        new_model.fit(self.x, self.y, optimizer='Analytical')
+        new_model.fit(self.x, self.y, optimizer='analytical')
 
         saved_model = omg.linear_regression.LinearRegressionClassifier()
         saved_model.load_model(_test_data_path("lr_analytical_model.ch"))

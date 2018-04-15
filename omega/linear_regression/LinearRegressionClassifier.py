@@ -18,7 +18,7 @@ class LinearRegressionClassifier(object):
    >>> y = ch.Tensor([[21.54945196], [47.46446305], [17.21865634], [52.789],
                     [16.1234], [12.789], [19.5649], [60.5793278]])
    >>> lr = omg.linear_regression.LinearRegressionClassifier(x,y)
-   >>> lr.fit('Adam')
+   >>> lr.fit('analytical')
    >>> lr.predict(x)
 
    """
@@ -39,11 +39,11 @@ class LinearRegressionClassifier(object):
                   The input values on which linear regression is performed.
         train_y : list of (int/float torch.Tensor).
                   The target labels corresponding to the input values.
-        optimizers : Analytical
+        optimizers : analytical
                      Trains parameters to minimize the loss function.
         """
 
-        if optimizer == 'Analytical':
+        if optimizer == 'analytical':
             cov_x_y = []
             var_x = []
 
@@ -69,7 +69,7 @@ class LinearRegressionClassifier(object):
             """
             if not hasattr(self, "alpha") or not hasattr(self, "beta"):
                 raise NotImplementedError("Predict is called before fit."
-                                          "Did you wish to load the load the model?")
+                                          "Did you wish to load the model?")
 
             for td in test_data:
                     predicted_value = float(self.beta) * float(td) + float(self.alpha)
