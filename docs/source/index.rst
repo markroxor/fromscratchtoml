@@ -10,6 +10,7 @@ Welcome to Omega's documentation!
    :maxdepth: 2
 
    nn/nn
+   linear_regression/LinearRegressionClassifier
 
 
 
