@@ -12,7 +12,7 @@ class LinearRegressionClassifier(object):
 
    Examples
    --------
-   >>> import omega as omg
+   >>> import fromscratchtoml as omg
    >>> import torch as ch
    >>> x = ch.Tensor([[24], [50], [15], [55], [14], [12], [18], [62]])
    >>> y = ch.Tensor([[21.54945196], [47.46446305], [17.21865634], [52.789],

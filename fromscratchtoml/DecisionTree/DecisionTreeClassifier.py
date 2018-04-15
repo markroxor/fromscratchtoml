@@ -21,7 +21,7 @@ class DecisionTreeClassifier(object):
 
     Examples
     --------
-    >>> from omega.DecisionTree import DecisionTreeClassifier
+    >>> from fromscratchtoml.DecisionTree import DecisionTreeClassifier
     >>> import torch as ch
     >>> x = ch.Tensor([[2.771244718, 1.784783929], [1.728571309, 1.169761413], [7.444542326, 0.476683375]])
     >>> y = ch.Tensor([0, 0 ,1])

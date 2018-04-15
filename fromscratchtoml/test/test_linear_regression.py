@@ -5,9 +5,9 @@
 import unittest
 
 import torch as ch
-import omega as omg
+import fromscratchtoml as omg
 
-from omega.test.toolbox import _tempfile, _test_data_path
+from fromscratchtoml.test.toolbox import _tempfile, _test_data_path
 
 import logging
 
