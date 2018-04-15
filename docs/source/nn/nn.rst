@@ -1,7 +1,7 @@
 :mod:`nn.nn` -- Neural Network model
 ========================================
 
-.. automodule:: omega.nn.nn
+.. automodule:: fromscratchtoml.nn.nn
     :synopsis: Neural Network model
     :members:
     :inherited-members:

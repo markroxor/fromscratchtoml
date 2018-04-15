@@ -8,8 +8,8 @@
 import unittest
 
 import torch as ch
-from omega.DecisionTree import DecisionTreeClassifier
-from omega.test.toolbox import _tempfile
+from fromscratchtoml.DecisionTree import DecisionTreeClassifier
+from fromscratchtoml.test.toolbox import _tempfile
 
 import logging
 

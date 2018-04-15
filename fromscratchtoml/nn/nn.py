@@ -3,7 +3,7 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import torch as ch
-from omega.toolbox import sigmoid, deriv_sigmoid
+from fromscratchtoml.toolbox import sigmoid, deriv_sigmoid
 
 import logging
 
@@ -17,12 +17,12 @@ class NetworkMesh(object):
 
     Examples
     --------
-    >>> import omega as omg
+    >>> import fromscratchtoml as fs2ml
     >>> import torch as ch
     >>> x = ch.Tensor([[0, 0],[0, 1],[1, 0], [1, 1]])
     >>> y = ch.Tensor([[1,0], [0,1], [0,1], [1,0]])
     >>> train_datax = ch.utils.data.TensorDataset(x, y)
-    >>> nw = omg.nn.NetworkMesh([2, 5, 2])
+    >>> nw = fs2ml.nn.NetworkMesh([2, 5, 2])
     >>> nw.SGD(train_data=train_datax, epochs=50, batch_size=4, lr=3, test_data=train_datax)
 
     """

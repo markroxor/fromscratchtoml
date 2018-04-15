@@ -18,7 +18,7 @@ sys.path.append(os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'Omega'
+project = u'fromscratchtoml'
 copyright = u'2018, Mohit Rathore'
 author = u'Mohit Rathore'
 
@@ -111,7 +111,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Omegadoc'
+htmlhelp_basename = 'fromscratchtomldoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -138,7 +138,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Omega.tex', u'Omega Documentation',
+    (master_doc, 'fromscratchtoml.tex', u'fromscratchtoml Documentation',
      u'Mohit Rathore', 'manual'),
 ]
 
@@ -148,7 +148,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'omega', u'Omega Documentation',
+    (master_doc, 'fromscratchtoml', u'fromscratchtoml Documentation',
      [author], 1)
 ]
 
@@ -159,8 +159,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Omega', u'Omega Documentation',
-     author, 'Omega', 'One line description of project.',
+    (master_doc, 'fromscratchtoml', u'fromscratchtoml Documentation',
+     author, 'fromscratchtoml', 'One line description of project.',
      'Miscellaneous'),
 ]
 
