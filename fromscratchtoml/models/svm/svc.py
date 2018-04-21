@@ -6,6 +6,8 @@ import cvxopt
 import torch as ch
 import numpy as np
 
+from fromscratchtoml.models.base_model import BaseModel
+
 import logging
 
 logging.basicConfig()
@@ -15,7 +17,7 @@ logger.setLevel(logging.INFO)
 cvxopt.solvers.options['show_progress'] = False
 
 
-class SVC(object):
+class SVC(BaseModel):
     def __init__(self):
         pass
 

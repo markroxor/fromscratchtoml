@@ -8,7 +8,7 @@
 import unittest
 
 import torch as ch
-import fromscratchtoml as fs2ml
+from fromscratchtoml.models import svm
 
 from fromscratchtoml.test.toolbox import _tempfile, _test_data_path
 
@@ -39,22 +39,22 @@ class TestNN(unittest.TestCase):
 
     def test_consistency(self):
         # tests for model's load save consistency.
-        old_model = fs2ml.svm.SVC()
+        old_model = svm.SVC()
         old_model.fit(self.X, self.y)
 
         fname = _tempfile("model.fs2ml")
         old_model.save_model(fname)
 
-        new_model = fs2ml.nn.NetworkMesh()
+        new_model = svm.SVC()
         new_model.load_model(fname)
         self.model_equal(old_model, new_model)
 
     def test_persistence(self):
         # ensure backward compatiblity and persistence of the model.
-        model = fs2ml.svm.SVC()
+        model = svm.SVC()
         model.fit(self.X, self.y)
 
-        saved_model = fs2ml.svm.SVC()
+        saved_model = svm.SVC()
         saved_model.load_model(_test_data_path("suc_svm.fs2ml"))
 
         self.model_equal(model, saved_model)

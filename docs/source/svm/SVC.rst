@@ -1,7 +1,7 @@
-:mod:`.svm.SVC` -- Support Vector Classifier model
+:mod:`svm.SVC` -- Support Vector Classifier model
 ==================================================
 
-.. automodule:: fromscratchtoml.svm.svc
+.. automodule:: fromscratchtoml.models.svm.svc
     :synopsis: Support Vector Classifier
     :members:
     :inherited-members:
