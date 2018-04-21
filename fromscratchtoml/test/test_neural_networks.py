@@ -8,7 +8,7 @@
 import unittest
 
 import torch as ch
-import fromscratchtoml as fs2ml
+from fromscratchtoml.models import nn
 import torch.utils.data
 
 from fromscratchtoml.test.toolbox import _tempfile, _test_data_path
@@ -37,22 +37,22 @@ class TestNN(unittest.TestCase):
 
     def test_consistency(self):
         # tests for model's load save consistency.
-        old_nw = fs2ml.nn.NetworkMesh([2, 5, 2], seed=100)
+        old_nw = nn.NeuralNetwork([2, 5, 2], seed=100)
         old_nw.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
         fname = _tempfile("model.fs2ml")
         old_nw.save_model(fname)
 
-        new_nw = fs2ml.nn.NetworkMesh()
+        new_nw = nn.NeuralNetwork()
         new_nw.load_model(fname)
         self.model_equal(old_nw, new_nw)
 
     def test_persistence(self):
         # ensure backward compatiblity and persistence of the model.
-        model = fs2ml.nn.NetworkMesh([2, 5, 2], seed=100)
+        model = nn.NeuralNetwork([2, 5, 2], seed=100)
         model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
-        saved_model = fs2ml.nn.NetworkMesh()
+        saved_model = nn.NeuralNetwork()
         saved_model.load_model(_test_data_path("xor_15_4_3_100.ch"))
 
         # self.model_equal(model, saved_model)
@@ -60,7 +60,7 @@ class TestNN(unittest.TestCase):
     def test_inconsistency(self):
         # ensure that NotImplementedError is raised when the netowrk architecture
         # is not defined.
-        model = fs2ml.nn.NetworkMesh()
+        model = nn.NeuralNetwork()
         with self.assertRaises(NotImplementedError):
             model.SGD(train_data=self.train_data, epochs=15, batch_size=4, lr=3)
 
@@ -70,5 +70,5 @@ class TestNN(unittest.TestCase):
         X = ch.Tensor([[0, 0], [0, 1], [1, 0], [1, 1]])
         Y = [0, 1, 1, 0]
         self.train_data_new = [(x, y) for x, y in zip(X, Y)]
-        model = fs2ml.nn.NetworkMesh([2, 5, 2], seed=100)
+        model = nn.NeuralNetwork([2, 5, 2], seed=100)
         model.SGD(train_data=self.train_data_new, epochs=15, batch_size=4, lr=3, test_data=self.train_data_new)
