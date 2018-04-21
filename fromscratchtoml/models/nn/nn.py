@@ -4,6 +4,7 @@
 
 import torch as ch
 from fromscratchtoml.toolbox import sigmoid, deriv_sigmoid
+from fromscratchtoml.models.base_model import BaseModel
 
 import logging
 
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class NetworkMesh(object):
+class NeuralNetwork(BaseModel):
     """Objects of this class form the base of neural networks.
 
     Examples
@@ -52,30 +53,6 @@ class NetworkMesh(object):
         self.num_layers = len(layer_architecture)
         self.layerwise_biases = [ch.randn(1, x) for x in layer_architecture[1:]]
         self.layerwise_weights = [ch.randn(x, y) for x, y in zip(layer_architecture[:-1], layer_architecture[1:])]
-
-    def save_model(self, file_path):
-        """This function saves the model in a file for loading it in future.
-
-        Parameters
-        ----------
-        file_path : str
-            The path to file where the model should be saved.
-
-        """
-        ch.save(self.__dict__, file_path)
-        return
-
-    def load_model(self, file_path):
-        """This function loads the saved model from a file.
-
-        Parameters
-        ----------
-        file_path : str
-            The path of file from where the model should be retrieved.
-
-        """
-        self.__dict__ = ch.load(file_path)
-        return
 
     def feedforward(self, x):
         """This function propogates the input `x` across the neural network formed
@@ -119,7 +96,7 @@ class NetworkMesh(object):
             the weights from their optimum values.
         test_data : list of (torch.Tensor, torch.Tensor) or a similar data type
                     optional
-            The test data on which the results are evaluated generally after each
+            The test data on which the results are predicted generally after each
             epoch.
 
         """
@@ -135,7 +112,7 @@ class NetworkMesh(object):
             logger.info("Epoch {0}:".format(i))
 
             if test_data:
-                self.evaluate(test_data), len(test_data)
+                self.predict(test_data), len(test_data)
 
     def __update_batch(self, batch, lr):
         """Updates the weights after iterating through the complete input batch
@@ -237,15 +214,15 @@ class NetworkMesh(object):
             der_cost_weight[-l] = ch.mm(activations[-l - 1].transpose(0, 1), delta)
         return (der_cost_bias, der_cost_weight)
 
-    def evaluate(self, test_data):
-        """This function evaluates the test dataset by feed forwarding the learned
+    def predict(self, test_data):
+        """This function predicts the test dataset by feed forwarding the learned
         weights across the network and calculating the number of correct evaluations
         by the network on test data.
 
         Parameters
         ----------
         test_data : list of (torch.Tensor, torch.Tensor) or a similar data type.
-            The test data on which the results are evaluated generally after each
+            The test data on which the results are predictd generally after each
             epoch.
 
         """
