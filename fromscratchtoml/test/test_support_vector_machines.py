@@ -29,13 +29,13 @@ class TestNN(unittest.TestCase):
 
     def model_equal(self, m1, m2):
         # compares two fs2ml.nn models by comparing their weights and biases
-        self.assertTrue(ch.equal(m1.w, m1.w))
         self.assertTrue(m1.b, m1.b)
 
         for s1, s2 in zip(m1.support_vectors, m2.support_vectors):
             self.assertTrue(ch.equal(s1, s2))
 
         self.assertTrue(ch.equal(m1.support_vectors_y, m2.support_vectors_y))
+        self.assertTrue(ch.equal(m1.effective_lagrange_multipliers, m2.effective_lagrange_multipliers))
 
     def test_consistency(self):
         # tests for model's load save consistency.
@@ -59,9 +59,9 @@ class TestNN(unittest.TestCase):
 
         self.model_equal(model, saved_model)
 
-    def test_inconsistency(self):
-        # ensure that NotImplementedError is raised when the netowrk architecture
-        # is not defined.
+    def test_not_fitted(self):
+        # ensure that ModelNotFittedError is raised when predict is called before
+        # predict.
         # TODO
         pass
 
