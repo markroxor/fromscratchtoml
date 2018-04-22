@@ -20,13 +20,15 @@ setup(
         'docs': linux_testenv + ['sphinx', 'sphinxcontrib-napoleon', 'travis-sphinx', 'sphinxcontrib.programoutput']
     },
     classifiers=[
-        'Development Status :: Pre-Alpha',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
     url='https://github.com/jellAIfish/fromscratchtoml',
+    author='Mohit Rathore',
+    author_email='mrmohitrathoremr@gmail.com',
     license='GPL-3.0',
     packages=find_packages(),
 )
