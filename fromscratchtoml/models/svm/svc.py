@@ -80,17 +80,20 @@ class SVC(BaseModel):
 
         self.b /= self.support_vectors_y.size()[0]
 
-    def predict(self, x, return_projection=False):
+    def predict(self, X, return_projection=False):
         if not hasattr(self, "b"):
             raise ModelNotFittedError("Predict called before fitting the model.")
 
-        self.prediction = self.b
-        for i in range(self.support_vectors_y.size()[0]):
-            self.prediction += self.effective_lagrange_multipliers[i] * self.support_vectors_y[i] *\
-                         self.kernel(self.support_vectors[i], x)
+        projections = ch.zeros(X.size()[0])
+        for j, x in enumerate(X):
+            projection = self.b
+            for i in range(self.support_vectors_y.size()[0]):
+                projection += self.effective_lagrange_multipliers[i] * self.support_vectors_y[i] *\
+                             self.kernel(self.support_vectors[i], x)
+            projections[j] = projection
 
-        logger.info(self.__sign(self.prediction))
         if return_projection:
-            return self.__sign(self.prediction), self.prediction
+            return ch.sign(ch.Tensor(projections)), projections
 
-        return self.__sign(self.prediction)
+        logger.info(ch.sign(ch.Tensor(projections)))
+        return ch.sign(ch.Tensor(projections))
