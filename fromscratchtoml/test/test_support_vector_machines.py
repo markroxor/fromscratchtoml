@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Copyright (C) 2017 Dikshant Gupta <dikshant2210@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import unittest
 
 import torch as ch
-from fromscratchtoml.models import svm
 
+from fromscratchtoml.models import svm
 from fromscratchtoml.test.toolbox import _tempfile, _test_data_path
+from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
 
 import logging
 
@@ -60,10 +60,11 @@ class TestNN(unittest.TestCase):
         self.model_equal(model, saved_model)
 
     def test_not_fitted(self):
-        # ensure that ModelNotFittedError is raised when predict is called before
-        # predict.
-        # TODO
-        pass
+        # ensure that ModelNotFittedError is raised when predict is called
+        # before predict.
+        model = svm.SVC()
+        with self.assertRaises(ModelNotFittedError):
+            model.predict(self.X)
 
     def test_model_sanity(self):
         # test when y is a list of integers (as in torch's dataloader implementation) our
