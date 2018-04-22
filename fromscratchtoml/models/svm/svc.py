@@ -95,5 +95,4 @@ class SVC(BaseModel):
         if return_projection:
             return ch.sign(ch.Tensor(projections)), projections
 
-        logger.info(ch.sign(ch.Tensor(projections)))
         return ch.sign(ch.Tensor(projections))
