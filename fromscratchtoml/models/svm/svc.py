@@ -39,7 +39,8 @@ class SVC(BaseModel):
 
         # create a gram matrix by taking the outer product of y
         gram_matrix_y = ch.ger(y, y)
-        gram_matrix_xy = gram_matrix_y * self.__create_kernel_matrix(X)
+        K = self.__create_kernel_matrix(X)
+        gram_matrix_xy = gram_matrix_y * K
 
         P = cvxopt.matrix(gram_matrix_xy.numpy().astype(np.double))
         q = cvxopt.matrix(-ch.ones(self.n).numpy().astype(np.double))
@@ -50,26 +51,19 @@ class SVC(BaseModel):
 
         lagrange_multipliers = ch.Tensor(list(cvxopt.solvers.qp(P, q, G, h, A, b)['x']))
         effective_lagrange_multiplier_indices = lagrange_multipliers > eta
-        ind = []
-
-        # TODO find a better way to calculate this
-        for i in range(effective_lagrange_multiplier_indices.shape[0]):
-            if effective_lagrange_multiplier_indices[i] == 1:
-                ind.append(i)
 
         self.support_vectors = ch.stack([x for multiplier, x in zip(lagrange_multipliers, X) if multiplier > eta])
         self.support_vectors_y = ch.Tensor(y[effective_lagrange_multiplier_indices])
         self.effective_lagrange_multipliers = lagrange_multipliers[effective_lagrange_multiplier_indices]
 
+        effective_lagrange_multiplier_indices = effective_lagrange_multiplier_indices.nonzero().view(-1)
+
         self.b = 0
-        # TODO find a better way to calculate indexwise kernel trick
         for i in range(self.support_vectors_y.size()[0]):
-            kernel_trick = []
-            for j in range(len(ind)):
-                kernel_trick.append(self.kernel(X[ind[i]], X[ind[j]]))
+            kernel_trick = K[[effective_lagrange_multiplier_indices[i]], effective_lagrange_multiplier_indices]
 
             self.b += self.support_vectors_y[i] - ch.sum(self.effective_lagrange_multipliers *
-                      self.support_vectors_y * ch.Tensor(kernel_trick))
+                      self.support_vectors_y * kernel_trick)
 
         self.b /= self.support_vectors_y.size()[0]
 
