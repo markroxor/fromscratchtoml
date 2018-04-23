@@ -14,6 +14,7 @@ setup(
 
     install_requires=[
         'numpy >= 1.14.2',
+        'matplotlib >= 2.1.0'
     ],
     extras_require={
         'test': linux_testenv,
