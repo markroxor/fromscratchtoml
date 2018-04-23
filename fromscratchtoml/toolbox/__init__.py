@@ -7,7 +7,9 @@
 import torch as ch
 import numpy as np
 
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt # noqa:F402
 
 
 def sigmoid(x):
@@ -40,17 +42,26 @@ def deriv_sigmoid(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def binary_visualize(X1_train, X2_train, clf=None, coarse=10):
-    x_min = min(ch.min(X1_train[:, 0]), ch.min(X2_train[:, 0])) * 0.8
-    x_max = max(ch.max(X1_train[:, 0]), ch.max(X2_train[:, 0])) * 1.2
-    y_min = min(ch.min(X1_train[:, 1]), ch.min(X2_train[:, 1])) * 0.8
-    y_max = max(ch.max(X1_train[:, 1]), ch.max(X2_train[:, 1])) * 1.2
+def binary_visualize(X, clf=None, coarse=10):
+    """Plots the scatter plot of binary classes, along with the margins if
+    clf is provided.
 
-    X1_train = X1_train.numpy()
-    X2_train = X2_train.numpy()
+    Parameters
+    ----------
+    X : an N-D torch.Tensor
+        Acts as a generator for each class. These are also plotted.
+    clf : a fromscratchtoml.models object, optional
+          The classifier which forms a basis for plotting margin.
+    coarse: int, optional
+            the sections in which the margin is divided in the plot or the
+            coarseness of margin.
 
-    plt.plot(X1_train[:, 0], X1_train[:, 1], "mx")
-    plt.plot(X2_train[:, 0], X2_train[:, 1], "bo")
+    """
+    x_min, x_max = ch.min(ch.cat(X)[:, 0]), ch.max(ch.cat(X)[:, 0])
+    y_min, y_max = ch.min(ch.cat(X)[:, 1]), ch.max(ch.cat(X)[:, 1])
+
+    for x in X:
+        plt.scatter(x[:, 0], x[:, 1])
 
     if clf is not None:
         X, Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))

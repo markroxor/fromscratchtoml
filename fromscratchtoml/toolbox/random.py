@@ -9,40 +9,42 @@ import torch as ch
 
 
 class Distribution:
-    @staticmethod
-    def linear(pts1=10, pts2=10,
-               mean1=np.array([0, 2]), mean2=np.array([2, 0]),
-               cov=np.array([[0.8, 0.6], [0.6, 0.8]])):
-        # generate training data in the 2-d case
+    """Objects of this class are the various distributions.
 
-        X1 = np.random.multivariate_normal(mean1, cov, pts1)
-        y1 = np.ones(len(X1))
-        X2 = np.random.multivariate_normal(mean2, cov, pts2)
-        y2 = np.ones(len(X2)) * -1
-        return ch.Tensor(X1), ch.Tensor(y1), ch.Tensor(X2), ch.Tensor(y2)
+    Examples
+    --------
+    >>> from fromscratchtoml.toolbox.random import Distribution
+    >>> import torch as ch
+    >>> X1 = Distribution.linear(pts=50, mean=[8, 20], covr=[[1.5, 1], [1, 2]])
+
+    """
 
     @staticmethod
-    def non_linear(pts1=10, pts2=10,
-                   mean1=[-1, 2], mean2=[1, -1],
-                   mean3=[4, -4], mean4=[-4, 4],
-                   cov=[[1.0, 0.8], [0.8, 1.0]]):
+    def linear(pts=10,
+               mean=[0, 2],
+               covr=[[0.8, 0.6], [0.6, 0.8]],
+               seed=None):
+        """Returns a N-D multivariate normal distribution using mean and covariance matrix.
 
-        X1 = np.random.multivariate_normal(mean1, cov, pts1 / 2)
-        X1 = np.vstack((X1, np.random.multivariate_normal(mean3, cov, pts1 - pts1 / 2)))
-        y1 = np.ones(len(X1))
-        X2 = np.random.multivariate_normal(mean2, cov, pts2 / 2)
-        X2 = np.vstack((X2, np.random.multivariate_normal(mean4, cov, pts2 - pts2 / 2)))
-        y2 = np.ones(len(X2)) * -1
-        return ch.Tensor(X1), ch.Tensor(y1), ch.Tensor(X2), ch.Tensor(y2)
+        Parameters
+        ----------
+        pts : int.
+              The number of N-D samples to be returned.
+        mean : N-D list.
+               A list of mean values of each dimension.
+        covr : NxN D list of list.
+               The covariance matrix.
+        seed : int, optional.
+               The random state seed value for mantaining reproducability of random
+               number generator of numpy.
 
-    @staticmethod
-    def linear_overlapping():
-        # generate training data in the 2-d case
-        mean1 = np.array([0, 2])
-        mean2 = np.array([2, 0])
-        cov = np.array([[1.5, 1.0], [1.0, 1.5]])
-        X1 = np.random.multivariate_normal(mean1, cov, 10)
-        y1 = np.ones(len(X1))
-        X2 = np.random.multivariate_normal(mean2, cov, 10)
-        y2 = np.ones(len(X2)) * -1
-        return ch.Tensor(X1), ch.Tensor(y1), ch.Tensor(X2), ch.Tensor(y2)
+        Returns
+        -------
+        _ : pts x N-D torch.Tensor
+            The multivariate distribution generated from mean and covariance matrix.
+
+        """
+        if seed:
+            np.random.seed(seed)
+
+        return ch.Tensor(np.random.multivariate_normal(mean, covr, pts))
