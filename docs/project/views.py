@@ -1,9 +1,8 @@
 from flask import render_template
-from flask.ext.assets import Environment, Bundle
+from flask_assets import Environment, Bundle
 import os
 from app import app
 import os.path
-import nbformat
 import subprocess
 
 
@@ -81,7 +80,6 @@ def get_notebooks():
         process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         output, error = process.communicate()
 
-        print(_file)
     for _file in os.listdir(NOTEBOOK_HTML_DIR):
         if _file.endswith(".html"):
             notebook_url = rel_path + _file

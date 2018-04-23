@@ -1,9 +1,9 @@
 // modded from https://github.com/TylerLH/github-latest-commits-widget
 
 githubCommits = function() {
-  var username = 'RaRe-Technologies';
-  var repo = 'gensim';
-  var limit = '3';
+  var username = 'jellAIfish';
+  var repo = 'fromscratchtoml';
+  var limit = '5';
 
   var callback = function(response) {
     var items = response.data;
