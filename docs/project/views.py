@@ -3,6 +3,8 @@ from flask.ext.assets import Environment, Bundle
 import os
 from app import app
 import os.path
+import nbformat
+import subprocess
 
 
 NOTEBOOK_HTML_DIR = os.path.dirname(os.path.realpath(__file__)) + "/static/notebooks"
@@ -69,13 +71,21 @@ def get_abstract(fname):
 
     return os.path.basename(fname)
 
+
 def get_notebooks():
     notebooks = []
+    # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
+    for _file in os.listdir(NOTEBOOK_DIR):
+        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + _file.split(".")[0]
+        process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
+
+        print(_file)
     for _file in os.listdir(NOTEBOOK_HTML_DIR):
         if _file.endswith(".html"):
             notebook_url = rel_path + _file
-            notebook_image = notebook_url[:-5] + '.png'
+            notebook_image = notebook_url.split(".")[0] + '.png'
             if not os.path.isfile(notebook_image[8:]):
                 notebook_image = rel_path + "default.png"
             notebook_title = _file[0:-5].replace('_', ' ')
