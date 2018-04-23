@@ -18,4 +18,4 @@ def polynomial(x, y, const=0, degree=1):
 
 def rbf(x, y, gamma=0.1):
     euclidean_dist = pow(ch.norm(x - y), 2)
-    return math.exp(-gamma * euclidean_dist)
+    return math.exp(- euclidean_dist / (2 * pow(gamma, 2)))
