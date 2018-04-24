@@ -5,7 +5,7 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import torch as ch
-import math
+import numpy as np
 
 
 def linear(x, y):
@@ -79,4 +79,4 @@ def rbf(x, y, gamma=0.1):
     """
 
     euclidean_dist = pow(ch.norm(x - y), 2)
-    return math.exp(- euclidean_dist / (2 * pow(gamma, 2)))
+    return np.exp(- euclidean_dist / (2 * pow(gamma, 2)))

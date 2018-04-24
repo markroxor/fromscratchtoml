@@ -16,6 +16,7 @@ class Distribution:
     >>> from fromscratchtoml.toolbox.random import Distribution
     >>> import torch as ch
     >>> X1 = Distribution.linear(pts=50, mean=[8, 20], covr=[[1.5, 1], [1, 2]])
+    >>> X2 = Distribution.radial_binary(pts=50, mean=[0, 0], start=4, end=5)
 
     """
 
@@ -28,13 +29,13 @@ class Distribution:
 
         Parameters
         ----------
-        pts : int.
+        pts : int
               The number of N-D samples to be returned.
-        mean : N-D list.
+        mean : N-D list
                A list of mean values of each dimension.
-        covr : NxN D list of list.
+        covr : NxN D list of list
                The covariance matrix.
-        seed : int, optional.
+        seed : int, optional
                The random state seed value for mantaining reproducability of random
                number generator of numpy.
 
@@ -55,24 +56,27 @@ class Distribution:
                start=1,
                end=2,
                seed=None):
-        """Returns a N-D multivariate normal distribution using mean and covariance matrix.
+        """Returns a radial data distribution (donut shaped) from given mean and
+           radial radii.
 
         Parameters
         ----------
-        pts : int.
+        pts : int
               The number of N-D samples to be returned.
-        mean : N-D list.
-               A list of mean values of each dimension.
-        covr : NxN D list of list.
-               The covariance matrix.
-        seed : int, optional.
+        mean : list
+               The centre of the radial distribution.
+        start : int
+               The lower limit from which radial distribution will start to form.
+        end : int
+               The upper limit at which radial distribution will end.
+        seed : int, optional
                The random state seed value for mantaining reproducability of random
                number generator of numpy.
 
         Returns
         -------
-        _ : pts x N-D torch.Tensor
-            The multivariate distribution generated from mean and covariance matrix.
+        _ : pts x 2-D torch.Tensor
+            The radial distribution.
 
         """
         if seed:
