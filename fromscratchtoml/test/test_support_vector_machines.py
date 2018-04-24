@@ -167,10 +167,10 @@ class TestNN(unittest.TestCase):
 
         predictions, projections = clf.predict(X_test, return_projection=True)
 
-        expected_projection = ch.Tensor([1.2587, 1.3259, 1.4985, 1.1960, 1.4524,
-                                         1.0512, 1.4300, 1.4184, 1.1026, 1.1007,
-                                         -1.7036, -1.5044, -1.0048, -1.8327, -1.0906,
-                                         -2.2424, -1.2318, -1.2278, -2.1293, -2.0913])
+        expected_projection = ch.Tensor([1.2631, 1.3302, 1.5028, 1.2003, 1.4568,
+                                         1.0555, 1.4343, 1.4228, 1.1070, 1.1050,
+                                         -1.6992, -1.5001, -1.0005, -1.8284, -1.0863,
+                                         -2.2380, -1.2274, -1.2235, -2.1250, -2.0870])
 
         self.assertTrue(torch_equal(projections, expected_projection))
         self.assertTrue(torch_equal(predictions, y_test))

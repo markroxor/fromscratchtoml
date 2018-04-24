@@ -14,7 +14,6 @@ from fromscratchtoml.models.base_model import BaseModel
 from fromscratchtoml.toolbox import kernels
 from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
 
-import sys
 import logging
 
 logging.basicConfig()
