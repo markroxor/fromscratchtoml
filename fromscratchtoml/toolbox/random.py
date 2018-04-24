@@ -48,3 +48,41 @@ class Distribution:
             np.random.seed(seed)
 
         return ch.Tensor(np.random.multivariate_normal(mean, covr, pts))
+
+    @staticmethod
+    def radial_binary(pts=100,
+               mean=[0, 0],
+               start=1,
+               end=2,
+               seed=None):
+        """Returns a N-D multivariate normal distribution using mean and covariance matrix.
+
+        Parameters
+        ----------
+        pts : int.
+              The number of N-D samples to be returned.
+        mean : N-D list.
+               A list of mean values of each dimension.
+        covr : NxN D list of list.
+               The covariance matrix.
+        seed : int, optional.
+               The random state seed value for mantaining reproducability of random
+               number generator of numpy.
+
+        Returns
+        -------
+        _ : pts x N-D torch.Tensor
+            The multivariate distribution generated from mean and covariance matrix.
+
+        """
+        if seed:
+            np.random.seed(seed)
+
+        r_theta = np.random.uniform([start, 0], [end, 2 * np.pi], [pts, 2])
+
+        r = r_theta[..., 0]
+        theta = r_theta[..., 1]
+
+        dist = np.stack((r * np.cos(theta), r * np.sin(theta)), axis=-1)
+
+        return ch.Tensor(dist)
