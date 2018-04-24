@@ -14,6 +14,7 @@ from fromscratchtoml.models.base_model import BaseModel
 from fromscratchtoml.toolbox import kernels
 from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
 
+import sys
 import logging
 
 logging.basicConfig()
@@ -24,7 +25,8 @@ cvxopt.solvers.options['show_progress'] = False
 
 
 class SVC(BaseModel):
-    def __init__(self, kernel="linear", **kwargs):
+    def __init__(self, C=1000, kernel="linear", **kwargs):
+        self.C = C
         self.kernel = partial(getattr(kernels, kernel), **kwargs)
 
     def __create_kernel_matrix(self, X):
@@ -44,8 +46,15 @@ class SVC(BaseModel):
 
         P = cvxopt.matrix(gram_matrix_xy.numpy().astype(np.double))
         q = cvxopt.matrix(-ch.ones(self.n).numpy().astype(np.double))
-        G = cvxopt.spmatrix(-1.0, range(self.n), range(self.n))
-        h = cvxopt.matrix(ch.zeros(self.n).numpy().astype(np.double))
+
+        G1 = cvxopt.spmatrix(-1.0, range(self.n), range(self.n))
+        G2 = cvxopt.spmatrix(1, range(self.n), range(self.n))
+        G = cvxopt.matrix([[G1, G2]])
+
+        h1 = cvxopt.matrix(ch.zeros(self.n).numpy().astype(np.double))
+        h2 = cvxopt.matrix(ch.ones(self.n).numpy().astype(np.double) * self.C)
+        h = cvxopt.matrix([[h1, h2]])
+
         A = cvxopt.matrix(y.numpy().astype(np.double)).trans()
         b = cvxopt.matrix(0.0)
 
