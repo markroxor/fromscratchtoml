@@ -11,15 +11,13 @@
   - [ ] Tests for the changes have been added.
   - [ ] Docs have been added / updated.
 
-* **What kind of change does this PR introduce?** (Bug fix, feature, docs update, ...)
-
-* **What is the current behavior?** (You can also link to an open issue here)
+* **What kind of change does this PR introduce?** <!--(Bug fix, feature, docs update, ...)-->
 
 * **What is the new behavior (if this is a feature change)?**
 
-
-* **Does this PR introduce a breaking change?** (What changes might users need to make in their application due to this PR?)
 <!-- This generally happens when you have to re-write existing tests to match your changes. -->
+* **Does this PR introduce a breaking change?** <!--(What changes might users need to make in their application due to this PR?)-->
+
 
 * **This PR fixes/implements the following -**
   - [ ] Bug 1
@@ -28,5 +26,5 @@
   - [ ] Feature 2
   - [ ] Breaking changes
 
-**Closing issues**
 <!-- Put `Resolves #XXXX` in your comment to auto-close the issue that your PR fixes (if such). -->
+* **Closing issues**
