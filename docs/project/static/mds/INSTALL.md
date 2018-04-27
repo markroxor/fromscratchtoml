@@ -4,6 +4,7 @@
 # Quicklinks
  * [Python pypi](#pypi)
  * [Compiling manually](#manual)
+ * [Issues](#issues)
 
 ### Python pypi <a name="pypi"></a>
 You can install from [pipy](https://pypi.org/project/fromscratchtoml/).
@@ -22,5 +23,6 @@ from source -
 
 
 
-## Problems? Got stuck? Found a bug? Help?  <a name="manual-problems"></a>
-In case you have a problem installing fromscratchtoml, please open an [issue on github](https://github.com/jellAIfish/fromscratchtoml/issues) with your system details, *exact* commands used, and logs posted as a [gist](https://gist.github.com/).
+## Issues <a name="issues"></a>
+In case you face a problem installing fromscratchtoml, please open an [issue on github](https://github.com/jellAIfish/fromscratchtoml/issues) with your system details, *exact* commands used, and logs posted as a [gist](https://gist.github.com/).
+Also you can get in touch with us on our [gitter channel](https://gitter.im/jellAIfish/from-scratch-to-ml).
