@@ -1,4 +1,4 @@
-<!-- *(Please answer the relevant questions and remove the rest.)* 
+<!-- *(Please answer the relevant questions and remove the rest.)*
 **Note: for support questions, please use our [channel]()**. This repository's issues are reserved for feature requests and bug reports.
 -->  
 
@@ -7,17 +7,21 @@
   - [ ] feature request
 
 
-* **How do we replicate the issue?**
 <!-- Please be specific as possible. Use dashes (-) or numbers (1.) to create a list of steps -->
+* **How do we replicate the issue?**
 
+<!-- Create a gist at https://gist.github.com/ and then provide a link below.-->
 * **Stacktrace** (if any)
+    https://link-to-gist
 
-* **Expected behavior (i.e. solution)**
 <!-- What should have happened? -->
+* **Expected behavior (i.e. solution)**
+    ...
 
 * **Please tell us about your environment:**
   - OS (with version)
   - python version
- 
-* **Other information** 
+
 <!-- (e.g. detailed explanation, stacktraces, related issues, suggestions how to fix, links for us to have context, eg. stackoverflow, gitter, etc) -->
+* **Other information**
+    ...
