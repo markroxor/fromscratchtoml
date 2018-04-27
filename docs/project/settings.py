@@ -2,7 +2,7 @@
 
 import os
 
-REPO_NAME = "fromscratchtoml"  # Used for FREEZER_BASE_URL
+REPO_NAME = ""  # Used for FREEZER_BASE_URL
 DEBUG = True
 
 # Assumes the app is located in the same directory
@@ -14,9 +14,11 @@ def parent_dir(path):
     return os.path.abspath(os.path.join(path, os.pardir))
 
 PROJECT_ROOT = parent_dir(APP_DIR)
+
 # In order to deploy to Github pages, you must build the static files to
 # the project root
-FREEZER_DESTINATION = PROJECT_ROOT
+FREEZER_DESTINATION = PROJECT_ROOT + "/../doc/build"
+print(FREEZER_DESTINATION)
 # Since this is a repo page (not a Github user page),
 # we need to set the BASE_URL to the correct url as per GH Pages' standards
 FREEZER_BASE_URL = "http://localhost/{0}".format(REPO_NAME)
