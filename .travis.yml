@@ -43,4 +43,11 @@ script:
 
 after_success:
   - coveralls
-  - travis-sphinx deploy
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $gh_pages  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: creategh
