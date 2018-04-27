@@ -22,13 +22,15 @@ setup(
 '               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'flask-assets']
     },
     classifiers=[
-        'Development Status :: Pre-Alpha',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
     url='https://github.com/jellAIfish/fromscratchtoml',
+    author='markroxor',
+    author_email='mrmohitrathoremr@gmail.com',
     license='GPL-3.0',
     packages=find_packages(),
 )
