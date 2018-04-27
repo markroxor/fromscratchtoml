@@ -7,26 +7,31 @@ import subprocess
 
 
 NOTEBOOK_HTML_DIR = os.path.dirname(os.path.realpath(__file__)) + "/static/notebooks"
-NOTEBOOK_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../notebooks"
+NOTEBOOK_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)) + "/notebooks"
 print(NOTEBOOK_HTML_DIR)
 print(NOTEBOOK_DIR)
+
 
 @app.route('/')
 def index():
     return render_template('home.html')
 
+
 @app.route('/apiref/')
 def apiref():
     return render_template('apiref.html')
+
 
 @app.route('/tutorials/')
 def tutorials():
     return render_template('tutorials.html')
 
+
 @app.route('/showroom/')
 def showroom():
     notebooks = get_notebooks()
     return render_template('showroom.html', examples=notebooks)
+
 
 # assets
 assets = Environment(app)
@@ -44,6 +49,7 @@ js = Bundle(
     filters='jsmin', output='gen/packed.js'
 )
 assets.register('js_all', js)
+
 
 # utils
 def get_abstract(fname):
@@ -64,7 +70,7 @@ def get_abstract(fname):
 
         for cell in cells:
             if cell['cell_type'] == 'heading' or cell['cell_type'] == 'markdown':
-                return markdown.markdown(''.join(cell['source'][0]).replace('#',''))
+                return markdown.markdown(''.join(cell['source'][0]).replace('#', ''))
     except Exception as e:
         print(e, "\n")
         pass
@@ -77,7 +83,8 @@ def get_notebooks():
     # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
     for _file in os.listdir(NOTEBOOK_DIR):
-        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + _file.split(".")[0]
+        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + \
+        _file.split(".")[0]
         process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         output, error = process.communicate()
 
@@ -88,7 +95,8 @@ def get_notebooks():
             if not os.path.isfile(notebook_image[8:]):
                 notebook_image = rel_path + "default.png"
             notebook_title = _file[0:-5].replace('_', ' ')
-            notebook_abstract = get_abstract(os.path.abspath(os.path.join(os.path.realpath(__file__), '../../notebooks', _file.replace('.html', '.ipynb'))))
+            notebook_abstract = get_abstract(os.path.abspath(os.path.join(os.path.realpath(__file__), '../../notebooks',
+            _file.replace('.html', '.ipynb'))))
             notebooks.append({
                 'url': notebook_url,
                 'image': notebook_image,
