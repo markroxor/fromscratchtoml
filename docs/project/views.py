@@ -17,11 +17,6 @@ def index():
     return render_template('home.html')
 
 
-@app.route('/apiref/')
-def apiref():
-    return render_template('apiref.html')
-
-
 @app.route('/install/')
 def install():
     install_content = get_markuped("install", "static/mds/INSTALL.md")
