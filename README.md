@@ -1,6 +1,6 @@
 # fromscratchtoml
+https://jellAIfish.github.io/fromscratchtoml/
 
-*An inefficient but intuitive machine learning library for beginners, in python.*  
 [![Build Status](https://travis-ci.org/jellAIfish/fromscratchtoml.svg?branch=master)](https://travis-ci.org/jellAIfish/fromscratchtoml)
 [![Coverage Status](https://coveralls.io/repos/github/jellAIfish/fromscratchtoml/badge.svg?branch=master)](https://coveralls.io/github/jellAIfish/fromscratchtoml?branch=master)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -8,6 +8,7 @@
 
 
 
+*An intuitive machine learning library for beginners, in python.*  
 This library targets individuals who want to learn machine learning code from scratch keeping _code-readability_ and _simplicity_ over efficiency.
 
 ## Highlights
