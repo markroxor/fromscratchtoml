@@ -6,7 +6,6 @@
 
 import cvxopt
 import torch as ch
-import numpy as np
 
 from functools import partial
 
@@ -36,11 +35,11 @@ class SVC(BaseModel):
     >>> y = ch.cat((Y1, Y2))
     >>> clf_lin = svm.SVC(kernel='linear')
     >>> clf_lin.fit(X, y)
-    >>> _, projections = clf_lin.predict(X, return_projection=True)
+    >>> predictions = clf_lin.predict(X)
 
     """
 
-    def __init__(self, C=1000, kernel="linear", **kwargs):
+    def __init__(self, C=1000, kernel="rbf", gamma=2, **kwargs):
         """Initializing the svc class parameters.
 
         Parameters
@@ -55,9 +54,9 @@ class SVC(BaseModel):
 
         """
         self.C = C
-        self.kernel = partial(getattr(kernels, kernel), **kwargs)
+        self.kernel = partial(getattr(kernels, kernel), gamma=gamma, **kwargs)
 
-    def create_kernel_matrix(self, X):
+    def __create_kernel_matrix(self, X):
         """Creates a gram kernel matrix of training data.
         Refer - https://en.wikipedia.org/wiki/Gramian_matrix
 
@@ -67,18 +66,18 @@ class SVC(BaseModel):
 
         Returns
         -------
-        tricked_x : torch.Tensor
+        kernel_matrix : torch.Tensor
                     The gram kernel matrix.
 
         """
 
-        tricked_x = [self.kernel(X[i], X[j]) for i in range(self.n)
+        kernel_matrix = [self.kernel(X[i], X[j]) for i in range(self.n)
                      for j in range(self.n)]
 
-        tricked_x = ch.Tensor(tricked_x).view(self.n, self.n)
-        return tricked_x
+        kernel_matrix = ch.Tensor(kernel_matrix).view(self.n, self.n)
+        return kernel_matrix
 
-    def fit(self, X, y, eta=1e-5):
+    def fit(self, X, y, multiplier_threshold=1e-5):
         """Fits the svc model on training data.
 
         Parameters
@@ -87,7 +86,7 @@ class SVC(BaseModel):
             The training features.
         y : torch.Tensor
             The training labels.
-        eta : float
+        multiplier_threshold : float
               the threshold for selecting lagrange multipliers.
 
         """
@@ -98,45 +97,43 @@ class SVC(BaseModel):
 
         # create a gram matrix by taking the outer product of y
         gram_matrix_y = ch.ger(y, y)
-        K = self.create_kernel_matrix(X)
+        K = self.__create_kernel_matrix(X)
         gram_matrix_xy = gram_matrix_y * K
 
-        P = cvxopt.matrix(gram_matrix_xy.numpy().astype(np.double))
-        q = cvxopt.matrix(-ch.ones(self.n).numpy().astype(np.double))
+        P = cvxopt.matrix(gram_matrix_xy.numpy().astype(float))
+        q = cvxopt.matrix(-ch.ones(self.n).numpy().astype(float))
 
         G1 = cvxopt.spmatrix(-1.0, range(self.n), range(self.n))
         G2 = cvxopt.spmatrix(1, range(self.n), range(self.n))
         G = cvxopt.matrix([[G1, G2]])
 
-        h1 = cvxopt.matrix(ch.zeros(self.n).numpy().astype(np.double))
-        h2 = cvxopt.matrix(ch.ones(self.n).numpy().astype(np.double) * self.C)
+        h1 = cvxopt.matrix(ch.zeros(self.n).numpy().astype(float))
+        h2 = cvxopt.matrix(ch.ones(self.n).numpy().astype(float) * self.C)
         h = cvxopt.matrix([[h1, h2]])
 
-        A = cvxopt.matrix(y.numpy().astype(np.double)).trans()
+        A = cvxopt.matrix(y.numpy().astype(float)).trans()
         b = cvxopt.matrix(0.0)
 
         lagrange_multipliers = ch.Tensor(list(cvxopt.solvers.qp(P, q, G, h, A,
                                                                 b)['x']))
 
-        lagrange_multiplier_indices = lagrange_multipliers > eta
-
-        self.support_vectors = ch.stack([x for multiplier, x in
-                                         zip(lagrange_multipliers, X)
-                                         if multiplier > eta])
-
-        self.support_vectors_y = ch.Tensor(y[lagrange_multiplier_indices])
-        self.lagrange_multipliers = lagrange_multipliers[lagrange_multiplier_indices]
-
+        lagrange_multiplier_indices = lagrange_multipliers.ge(multiplier_threshold)
         lagrange_multiplier_indices = lagrange_multiplier_indices.nonzero().view(-1)
 
+        self.support_vectors = X.index_select(0, lagrange_multiplier_indices)
+        self.support_vectors_y = y.index_select(0, lagrange_multiplier_indices)
+        self.support_lagrange_multipliers = lagrange_multipliers.index_select(0, lagrange_multiplier_indices)
+
         self.b = 0
-        for i in range(self.support_vectors_y.size()[0]):
+        self.n_support_vectors = self.support_vectors.size()[0]
+
+        for i in range(self.n_support_vectors):
             kernel_trick = K[[lagrange_multiplier_indices[i]], lagrange_multiplier_indices]
 
-            self.b += self.support_vectors_y[i] - ch.sum(self.lagrange_multipliers *
+            self.b += self.support_vectors_y[i] - ch.sum(self.support_lagrange_multipliers *
                       self.support_vectors_y * kernel_trick)
 
-        self.b /= self.support_vectors_y.size()[0]
+        self.b /= self.n_support_vectors
 
     def predict(self, X, return_projection=False):
         """Predicts the class of input test data.
@@ -164,10 +161,11 @@ class SVC(BaseModel):
             raise ModelNotFittedError("Predict called before fitting the model.")
 
         projections = ch.zeros(X.size()[0])
+
         for j, x in enumerate(X):
             projection = self.b
-            for i in range(self.support_vectors_y.size()[0]):
-                projection += self.lagrange_multipliers[i] * self.support_vectors_y[i] *\
+            for i in range(self.n_support_vectors):
+                projection += self.support_lagrange_multipliers[i] * self.support_vectors_y[i] *\
                               self.kernel(self.support_vectors[i], x)
             projections[j] = projection
 

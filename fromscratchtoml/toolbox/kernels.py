@@ -8,7 +8,7 @@ import torch as ch
 import numpy as np
 
 
-def linear(x, y):
+def linear(x, y, **kwargs):
     """The linear kernel.
     https://www.svm-tutorial.com/2014/10/svm-linear-kernel-good-text-classification/
     When to use linear kernel -
@@ -24,7 +24,7 @@ def linear(x, y):
 
     Returns
     -------
-    kernel_trick : torch.Tensor
+    kernel_trick : float
                    Returns the linear kernel trick which doesn't increase the
                    dimensionality.
 
@@ -33,7 +33,7 @@ def linear(x, y):
     return ch.dot(x, y)
 
 
-def polynomial(x, y, const=0, degree=1):
+def polynomial(x, y, const=0, degree=1, **kwargs):
     """The polynomial kernel. It introduces non-linearity into the margin.
     Visualizing polynomial kernel
     https://www.youtube.com/watch?v=3liCbRZPrZA
@@ -49,7 +49,7 @@ def polynomial(x, y, const=0, degree=1):
 
     Returns
     -------
-    kernel_trick : torch.Tensor
+    kernel_trick : float
                    Returns the kernel trick to transform the data into `degree`
                    dimensions.
 
@@ -58,7 +58,7 @@ def polynomial(x, y, const=0, degree=1):
     return pow((ch.dot(x, y) + const), degree)
 
 
-def rbf(x, y, gamma=0.1):
+def rbf(x, y, gamma=0.1, **kwargs):
     """The radial basis function or gaussian kernel. Results in closed loop
        margin of higher dimension.
     http://pages.cs.wisc.edu/~matthewb/pages/notes/pdf/svms/RBFKernel.pdf

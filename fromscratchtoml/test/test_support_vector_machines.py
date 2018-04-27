@@ -37,8 +37,8 @@ class TestNN(unittest.TestCase):
             self.assertTrue(ch.equal(s1, s2))
 
         self.assertTrue(ch.equal(m1.support_vectors_y, m2.support_vectors_y))
-        self.assertTrue(ch.equal(m1.lagrange_multipliers,
-                                 m2.lagrange_multipliers))
+        self.assertTrue(ch.equal(m1.support_lagrange_multipliers,
+                                 m2.support_lagrange_multipliers))
 
     def test_consistency(self):
         # tests for model's load save consistency.
