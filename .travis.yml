@@ -51,3 +51,4 @@ deploy:
   keep-history: true
   on:
     branch: creategh
+    condition: TOXENV="docs"
