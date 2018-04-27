@@ -47,9 +47,7 @@ after_success:
 deploy:
   provider: pages
   skip-cleanup: true
-  github-token: $GITHUB_TOKEN1  # Set in travis-ci.org dashboard, marked secure
-  email: mrmohitrathoremr@gmail.com
-  name: markroxor
+  github-token: $gh_pages  # Set in travis-ci.org dashboard, marked secure
   keep-history: true
   on:
     branch: creategh
