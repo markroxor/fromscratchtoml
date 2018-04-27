@@ -9,8 +9,7 @@
   - [ ] Docs have been added / updated.
 
 * **What kind of change does this PR introduce?** <!--(Bug fix, feature, docs update, ...)-->
-
-* **What is the new behavior (if this is a feature change)?**
+    ...
 
 <!-- This generally happens when you have to re-write existing tests to match your changes. -->
 * **Does this PR introduce a breaking change?** <!--(What changes might users need to make in their application due to this PR?)-->
@@ -25,3 +24,4 @@
 
 <!-- Put `Resolves #XXXX` in your comment to auto-close the issue that your PR fixes (if such). -->
 * **Closing issues**
+    ...
