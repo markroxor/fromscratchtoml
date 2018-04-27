@@ -8,6 +8,7 @@
 import tempfile
 import os
 
+import torch as ch
 pwd_path = os.path.dirname(__file__)
 
 
@@ -17,3 +18,7 @@ def _tempfile(fname):
 
 def _test_data_path(fname):
     return os.path.join(pwd_path, "test_data", fname)
+
+
+def torch_equal(x, y, precision=1e-4):
+    return not ch.sum(ch.ge(ch.abs(x - y), precision))

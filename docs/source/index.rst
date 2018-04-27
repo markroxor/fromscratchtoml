@@ -11,7 +11,7 @@ Welcome to fromscratchtoml's documentation!
 
    nn/nn
    linear_regression/LinearRegressionClassifier
-
+   svm/SVC
 
 
 
