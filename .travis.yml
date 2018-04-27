@@ -35,7 +35,6 @@ install:
     - pip install tox
     - pip install sphinxcontrib-napoleon
     - pip install sphinxcontrib.programoutput
-    - pip install travis-sphinx
     - pip install python-coveralls
 
 script:
@@ -46,6 +45,7 @@ after_success:
 
 deploy:
   provider: pages
+  local-dir: doc/build
   skip-cleanup: true
   github-token: $gh_pages  # Set in travis-ci.org dashboard, marked secure
   keep-history: true
