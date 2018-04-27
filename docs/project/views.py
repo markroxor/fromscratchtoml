@@ -8,8 +8,6 @@ import subprocess
 
 NOTEBOOK_HTML_DIR = os.path.dirname(os.path.realpath(__file__)) + "/static/notebooks"
 NOTEBOOK_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)) + "/notebooks"
-print(NOTEBOOK_HTML_DIR)
-print(NOTEBOOK_DIR)
 
 
 @app.route('/')
@@ -27,10 +25,10 @@ def tutorials():
     return render_template('tutorials.html')
 
 
-# @app.route('/showroom/')
-# def showroom():
-#     notebooks = get_notebooks()
-#     return render_template('showroom.html', examples=notebooks)
+@app.route('/showroom/')
+def showroom():
+    notebooks = get_notebooks()
+    return render_template('showroom.html', examples=notebooks)
 
 
 # assets
@@ -79,12 +77,15 @@ def get_abstract(fname):
 
 
 def get_notebooks():
+    print(os.getcwd())
     notebooks = []
     # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
+    print(NOTEBOOK_HTML_DIR, "123")
+    print(NOTEBOOK_DIR, "456")
     for _file in os.listdir(NOTEBOOK_DIR):
-        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + \
-        _file.split(".")[0]
+        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + _file.split(".")[0]
+        print(cmd, "yes")
         process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         output, error = process.communicate()
 
