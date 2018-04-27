@@ -1,0 +1,352 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>fromscratchtoml.models.nn.nn &#8212; fromscratchtoml 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fromscratchtoml.models.nn.nn</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html</span>
+
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">ch</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox</span> <span class="k">import</span> <span class="n">sigmoid</span><span class="p">,</span> <span class="n">deriv_sigmoid</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.models.base_model</span> <span class="k">import</span> <span class="n">BaseModel</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NeuralNetwork"><a class="viewcode-back" href="../../../../nn/nn.html#fromscratchtoml.models.nn.nn.NeuralNetwork">[docs]</a><span class="k">class</span> <span class="nc">NeuralNetwork</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Objects of this class form the base of neural networks.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import fromscratchtoml as fs2ml</span>
+<span class="sd">    &gt;&gt;&gt; import torch as ch</span>
+<span class="sd">    &gt;&gt;&gt; x = ch.Tensor([[0, 0],[0, 1],[1, 0], [1, 1]])</span>
+<span class="sd">    &gt;&gt;&gt; y = ch.Tensor([[1,0], [0,1], [0,1], [1,0]])</span>
+<span class="sd">    &gt;&gt;&gt; train_datax = ch.utils.data.TensorDataset(x, y)</span>
+<span class="sd">    &gt;&gt;&gt; nw = fs2ml.nn.NetworkMesh([2, 5, 2])</span>
+<span class="sd">    &gt;&gt;&gt; nw.SGD(train_data=train_datax, epochs=50, batch_size=4, lr=3, test_data=train_datax)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_architecture</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forms the network architecture defining the number of layers and the</span>
+<span class="sd">        number of neurons in each layer of the network.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        layer_architecture : a list of integers, optional</span>
+<span class="sd">            where ith integer represents the number of neurons in the ith layer</span>
+<span class="sd">        seed : int, optional</span>
+<span class="sd">            a pytorch random number seed for mantaining reproducability of weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">layer_architecture</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Network initialized without architecture definition,</span><span class="se">\</span>
+<span class="s2">                 Expecting the model to be loaded.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">seed</span><span class="p">:</span>
+            <span class="n">ch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_architecture</span> <span class="o">=</span> <span class="n">layer_architecture</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer_architecture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">layer_architecture</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layer_architecture</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">layer_architecture</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+
+<div class="viewcode-block" id="NeuralNetwork.feedforward"><a class="viewcode-back" href="../../../../nn/nn.html#fromscratchtoml.models.nn.nn.NeuralNetwork.feedforward">[docs]</a>    <span class="k">def</span> <span class="nf">feedforward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function propogates the input `x` across the neural network formed</span>
+<span class="sd">        feed forwarding it across all the perceptrons.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            The input which is to be forwarded.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            The activation of the final output layer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">biases</span><span class="p">,</span> <span class="n">weights</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">ch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span> <span class="o">+</span> <span class="n">biases</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="NeuralNetwork.SGD"><a class="viewcode-back" href="../../../../nn/nn.html#fromscratchtoml.models.nn.nn.NeuralNetwork.SGD">[docs]</a>    <span class="k">def</span> <span class="nf">SGD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">test_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function performs stochastic gradient descent on the weights,</span>
+<span class="sd">        for a number of epochs until we get optimum weights which return minimum</span>
+<span class="sd">        loss.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        train_data : list of (torch.Tensor, torch.Tensor) or a similar data type.</span>
+<span class="sd">            The training data on which the weights will be optimized to yield</span>
+<span class="sd">            minimum loss.</span>
+<span class="sd">        epochs : int</span>
+<span class="sd">            The number of times the network should be trained.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            The contiguous `sample` of training data after which weights should</span>
+<span class="sd">            be updated.</span>
+<span class="sd">        lr : float</span>
+<span class="sd">            This is the learning rate of the network, higher learning rate implies</span>
+<span class="sd">            higher change in weights after each updation but this might overshoot</span>
+<span class="sd">            the weights from their optimum values.</span>
+<span class="sd">        test_data : list of (torch.Tensor, torch.Tensor) or a similar data type</span>
+<span class="sd">                    optional</span>
+<span class="sd">            The test data on which the results are predicted generally after each</span>
+<span class="sd">            epoch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;layer_architecture&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Define layer architecture before calling SGD.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="n">batches</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__update_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Epoch </span><span class="si">{0}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">test_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__update_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the weights after iterating through the complete input batch</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : list of (torch.Tensor, torch.Tensor) or a similar data type.</span>
+<span class="sd">            Batch is a contiguous sample of training data after processing which,</span>
+<span class="sd">            the weights are updated.</span>
+<span class="sd">        lr : float</span>
+<span class="sd">            This is the learning rate of the network, higher learning rate implies</span>
+<span class="sd">            higher change in weights after each updation but this might overshoot</span>
+<span class="sd">            the weights from their optimum values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">der_cost_bias</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">biases</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="k">for</span> <span class="n">biases</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span><span class="p">]</span>
+        <span class="n">der_cost_weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="k">for</span> <span class="n">weights</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">_y</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_architecture</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">_y</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">_y</span>
+
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+            <span class="n">delta_der_cost_bias</span><span class="p">,</span> <span class="n">delta_der_cost_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__backprop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">der_cost_bias</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span> <span class="n">dnb</span><span class="p">)</span> <span class="k">for</span> <span class="n">nb</span><span class="p">,</span> <span class="n">dnb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">der_cost_bias</span><span class="p">,</span> <span class="n">delta_der_cost_bias</span><span class="p">)]</span>
+            <span class="n">der_cost_weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">dnw</span><span class="p">)</span> <span class="k">for</span> <span class="n">nw</span><span class="p">,</span> <span class="n">dnw</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">der_cost_weight</span><span class="p">,</span> <span class="n">delta_der_cost_weight</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__update_weights</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">der_cost_bias</span><span class="p">,</span> <span class="n">der_cost_weight</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__update_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">der_cost_bias</span><span class="p">,</span> <span class="n">der_cost_weight</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the weights by following the learning rate equation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lr : float</span>
+<span class="sd">            This is the learning rate of the network, higher learning rate implies</span>
+<span class="sd">            higher change in weights after each updation but this might overshoot</span>
+<span class="sd">            the weights from their optimum values</span>
+
+<span class="sd">        der_cost_bias : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to biases.</span>
+
+<span class="sd">        der_cost_weight : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="o">-</span> <span class="p">(</span><span class="n">lr</span><span class="p">)</span> <span class="o">*</span> <span class="n">nb</span>
+                                 <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">nb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span><span class="p">,</span> <span class="n">der_cost_bias</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="o">-</span> <span class="p">(</span><span class="n">lr</span><span class="p">)</span> <span class="o">*</span> <span class="n">nw</span>
+                                 <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">nw</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">,</span> <span class="n">der_cost_weight</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Backpropogates the weights and biases to find the derivative of cost function with</span>
+<span class="sd">        respect to weights and biases, and following the chain rule of derivation .</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            The input variable on which the model is trained.</span>
+<span class="sd">        y : torch.Tensor</span>
+<span class="sd">            The expected output when the input is x</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        der_cost_bias : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to biases.</span>
+
+<span class="sd">        der_cost_weight : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">der_cost_bias</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">biases</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="k">for</span> <span class="n">biases</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span><span class="p">]</span>
+        <span class="n">der_cost_weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="k">for</span> <span class="n">weights</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">]</span>
+
+        <span class="n">activation</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">activations</span> <span class="o">=</span> <span class="p">[</span><span class="n">activation</span><span class="p">]</span>
+        <span class="n">zs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">biases</span><span class="p">,</span> <span class="n">weights</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerwise_biases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">):</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span> <span class="o">+</span> <span class="n">biases</span>
+            <span class="n">zs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">activation</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cost_derivative</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">deriv_sigmoid</span><span class="p">(</span><span class="n">zs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">der_cost_bias</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="n">der_cost_weight</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">delta</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="o">-</span><span class="n">l</span><span class="p">]</span>
+            <span class="n">sp</span> <span class="o">=</span> <span class="n">deriv_sigmoid</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layerwise_weights</span><span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">sp</span>
+            <span class="n">der_cost_bias</span><span class="p">[</span><span class="o">-</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
+            <span class="n">der_cost_weight</span><span class="p">[</span><span class="o">-</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">delta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">der_cost_bias</span><span class="p">,</span> <span class="n">der_cost_weight</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NeuralNetwork.predict"><a class="viewcode-back" href="../../../../nn/nn.html#fromscratchtoml.models.nn.nn.NeuralNetwork.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function predicts the test dataset by feed forwarding the learned</span>
+<span class="sd">        weights across the network and calculating the number of correct evaluations</span>
+<span class="sd">        by the network on test data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        test_data : list of (torch.Tensor, torch.Tensor) or a similar data type.</span>
+<span class="sd">            The test data on which the results are predictd generally after each</span>
+<span class="sd">            epoch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">correct_evaluation</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">activations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">d</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">_y</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_architecture</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">_y</span><span class="p">[</span><span class="n">Y</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">Y</span> <span class="o">=</span> <span class="n">_y</span>
+
+            <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feedforward</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">prediction</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">ch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">prediction</span> <span class="o">==</span> <span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">():</span>
+                <span class="n">correct_evaluation</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Accuracy is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">correct_evaluation</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">correct_evaluation</span></div>
+
+    <span class="k">def</span> <span class="nf">__cost_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_activations</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If our cost function is sum of mean of squares of errors then the</span>
+<span class="sd">        out cost derivative function becomes the error or output_activations - y.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        output_activations : torch.Tensor</span>
+<span class="sd">            The output produced by feedforwarding the input through the netowrk.</span>
+<span class="sd">        y : torch.Tensor</span>
+<span class="sd">            The expected output of the network</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        der_cost_bias : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to biases.</span>
+
+<span class="sd">        der_cost_weight : list of torch.Tensor matrices</span>
+<span class="sd">            This contains the accumulated derivative of the cost function with</span>
+<span class="sd">            respect to weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">output_activations</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mohit Rathore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
