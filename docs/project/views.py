@@ -89,19 +89,21 @@ def get_notebooks():
     notebooks = []
     # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
-
+    # print(os.)
     for _file in os.listdir(NOTEBOOK_HTML_DIR):
         if _file.endswith(".html"):
-            notebook_url = rel_path + _file
-            notebook_image = notebook_url.split(".")[0] + '.png'
-            if not os.path.isfile(notebook_image[8:]):
-                notebook_image = rel_path + "default.png"
+            notebook_url = _file
+            notebook_image = notebook_url.replace('.html', '.png')
+            if not os.path.isfile(os.path.abspath(os.path.join(os.path.realpath(__file__), '../static/notebooks',
+            notebook_image))):
+                notebook_image = "default.png"
+
             notebook_title = _file[0:-5].replace('_', ' ')
             notebook_abstract = get_abstract(os.path.abspath(os.path.join(os.path.realpath(__file__), '../../notebooks',
             _file.replace('.html', '.ipynb'))))
             notebooks.append({
-                'url': notebook_url,
-                'image': notebook_image,
+                'url': rel_path + notebook_url,
+                'image': rel_path + notebook_image,
                 'title': notebook_title,
                 'abstract': notebook_abstract})
 
