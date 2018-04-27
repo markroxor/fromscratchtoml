@@ -8,7 +8,8 @@ import subprocess
 
 NOTEBOOK_HTML_DIR = os.path.dirname(os.path.realpath(__file__)) + "/static/notebooks"
 NOTEBOOK_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../notebooks"
-
+print(NOTEBOOK_HTML_DIR)
+print(NOTEBOOK_DIR)
 
 @app.route('/')
 def index():
