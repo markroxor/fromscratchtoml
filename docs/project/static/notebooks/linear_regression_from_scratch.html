@@ -11775,55 +11775,45 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Supervised_Learning">Supervised_Learning<a class="anchor-link" href="#Supervised_Learning">&#182;</a></h1><h2 id="Linear-Regression">Linear Regression<a class="anchor-link" href="#Linear-Regression">&#182;</a></h2><p>Let's say we have a dataset of type <code>[(x_1, y_1), (x_2, y_2), (x_3, y_3) ... (x_n, y_n)]</code> where xi = size of house and yi = price of house in a particular area.</p>
+<h1 id="Supervised_Learning">Supervised_Learning<a class="anchor-link" href="#Supervised_Learning">&#194;&#182;</a></h1><h2 id="Linear-Regression">Linear Regression<a class="anchor-link" href="#Linear-Regression">&#194;&#182;</a></h2><p>Let's say we have a dataset of type <code>[(x_1, y_1), (x_2, y_2), (x_3, y_3) ... (x_n, y_n)]</code> where xi = size of house and yi = price of house in a particular area.</p>
 <p>The task is train your system on the given dataset and predict the price for on an unseen size.</p>
 <p>We can train a hypothesis function using linear regression which can predict the price for a given size. The hypothesis function for linear regression can be can be derived in two ways. The first way is trivial but interesting which is known as the analytical approach or ordinary least square. The following section will describe about the analytical approach.</p>
-<h5 id="Analytical-Approach">Analytical Approach<a class="anchor-link" href="#Analytical-Approach">&#182;</a></h5><p>y = target variable</p>
+<h5 id="Analytical-Approach">Analytical Approach<a class="anchor-link" href="#Analytical-Approach">&#194;&#182;</a></h5><p>y = target variable</p>
 <p>x = predictor variable</p>
 <p>take a hypothesis function <code>f(x) = b_1x+b_0</code> ( which is the equation of a straight line, 12th standard math).
 b0 and b1 are the parameters where b1 = slope of the line and b0 = intercept. If you are able to find these two parameters then you have found the hypothesis function. The analytical approach can compute the parameter b0 and b1 directly from the training data.</p>
-<h4 id="Let's-see-the-couple-of-mathematical-equations.">Let's see the couple of mathematical equations.<a class="anchor-link" href="#Let's-see-the-couple-of-mathematical-equations.">&#182;</a></h4><p>In machine learning literature, we find the hypothesis function by computing the loss function. We try to optimize the loss function in a way that the given the input the loss should be the minimum. This loss function is also known as cost function or objective function.</p>
+<h4 id="Let's-see-the-couple-of-mathematical-equations.">Let's see the couple of mathematical equations.<a class="anchor-link" href="#Let's-see-the-couple-of-mathematical-equations.">&#194;&#182;</a></h4><p>In machine learning literature, we find the hypothesis function by computing the loss function. We try to optimize the loss function in a way that the given the input the loss should be the minimum. This loss function is also known as cost function or objective function.</p>
 <p>There exist varieties of loss function. However, we will use the simplest loss function (L2 loss). The equations below describes the Loss function and the steps to compute the first parameter b0.</p>
-<p>$$
+$$
 L =\frac{1}{2n} \sum\limits_{i = 1}^n [{{y _i - f(x_i)}}]^2
-$$</p>
-<p>Now substitute the value of f(x) in the above equation.</p>
-<p>$$
+$$<p>Now substitute the value of f(x) in the above equation.</p>
+$$
 L =\frac{1}{2n} \sum\limits_{i = 1}^n [{{y _i - b_1x_i -b_0}}]^2
-$$</p>
-<p>Differentiate the above equation with respect to <code>b_1</code> and <code>b_0</code>. After differentiation equate it to zero to get the optimal value of <code>b_1</code> and <code>b_0</code>.</p>
-<p>$$
+$$<p>Differentiate the above equation with respect to <code>b_1</code> and <code>b_0</code>. After differentiation equate it to zero to get the optimal value of <code>b_1</code> and <code>b_0</code>.</p>
+$$
 \frac{\delta L}{\delta b_0} = \frac{-1}{n}\sum\limits_{i = 1}^n[y_i -b_1x_i -b_0]
-$$</p>
-<p>$$
+$$$$
 0 = \frac{-1}{n}\sum\limits_{i = 1}^n[y_i -b_1x_i -b_0]
-$$</p>
-<p>Apply summation to each component</p>
-<p>$$ 
+$$<p>Apply summation to each component</p>
+$$ 
 0 = -\frac{1}{n}\sum\limits_{i = 1}^n [y_i] + \frac{1}{n}\sum\limits_{i = 1}^n [b_1x_i] + \frac{1}{n}\sum\limits_{i = 1}^n [b_0]
-$$</p>
-<p>Finally, the b_0 becomes</p>
-<p>$$ 
+$$<p>Finally, the b_0 becomes</p>
+$$ 
 \frac{1}{n}\sum\limits_{i = 1}^n [y_i] - \frac{1}{n}\sum\limits_{i = 1}^n [b_1x_i] = \frac{1}{n}\sum\limits_{i = 1}^n [b_0]
-$$</p>
-<p>i.e.,</p>
-<p>$$
+$$<p>i.e.,</p>
+$$
 b_0 = \bar y - b_1\bar x
-$$</p>
-<p>As we can see in the final above equation that the value of b0 = mean(y) - b1*mean(x). This implies that the first step in analaytical approach is to compute the mean for target and predictor.</p>
+$$<p>As we can see in the final above equation that the value of b0 = mean(y) - b1*mean(x). This implies that the first step in analaytical approach is to compute the mean for target and predictor.</p>
 <p>Substitute the value of b_0 in the top most equation for the loss function.</p>
-<p>$$ 
+$$ 
 L  =\frac{1}{2n} \sum\limits_{i = 1}^n [{{y _i - b_1x_i -\bar y + b_1\bar x}}]^2
-$$</p>
-<p>Now differentiate the above equation</p>
-<p>$$
+$$<p>Now differentiate the above equation</p>
+$$
 \frac{\delta L}{\delta b_1} = \frac{1}{n}\sum\limits_{i = 1}^n[{{(y _i -\bar y) - (b_1\bar x -b_1x_i) }}][\bar x - x_i]
-$$</p>
-<p>Equating left hand side to zero and solving for b_1, we will get the following.</p>
-<p>$$
+$$<p>Equating left hand side to zero and solving for b_1, we will get the following.</p>
+$$
 b_1 = \frac{\sum\limits_{i = 1}^n (y_i - \bar y)(x_i - \bar x)}{\sum\limits_{i = 1}^n (x_i - \bar x)^2 }
-$$</p>
-<p>As shown above in the equation that the parameter b_1 is the ratio of covariance of x,y to variance of x. Therefore, the second step is to calculate the cov(x,y) and var(x). Use these two values to compute the parameter b_1.</p>
+$$<p>As shown above in the equation that the parameter b_1 is the ratio of covariance of x,y to variance of x. Therefore, the second step is to calculate the cov(x,y) and var(x). Use these two values to compute the parameter b_1.</p>
 
 </div>
 </div>
@@ -11859,6 +11849,19 @@ $$</p>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cov_x_y</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">var_x</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">mean_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">mean_x</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>

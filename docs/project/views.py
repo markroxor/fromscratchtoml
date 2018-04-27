@@ -27,10 +27,10 @@ def tutorials():
     return render_template('tutorials.html')
 
 
-@app.route('/showroom/')
-def showroom():
-    notebooks = get_notebooks()
-    return render_template('showroom.html', examples=notebooks)
+# @app.route('/showroom/')
+# def showroom():
+#     notebooks = get_notebooks()
+#     return render_template('showroom.html', examples=notebooks)
 
 
 # assets
