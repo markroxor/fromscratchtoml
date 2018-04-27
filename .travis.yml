@@ -33,8 +33,6 @@ matrix:
 
 install:
     - pip install tox
-    - pip install sphinxcontrib-napoleon
-    - pip install sphinxcontrib.programoutput
     - pip install python-coveralls
 
 script:
@@ -47,8 +45,8 @@ deploy:
   provider: pages
   local-dir: doc/build
   skip-cleanup: true
-  github-token: $gh_pages  # Set in travis-ci.org dashboard, marked secure
+  github-token: $gh_pages
   keep-history: true
   on:
-    branch: creategh
+    branch: master
     condition: $TOXENV = "docs"
