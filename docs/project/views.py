@@ -64,7 +64,8 @@ def get_abstract(fname):
     import markdown
 
     try:
-        js = json.load(file(fname))
+        with open(fname) as f:
+            js = json.load(f)
 
         if 'worksheets' in js:
             if len(js['worksheets']) > 0:
