@@ -77,17 +77,9 @@ def get_abstract(fname):
 
 
 def get_notebooks():
-    print(os.getcwd())
     notebooks = []
     # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
-    print(NOTEBOOK_HTML_DIR, "123")
-    print(NOTEBOOK_DIR, "456")
-    for _file in os.listdir(NOTEBOOK_DIR):
-        cmd = "jupyter nbconvert " + NOTEBOOK_DIR + "/" + _file + " --output=" + NOTEBOOK_HTML_DIR + "/" + _file.split(".")[0]
-        print(cmd, "yes")
-        process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
 
     for _file in os.listdir(NOTEBOOK_HTML_DIR):
         if _file.endswith(".html"):
