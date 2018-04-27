@@ -44,14 +44,3 @@ script:
 after_success:
   - coveralls
   - travis-sphinx deploy
-
-deploy:
-    - provider: pages
-        local-dir: docs/
-        skip-cleanup: true
-        github-token: $GITHUB_TOKEN1
-        keep-history: true
-        on:
-          branch: creategh
-        email: mrmohitrathoremr@gmail.com
-        name: markroxor
