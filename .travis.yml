@@ -29,9 +29,6 @@ matrix:
 
 install:
     - pip install tox
-    - pip install sphinxcontrib-napoleon
-    - pip install sphinxcontrib.programoutput
-    - pip install travis-sphinx
     - pip install python-coveralls
 
 script:
@@ -48,3 +45,11 @@ deploy:
         distributions: sdist bdist_wheel
         on:
           branch: pip
+    - provider: pages
+      local-dir: doc/build
+      skip-cleanup: true
+      github-token: $gh_pages
+      keep-history: true
+      on:
+        branch: master
+        condition: $TOXENV = "docs"
