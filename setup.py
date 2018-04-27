@@ -12,7 +12,7 @@ linux_testenv = [
 
 setup(
     name='fromscratchtoml',
-    version='0.0.1',
+    version='0.0.2',
     description=' An intuitive machine learning library for python.',
 
     install_requires=install_requires,
