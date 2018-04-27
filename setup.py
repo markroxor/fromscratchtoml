@@ -29,8 +29,6 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     url='https://github.com/jellAIfish/fromscratchtoml',
-    author='Mohit Rathore',
-    author_email='mrmohitrathoremr@gmail.com',
     license='GPL-3.0',
     packages=find_packages(),
 )
