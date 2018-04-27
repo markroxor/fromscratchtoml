@@ -19,7 +19,9 @@ setup(
     ],
     extras_require={
         'test': linux_testenv,
-        'docs': linux_testenv + ['sphinx', 'sphinxcontrib-napoleon', 'travis-sphinx', 'sphinxcontrib.programoutput']
+        'docs': linux_testenv + ['Flask>=0.10.1', 'Jinja2>=2.7', 'MarkupSafe>=0.18', 'Werkzeug>=0.9.1',
+'               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'sphinx', 'sphinxcontrib-napoleon',
+                'travis-sphinx', 'sphinxcontrib.programoutput', 'flask-assets']
     },
     classifiers=[
         'Development Status :: Pre-Alpha',
