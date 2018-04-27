@@ -87,9 +87,8 @@ def get_abstract(fname):
 
 def get_notebooks():
     notebooks = []
-    # ipython nbconvert --to FORMAT notebook.ipynb
     rel_path = "/fromscratchtoml/static/notebooks/"
-    # print(os.)
+
     for _file in os.listdir(NOTEBOOK_HTML_DIR):
         if _file.endswith(".html"):
             notebook_url = _file
