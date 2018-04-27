@@ -1,10 +1,12 @@
-from flask import render_template
+from flask import render_template, Markup
 from flask_assets import Environment, Bundle
 import os
 from app import app
 import os.path
-import subprocess
+from werkzeug.contrib.cache import SimpleCache
+import markdown
 
+cache = SimpleCache()
 
 NOTEBOOK_HTML_DIR = os.path.dirname(os.path.realpath(__file__)) + "/static/notebooks"
 NOTEBOOK_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)) + "/notebooks"
@@ -20,9 +22,10 @@ def apiref():
     return render_template('apiref.html')
 
 
-@app.route('/tutorials/')
-def tutorials():
-    return render_template('tutorials.html')
+@app.route('/install/')
+def install():
+    install_content = get_markuped("install", "static/mds/INSTALL.md")
+    return render_template('install.html', **locals())
 
 
 @app.route('/showroom/')
@@ -47,6 +50,16 @@ js = Bundle(
     filters='jsmin', output='gen/packed.js'
 )
 assets.register('js_all', js)
+
+
+def get_markuped(key, filename):
+    content = cache.get(key)
+    if content is None:
+        with open(os.path.join(app.root_path, filename)) as f:
+            content = ''.join(f.readlines())
+        content = Markup(markdown.markdown(content))
+        cache.set(key, content, timeout=0)
+    return content
 
 
 # utils
