@@ -51,4 +51,4 @@ deploy:
   keep-history: true
   on:
     branch: creategh
-    condition: "$TOXENV" = "docs"
+    condition: $TOXENV = "docs"
