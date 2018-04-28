@@ -1,7 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 # regulars
 data/*
-
+docs/project/static/notebooks/*.html
 # tox
 .pytest_cache/
 
@@ -115,4 +115,3 @@ venv.bak/
 .mypy_cache/
 
 .idea/
-
