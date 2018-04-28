@@ -6,6 +6,7 @@
 
 import cvxopt
 import torch as ch
+import numpy as np
 
 from functools import partial
 
@@ -92,11 +93,25 @@ class SVC(BaseModel):
         """
 
         X = ch.Tensor(X)
-        y = ch.Tensor(y)
-        self.n = y.size()[0]
+        self.y = ch.Tensor(y)
+        self.n = self.y.size()[0]
+
+        # Multivariate SVC
+        uniques, self.ind = np.unique(self.y.numpy(), return_index=True)
+        self.n_classes = len(uniques)
+
+        if self.n_classes > 2:
+            y_list = [np.where(y.numpy() == u, 1, -1) for u in uniques]
+
+            self.classifiers = []
+            for y_i in y_list:
+                clf = SVC(kernel='linear', C=1000)
+                clf.fit(X, y_i)
+                self.classifiers.append(clf)
+            return self.classifiers
 
         # create a gram matrix by taking the outer product of y
-        gram_matrix_y = ch.ger(y, y)
+        gram_matrix_y = ch.ger(self.y, self.y)
         K = self.__create_kernel_matrix(X)
         gram_matrix_xy = gram_matrix_y * K
 
@@ -111,7 +126,7 @@ class SVC(BaseModel):
         h2 = cvxopt.matrix(ch.ones(self.n).numpy().astype(float) * self.C)
         h = cvxopt.matrix([[h1, h2]])
 
-        A = cvxopt.matrix(y.numpy().astype(float)).trans()
+        A = cvxopt.matrix(self.y.numpy().astype(float)).trans()
         b = cvxopt.matrix(0.0)
 
         lagrange_multipliers = ch.Tensor(list(cvxopt.solvers.qp(P, q, G, h, A,
@@ -121,7 +136,7 @@ class SVC(BaseModel):
         lagrange_multiplier_indices = lagrange_multiplier_indices.nonzero().view(-1)
 
         self.support_vectors = X.index_select(0, lagrange_multiplier_indices)
-        self.support_vectors_y = y.index_select(0, lagrange_multiplier_indices)
+        self.support_vectors_y = self.y.index_select(0, lagrange_multiplier_indices)
         self.support_lagrange_multipliers = lagrange_multipliers.index_select(0, lagrange_multiplier_indices)
 
         self.b = 0
@@ -156,9 +171,22 @@ class SVC(BaseModel):
                       margin.
 
         """
+        if len(X.size()) == 1:
+            X = X.unsqueeze(0)
 
-        if not hasattr(self, "b"):
+        if not hasattr(self, "b") and not hasattr(self, "classifiers"):
             raise ModelNotFittedError("Predict called before fitting the model.")
+
+        if self.n_classes > 2:
+            predictions = []
+            for x in ch.Tensor(X):
+                for i, clas in enumerate(self.classifiers):
+                    if self.classifiers[i].predict(x)[0] == 1:
+                        predictions.append(self.y[self.ind[i]])
+                        break
+                    if i == len(self.classifiers) - 1:
+                        predictions.append(0)
+            return predictions
 
         projections = ch.zeros(X.size()[0])
 
