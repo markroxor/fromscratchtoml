@@ -79,7 +79,7 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None):
 
     if clf is not None:
         X, Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
-        _X = np.array([[x, y] for x, y in zip(np.ravel(X), np.ravel(Y))])
+        _X = np.array([[a, b] for a, b in zip(np.ravel(X), np.ravel(Y))])
 
         _, Z = clf.predict(ch.Tensor(_X), return_projection=True)
         Z = Z.view(X.shape)
