@@ -42,14 +42,16 @@ def deriv_sigmoid(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
-    """Plots the scatter plot of binary classes, along with the margins if
+def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None):
+    """Plots the scatter plot of 2D data, along with the margins if
     clf is provided.
 
     Parameters
     ----------
-    X : an N-D torch.Tensor
-        Acts as a generator for each class. These are also plotted.
+    X : an 2xN torch.Tensor
+        The input 2D data to be plotted.
+    y : an 2xN torch.Tensor, optional
+        The corresponding labels. If not provided, will be predicted.
     clf : a fromscratchtoml.models object, optional
           The classifier which forms a basis for plotting margin.
     coarse: int, optional
@@ -57,18 +59,23 @@ def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
             coarseness of margin.
 
     """
+
     if xlim is None:
-        x_min, x_max = ch.min(ch.cat(X)[:, 0]), ch.max(ch.cat(X)[:, 0])
+        x_min, x_max = ch.min(X[:, 0]), ch.max(X[:, 0])
     else:
         x_min, x_max = xlim
 
     if ylim is None:
-        y_min, y_max = ch.min(ch.cat(X)[:, 1]), ch.max(ch.cat(X)[:, 1])
+        y_min, y_max = ch.min(X[:, 1]), ch.max(X[:, 1])
     else:
         y_min, y_max = ylim
 
-    for x in X:
-        plt.scatter(x[:, 0], x[:, 1])
+    if y is None:
+        y = clf.predict(X)
+
+    uniques, y = np.unique(y.numpy(), return_inverse=True)
+
+    plt.scatter(X[:, 0], X[:, 1], c=y)
 
     if clf is not None:
         X, Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
