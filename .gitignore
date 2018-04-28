@@ -1,7 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 # regulars
 data/*
-/notebooks/*.html
 docs/project/static/notebooks/*.html
 # tox
 .pytest_cache/
