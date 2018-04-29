@@ -56,6 +56,7 @@ class SVC(BaseModel):
         """
         self.C = C
         self.kernel = partial(getattr(kernels, kernel), gamma=gamma, **kwargs)
+        self.classifiers = []
 
     def __create_kernel_matrix(self, X):
         """Creates a gram kernel matrix of training data.
@@ -96,19 +97,19 @@ class SVC(BaseModel):
         self.y = ch.Tensor(y)
         self.n = self.y.size()[0]
 
-        # Multivariate SVC
-        uniques, self.ind = np.unique(self.y.numpy(), return_index=True)
-        self.n_classes = len(uniques)
+        self.uniques, self.ind = np.unique(self.y.numpy(), return_index=True)
+        self.n_classes = len(self.uniques)
 
-        if self.n_classes > 2:
-            y_list = [np.where(y.numpy() == u, 1, -1) for u in uniques]
-
-            self.classifiers = []
+        # Do multi class classification
+        if sorted(self.uniques) != [-1, 1]:
+            y_list = [np.where(y.numpy() == u, 1, -1) for u in self.uniques]
             for y_i in y_list:
-                clf = SVC(kernel='linear', C=1000)
+                clf = SVC()
+                clf.kernel = self.kernel
+                clf.C = self.C
                 clf.fit(X, y_i)
                 self.classifiers.append(clf)
-            return self.classifiers
+            return
 
         # create a gram matrix by taking the outer product of y
         gram_matrix_y = ch.ger(self.y, self.y)
@@ -150,6 +151,8 @@ class SVC(BaseModel):
 
         self.b /= self.n_support_vectors
 
+        self.classifiers = [self]
+
     def predict(self, X, return_projection=False):
         """Predicts the class of input test data.
 
@@ -174,30 +177,35 @@ class SVC(BaseModel):
         if len(X.size()) == 1:
             X = X.unsqueeze(0)
 
-        if not hasattr(self, "b") and not hasattr(self, "classifiers"):
+        if len(self.classifiers) == 0:
             raise ModelNotFittedError("Predict called before fitting the model.")
 
-        if self.n_classes > 2:
-            predictions = []
-            for x in ch.Tensor(X):
+        projections = ch.zeros(X.size()[0])
+        predictions = ch.zeros(X.size()[0])
+
+        if sorted(self.uniques) != [-1, 1]:
+            for j, x in enumerate(ch.Tensor(X)):
                 for i, clas in enumerate(self.classifiers):
+                    prediction, projection = self.classifiers[i].predict(x, return_projection=True)
                     if self.classifiers[i].predict(x)[0] == 1:
-                        predictions.append(self.y[self.ind[i]])
+                        predictions[j] = self.y[self.ind[i]]
+                        projections[j] = float(projection)
                         break
-                    if i == len(self.classifiers) - 1:
-                        predictions.append(0)
+
+            if return_projection:
+                return predictions, projections
+
             return predictions
 
-        projections = ch.zeros(X.size()[0])
-
-        for j, x in enumerate(X):
-            projection = self.b
-            for i in range(self.n_support_vectors):
-                projection += self.support_lagrange_multipliers[i] * self.support_vectors_y[i] *\
-                              self.kernel(self.support_vectors[i], x)
-            projections[j] = projection
+        else:
+            for j, x in enumerate(X):
+                projection = self.b
+                for i in range(self.n_support_vectors):
+                    projection += self.support_lagrange_multipliers[i] * self.support_vectors_y[i] *\
+                                  self.kernel(self.support_vectors[i], x)
+                projections[j] = projection
 
         if return_projection:
-            return ch.sign(ch.Tensor(projections)), projections
+            return ch.sign(projections), projections
 
-        return ch.sign(ch.Tensor(projections))
+        return ch.sign(projections)
