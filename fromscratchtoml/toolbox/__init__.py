@@ -42,7 +42,7 @@ def deriv_sigmoid(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None):
+def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, multicolor_contour=False):
     """Plots the scatter plot of 2D data, along with the margins if
     clf is provided.
 
@@ -73,17 +73,22 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None):
     if y is None:
         y = clf.predict(X)
 
-    uniques, y = np.unique(y.numpy(), return_inverse=True)
-
+    _, y = np.unique(y.numpy(), return_inverse=True)
     plt.scatter(X[:, 0], X[:, 1], c=y)
 
     if clf is not None:
-        X, Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
-        _X = np.array([[a, b] for a, b in zip(np.ravel(X), np.ravel(Y))])
+        clf = clf.classifiers
+        colors = [(np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)) for _ in range(len(clf))]
 
-        _, Z = clf.predict(ch.Tensor(_X), return_projection=True)
-        Z = Z.view(X.shape)
+        for i, _clf in enumerate(clf):
+            _X, _Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
+            Z = np.array([[_x, _y] for _x, _y in zip(np.ravel(_X), np.ravel(_Y))])
+            _, Z = _clf.predict(ch.Tensor(Z), return_projection=True)
+            Z = Z.view(_X.shape)
 
-        plt.contour(X, Y, Z, [0.0], colors='k')
+            if multicolor_contour is True:
+                plt.contour(_X, _Y, Z, [0.0], colors=[colors[i]])
+            else:
+                plt.contour(_X, _Y, Z, [0.0], colors='k')
 
     plt.show()
