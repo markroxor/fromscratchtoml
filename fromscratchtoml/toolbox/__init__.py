@@ -78,7 +78,7 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, multi
 
     if clf is not None:
         clf = clf.classifiers
-        colors = [(np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)) for _ in range(len(clf))]
+        colors = [(np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)) for i in range(len(clf))]
 
         for i, _clf in enumerate(clf):
             _X, _Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
