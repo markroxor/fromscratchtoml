@@ -1,6 +1,9 @@
+
 import torch as ch
 import logging
 import numpy as np
+from activation import Activation
+from loss_funtion import LossFunction
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -9,51 +12,52 @@ logger.setLevel(logging.INFO)
 
 class Optimizer(object):
 
-    def relu_activation(self, x):
-        if x > 0:
-            return 1
-        return 0
+    def __init__(self, no_hidden_layer_neurons, no_output_layer_neurons, X_train, Y_train, lr=0.001,
+                bias_h=0, epoch=500):
+                self.no_hidden_layer_neurons = no_hidden_layer_neurons
+                self.no_output_layer_neurons = no_output_layer_neurons
+                self.X_train = X_train
+                self.Y_train = Y_train
+                self.bias_h = bias_h
+                self.epoch = epoch
+                shape_xtrain = X_train.size()
+                shape_weight_hidden = (shape_xtrain[0], no_hidden_layer_neurons)
+                np.random.seed(42)
+                # Weight, bias initialization
+                self.weight_hidden = np.random.uniform(size=shape_weight_hidden)
+                self.bias_hidden = np.random.uniform(size=(1, no_hidden_layer_neurons))
+                self.weight_output = np.random.uniform(size=(no_hidden_layer_neurons, no_output_layer_neurons))
+                self.bias_output = np.random.uniform(size=(1, no_output_layer_neurons))
 
-    def sigmoid(self, x):
-        return ch.exp(x) / (1 + ch.exp(x))
+    def feed_forward(self):
 
-    def tanh(x):
-        return (1 - ch.exp(x)) / (1 + ch.exp(x))
+                original_input = np.dot(self.X_train, self.weight_hidden)
+                input_to_hidden_layer = original_input + self.bias_hidden
+                output_after_hidden_activation = Activation.sigmoid(input_to_hidden_layer)
+                original_input_to_output_layer = np.dot(output_after_hidden_activation, self.weight_output)
+                input_to_output_layer = original_input_to_output_layer + self.bias_output
+                final_output = Activation.sigmoid(input_to_output_layer)
+                return output_after_hidden_activation, final_output
 
-    def softmax(x):
-        x_new = [ch.exp(i) for i in x]
-        sum_x_new = sum(x_new)
-        return [sum_x_new / (i) for i in x_new]
+    def backprop(self):
+                output_after_hidden_activation, final_output = self.feed_forward()
+                error_output = LossFunction.L2_loss(final_output, self.Y_train)
+                slope_output_layer = Activation.derivate_sigmoid(error_output)
+                slope_hidden_layer = Activation.derivate_sigmoid(output_after_hidden_activation)
+                d_output = error_output * slope_output_layer
+                Error_at_hidden_layer = d_output.dot(self.weight_output.T)
+                d_hiddenlayer = Error_at_hidden_layer * slope_hidden_layer
+                self.weight_output += (output_after_hidden_activation.T).dot(d_output) * self.lr
+                self.bias_output += np.sum(d_output, axis=0, keepdims=True) * self.lr
+                self.weight_hidden += (self.X_train.T).dot(d_hiddenlayer) * self.lr
+                self.bias_hidden += np.sum(d_hiddenlayer, axis=0, keepdims=True) * self.lr
+                return final_output
 
-    def feed_forward(self, X_train, W_hidden, W_output):
-
-        Weighted_X = X_train * W_hidden
-        H_o = self.sigmoid(Weighted_X)
-
-        Weighted_H_o = H_o * W_output
-        Y_pred = self.relu_activation(Weighted_H_o)
-        return Y_pred, H_o
-
-    def backprop(self, X_train, Y_train, W_hidden, W_output, lr):
-        Y_pred, H_o = self.feed_forward(X_train, W_hidden, W_output)
-
-        # Layer Error
-        Err_output = (Y_pred - Y_train) * self.relu_activation(W_output * H_o)
-        Err_hidden = Err_output * W_output * self.relu_activation(H_o)
-
-        # Derivatives with respect to the weights
-        derivative_W_output = Err_output * H_o
-        derivative_W_hidden = Err_hidden * X_train
-
-        # Update the weights
-        W_hidden -= lr * derivative_W_hidden
-        W_output -= lr * derivative_W_output
-
-    def SGD(self, X_train, Y_train, batch_size, lr):
-        N = len(X_train)
-        train_data = ch.utils.data.TensorDataset(X_train, Y_train)
+    def SGD(self, batch_size):
+        N = len(self.X_train)
+        train_data = ch.utils.data.TensorDataset(self.X_train, self.Y_train)
         np.random.shuffle(train_data)
-        mini_batches = np.array([train_data[i:i + batch_size]])
         for i in range([(0, N, batch_size)]):
+            mini_batches = np.array([train_data[i:i + batch_size]])
             for X_train, Y_train in mini_batches:
-                self.backprop(X_train, Y_train, lr)
+                logger.info("The predicted output {} at epoch {}").format(self.backprop(), self.epoch)
