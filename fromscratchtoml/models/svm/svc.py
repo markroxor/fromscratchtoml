@@ -69,7 +69,7 @@ class SVC(BaseModel):
         Returns
         -------
         kernel_matrix : torch.Tensor
-                    The gram kernel matrix.
+            The gram kernel matrix.
 
         """
 
@@ -89,8 +89,12 @@ class SVC(BaseModel):
         y : torch.Tensor
             The training labels.
         multiplier_threshold : float
-              the threshold for selecting lagrange multipliers.
+            The threshold for selecting lagrange multipliers.
 
+        Returns
+        -------
+        kernel_matrix : list of svm.SVC
+            A list of all the classifiers used for multi class classification
         """
 
         X = ch.Tensor(X)
@@ -103,11 +107,14 @@ class SVC(BaseModel):
         # Do multi class classification
         if sorted(self.uniques) != [-1, 1]:
             y_list = [np.where(y.numpy() == u, 1, -1) for u in self.uniques]
+
             for y_i in y_list:
+                # Copy the current initializer
                 clf = SVC()
                 clf.kernel = self.kernel
                 clf.C = self.C
                 clf.fit(X, y_i)
+
                 self.classifiers.append(clf)
             return
 
@@ -161,17 +168,17 @@ class SVC(BaseModel):
         x : torch.Tensor
             The test data which is to be classified.
         return_projection : bool, optional
-                            returns the projection of test data on the margin
-                            along with the class prediction.
+            returns the projection of test data on the margin
+            along with the class prediction.
 
         Returns
         -------
         prediction : torch.Tensor
-                     A torch.Tensor consisting of 1, 0, -1 denoting the class of
-                     test data
-        projections : torch.Tensor
-                      The projection formed by the test data point on the
-                      margin.
+            A torch.Tensor consisting of 1, 0, -1 denoting the class of
+            test data
+        projections : torch.Tensor, optional
+            The projection formed by the test data point on the
+            margin.
 
         """
         if len(X.size()) == 1:
@@ -183,19 +190,16 @@ class SVC(BaseModel):
         projections = ch.zeros(X.size()[0])
         predictions = ch.zeros(X.size()[0])
 
+        # If the input labels are not of as desired by svc i.e - [-1, 1]
         if sorted(self.uniques) != [-1, 1]:
             for j, x in enumerate(ch.Tensor(X)):
                 for i, clas in enumerate(self.classifiers):
                     prediction, projection = self.classifiers[i].predict(x, return_projection=True)
-                    if self.classifiers[i].predict(x)[0] == 1:
+
+                    if int(prediction) == 1:
                         predictions[j] = self.y[self.ind[i]]
                         projections[j] = float(projection)
                         break
-
-            if return_projection:
-                return predictions, projections
-
-            return predictions
 
         else:
             for j, x in enumerate(X):
@@ -204,8 +208,9 @@ class SVC(BaseModel):
                     projection += self.support_lagrange_multipliers[i] * self.support_vectors_y[i] *\
                                   self.kernel(self.support_vectors[i], x)
                 projections[j] = projection
+                predictions[j] = np.sign(projection)
 
         if return_projection:
-            return ch.sign(projections), projections
+            return predictions, projections
 
-        return ch.sign(projections)
+        return predictions
