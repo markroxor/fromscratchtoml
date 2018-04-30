@@ -6,7 +6,7 @@ $(document).ready(function() {
     $(".overlay-iframe").attr('src', url);
     $(".overlay-new").attr('href', url);
     if (url.indexOf("notebook") != -1) {
-      var nburl="http://cloud.shogun-toolbox.org/notebook" + url.substring(url.lastIndexOf("/"), url.lastIndexOf(".")) + ".ipynb"
+      var nburl="https://github.com/jellAIfish/fromscratchtoml/tree/master/docs/notebooks" + url.substring(url.lastIndexOf("/"), url.lastIndexOf(".")) + ".ipynb"
       $(".overlay-cloud").attr('href', nburl);
     }
     $(".overlay-bg").fadeIn(500);
@@ -29,4 +29,3 @@ function closeOverlay(event) {
   $(".overlay-bg").fadeOut(500);
   $('body').css('overflow', 'visible');
 }
-
