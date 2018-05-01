@@ -58,17 +58,16 @@ def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
 
     """
     if xlim is None:
-        x_min, x_max = ch.min(ch.cat(X)[:, 0]), ch.max(ch.cat(X)[:, 0])
+        x_min, x_max = ch.min(X[:, 0]), ch.max(X[:, 0])
     else:
         x_min, x_max = xlim
 
     if ylim is None:
-        y_min, y_max = ch.min(ch.cat(X)[:, 1]), ch.max(ch.cat(X)[:, 1])
+        y_min, y_max = ch.min(X[:, 1]), ch.max(X[:, 1])
     else:
         y_min, y_max = ylim
 
-    for x in X:
-        plt.scatter(x[:, 0], x[:, 1])
+    plt.scatter(X[:, 0], X[:, 1])
 
     if clf is not None:
         X, Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
