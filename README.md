@@ -5,6 +5,7 @@ https://jellAIfish.github.io/fromscratchtoml/
 [![Coverage Status](https://coveralls.io/repos/github/jellAIfish/fromscratchtoml/badge.svg?branch=master)](https://coveralls.io/github/jellAIfish/fromscratchtoml?branch=master)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jellAIfish/from-scratch-to-ml)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml?ref=badge_shield)
 
 
 
@@ -51,3 +52,7 @@ from source -
 
 ## Future endeavours
 * This library will form a back-bone for teaching and guiding budding machine learning developers via vBlogs.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml?ref=badge_large)
