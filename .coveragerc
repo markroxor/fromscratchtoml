@@ -8,3 +8,4 @@ omit =
     */python?.?-dev/*
     */site-packages/nose/*
     */test
+    */toolbox/__init__.py
