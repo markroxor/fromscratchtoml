@@ -12,36 +12,6 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt # noqa:F402
 
 
-def sigmoid(x):
-    """Returns the sigmoid of x.
-
-    Parameters
-    ----------
-    x : torch.Tensor
-
-    Returns
-    -------
-    sigmoid of x
-
-    """
-    return 1.0 / (1.0 + ch.exp(-x))
-
-
-def deriv_sigmoid(x):
-    """Returns the derivative of sigmoid of x.
-
-    Parameters
-    ----------
-    x : torch.Tensor
-
-    Returns
-    -------
-    derivative of sigmoid of x
-
-    """
-    return sigmoid(x) * (1 - sigmoid(x))
-
-
 def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
                      ylabel=None, title=None, multicolor_contour=False):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
@@ -77,6 +47,11 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
         else:
             y = 'k'
 
+    fig = plt.figure()
+    ax = fig.gca()
+    ax.set_xticks(np.linspace(x_min, x_max, coarse))
+    ax.set_yticks(np.linspace(y_min, y_max, coarse))
+
     plt.scatter(X[:, 0], X[:, 1], c=y)
 
     if clf is not None:
@@ -102,4 +77,6 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
 
     if title:
         plt.title(title)
+
+    plt.grid()
     plt.show()
