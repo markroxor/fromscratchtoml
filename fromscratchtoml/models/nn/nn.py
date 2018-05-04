@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import torch as ch
-from fromscratchtoml.toolbox import sigmoid, deriv_sigmoid
+from .activations import Activations
 from fromscratchtoml.models.base_model import BaseModel
 
 import logging
@@ -11,6 +13,22 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+def deriv_sigmoid(x):
+    """Returns the derivative of sigmoid of x.
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+
+    Returns
+    -------
+    _ : numpy.ndarray
+        derivative of sigmoid of x
+
+    """
+    return Activations.sigmoid(x) * (1 - Activations.sigmoid(x))
 
 
 class NeuralNetwork(BaseModel):
@@ -72,7 +90,7 @@ class NeuralNetwork(BaseModel):
 
         x = x.view(1, ch.numel(x))
         for biases, weights in zip(self.layerwise_biases, self.layerwise_weights):
-            x = sigmoid(ch.mm(x, weights) + biases)
+            x = Activations.sigmoid(ch.mm(x, weights) + biases)
         return x
 
     def SGD(self, train_data, epochs, batch_size, lr, test_data=None):
@@ -199,7 +217,7 @@ class NeuralNetwork(BaseModel):
         for biases, weights in zip(self.layerwise_biases, self.layerwise_weights):
             z = ch.mm(activation, weights) + biases
             zs.append(z)
-            activation = sigmoid(z)
+            activation = Activations.sigmoid(z)
             activations.append(activation)
 
         delta = self.__cost_derivative(activations[-1], y) * deriv_sigmoid(zs[-1])
