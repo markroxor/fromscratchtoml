@@ -19,7 +19,8 @@ setup(
     extras_require={
         'test': linux_testenv,
         'docs': ['jupyter', 'Flask>=0.10.1', 'Jinja2>=2.7', 'MarkupSafe>=0.18', 'Werkzeug>=0.9.1',
-'               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'flask-assets']
+'               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'flask-assets'] +
+                ['sphinx', 'sphinxcontrib-napoleon', 'sphinxcontrib.programoutput']
     },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
