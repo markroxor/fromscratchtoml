@@ -42,7 +42,8 @@ def deriv_sigmoid(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
+def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
+                     ylabel=None, title=None):
     """Plots the scatter plot of binary classes, along with the margins if
     clf is provided.
 
@@ -58,12 +59,12 @@ def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
 
     """
     if xlim is None:
-        x_min, x_max = ch.min(X[:, 0]), ch.max(X[:, 0])
+        x_min, x_max = np.min(X[:, 0]), np.max(X[:, 0])
     else:
         x_min, x_max = xlim
 
     if ylim is None:
-        y_min, y_max = ch.min(X[:, 1]), ch.max(X[:, 1])
+        y_min, y_max = np.min(X[:, 1]), np.max(X[:, 1])
     else:
         y_min, y_max = ylim
 
@@ -78,4 +79,12 @@ def binary_visualize(X, clf=None, coarse=10, xlim=None, ylim=None):
 
         plt.contour(X, Y, Z, [0.0], colors='k')
 
+    if xlabel:
+        plt.xlabel(xlabel)
+
+    if ylabel:
+        plt.ylabel(ylabel)
+
+    if title:
+        plt.title(title)
     plt.show()
