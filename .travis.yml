@@ -39,7 +39,7 @@ after_success:
 
 deploy:
   - provider: pages
-    local-dir: doc/build
+    local-dir: doc
     committer-from-gh: true
     skip-cleanup: true
     github-token: $gh_pages
