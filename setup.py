@@ -19,12 +19,13 @@ setup(
     extras_require={
         'test': linux_testenv,
         'docs': ['jupyter', 'Flask>=0.10.1', 'Jinja2>=2.7', 'MarkupSafe>=0.18', 'Werkzeug>=0.9.1',
-'               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'flask-assets']
+'               itsdangerous>=0.22', 'flask-flatpages', 'frozen-flask', 'flask-assets'] +
+                ['sphinx', 'sphinxcontrib-napoleon', 'sphinxcontrib.programoutput']
     },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
+        'License :: OSI Approved :: GNU General Public License v3.0',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
