@@ -42,9 +42,9 @@ def deriv_sigmoid(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
 
-def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, multicolor_contour=False):
-    """Plots the scatter plot of 2D data, along with the margins if
-    clf is provided.
+def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
+                     ylabel=None, title=None, multicolor_contour=False):
+    """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
     ----------
@@ -61,19 +61,22 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, multi
     """
 
     if xlim is None:
-        x_min, x_max = ch.min(X[:, 0]), ch.max(X[:, 0])
+        x_min, x_max = np.min(X[:, 0]), np.max(X[:, 0])
     else:
         x_min, x_max = xlim
 
     if ylim is None:
-        y_min, y_max = ch.min(X[:, 1]), ch.max(X[:, 1])
+        y_min, y_max = np.min(X[:, 1]), np.max(X[:, 1])
     else:
         y_min, y_max = ylim
 
     if y is None:
-        y = clf.predict(X)
+        if clf:
+            y = clf.predict(X)
+            _, y = np.unique(y.numpy(), return_inverse=True)
+        else:
+            y = 'k'
 
-    _, y = np.unique(y.numpy(), return_inverse=True)
     plt.scatter(X[:, 0], X[:, 1], c=y)
 
     if clf is not None:
@@ -91,4 +94,12 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, multi
             else:
                 plt.contour(_X, _Y, Z, [0.0], colors='k')
 
+    if xlabel:
+        plt.xlabel(xlabel)
+
+    if ylabel:
+        plt.ylabel(ylabel)
+
+    if title:
+        plt.title(title)
     plt.show()
