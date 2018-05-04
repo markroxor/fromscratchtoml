@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 # regulars
 data/*
+docs/notebook/data
 doc/
 docs/project/static/notebooks/*.html
 # tox
