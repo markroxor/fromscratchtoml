@@ -44,8 +44,7 @@ def deriv_sigmoid(x):
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
                      ylabel=None, title=None, multicolor_contour=False):
-    """Plots the scatter plot of binary classes, along with the margins if
-    clf is provided.
+    """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
     ----------
@@ -72,8 +71,12 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
         y_min, y_max = ylim
 
     if y is None:
-        y = clf.predict(X)
-    _, y = np.unique(y.numpy(), return_inverse=True)
+        if clf:
+            y = clf.predict(X)
+            _, y = np.unique(y.numpy(), return_inverse=True)
+        else:
+            y = 'k'
+
     plt.scatter(X[:, 0], X[:, 1], c=y)
 
     if clf is not None:
