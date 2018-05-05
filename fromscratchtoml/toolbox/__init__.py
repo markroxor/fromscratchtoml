@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt # noqa:F402
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
-                     ylabel=None, title=None, multicolor_contour=False):
+                     ylabel=None, title=None, multicolor_contour=False, color_seed=100):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
@@ -29,30 +29,27 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
             coarseness of margin.
 
     """
-
-    if xlim is None:
-        x_min, x_max = np.min(X[:, 0]), np.max(X[:, 0])
-    else:
-        x_min, x_max = xlim
-
-    if ylim is None:
-        y_min, y_max = np.min(X[:, 1]), np.max(X[:, 1])
-    else:
-        y_min, y_max = ylim
+    np.random.seed(color_seed)
 
     if y is None:
         if clf:
-            y = clf.predict(X)
-            _, y = np.unique(y.numpy(), return_inverse=True)
+            y = clf.predict(ch.Tensor(X))
+            _, y = np.unique(y, return_inverse=True)
         else:
-            y = 'k'
-
-    fig = plt.figure()
-    ax = fig.gca()
-    ax.set_xticks(np.linspace(x_min, x_max, coarse))
-    ax.set_yticks(np.linspace(y_min, y_max, coarse))
+            y = 'b'
+    else:
+        _, y = np.unique(y, return_inverse=True)
 
     plt.scatter(X[:, 0], X[:, 1], c=y)
+
+    if xlim is None:
+        xlim = plt.xlim()
+
+    if ylim is None:
+        ylim = plt.ylim()
+
+    x_min, x_max = xlim
+    y_min, y_max = ylim
 
     if clf is not None:
         clf = clf.classifiers
@@ -78,5 +75,7 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
     if title:
         plt.title(title)
 
+    plt.xlim(xlim)
+    plt.ylim(ylim)
     plt.grid()
     plt.show()
