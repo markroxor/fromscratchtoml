@@ -13,5 +13,5 @@ class ModelNotFittedError(Error):
     pass
 
 
-class ValueTooLargeError(Error):
+class InvalidArgumentError(Error):
     pass
