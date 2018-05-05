@@ -7,9 +7,13 @@ Welcome to fromscratchtoml's documentation!
 ===========================================
 
 .. toctree::
-   :maxdepth: 10
+   :maxdepth: 2
 
-
+   models/nn
+   models/LinearRegressionClassifier
+   models/svm
+   decomposition/decomposition
+   cluster/dbscan
 
 
 
