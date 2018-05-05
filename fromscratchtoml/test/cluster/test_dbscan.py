@@ -34,8 +34,8 @@ class TestNN(unittest.TestCase):
         skl_db.fit(self.X)
 
         fs2ml_db = fs2ml_DBSCAN(self.eps, self.min_points)
-        fs2ml_db.fit(self.X)
-        self.assertTrue(np.allclose(np.array(fs2ml_db.clan, dtype=np.int64), np.array(skl_db.labels_, dtype=np.int64)))
+        labels = fs2ml_db.fit_predict(self.X)
+        self.assertTrue(np.allclose(np.array(labels, dtype=np.int64), np.array(skl_db.labels_, dtype=np.int64)))
 
     def test_invalid_argument_error(self):
         with self.assertRaises(InvalidArgumentError):
