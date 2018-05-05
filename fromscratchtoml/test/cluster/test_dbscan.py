@@ -9,9 +9,10 @@ import numpy as np
 
 from sklearn.datasets import load_iris
 
-
 from sklearn.cluster import DBSCAN as skl_DBSCAN
 from fromscratchtoml.cluster import DBSCAN as fs2ml_DBSCAN
+
+from fromscratchtoml.toolbox.exceptions import InvalidArgumentError
 
 import logging
 
@@ -35,3 +36,13 @@ class TestNN(unittest.TestCase):
         fs2ml_db = fs2ml_DBSCAN(self.eps, self.min_points)
         fs2ml_db.fit(self.X)
         self.assertTrue(np.allclose(np.array(fs2ml_db.clan, dtype=np.int64), np.array(skl_db.labels_, dtype=np.int64)))
+
+    def test_invalid_argument_error(self):
+        with self.assertRaises(InvalidArgumentError):
+            fs2ml_DBSCAN(eps=-1, min_neigh=1)
+
+        with self.assertRaises(InvalidArgumentError):
+            fs2ml_DBSCAN(eps=1, min_neigh=-1)
+
+        with self.assertRaises(InvalidArgumentError):
+            fs2ml_DBSCAN(eps=1, min_neigh=1.2)
