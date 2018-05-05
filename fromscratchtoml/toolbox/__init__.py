@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt # noqa:F402
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabel=None,
-                     ylabel=None, title=None, multicolor_contour=False, color_seed=100):
+                     ylabel=None, title=None, multicolor_contour=False, color_seed=10):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
@@ -23,7 +23,8 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
     y : an 2xN torch.Tensor, optional
         The corresponding labels. If not provided, will be predicted.
     clf : a fromscratchtoml.models object, optional
-          The classifier which forms a basis for plotting margin.
+          The classifier which forms a basis for plotting margin. Should be passed in case of
+          supervised algorithms only.
     coarse: int, optional
             the sections in which the margin is divided in the plot or the
             coarseness of margin.
@@ -31,16 +32,16 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlim=None, ylim=None, xlabe
     """
     np.random.seed(color_seed)
 
-    if y is None:
-        if clf:
-            y = clf.predict(ch.Tensor(X))
-            _, y = np.unique(y, return_inverse=True)
-        else:
-            y = 'b'
-    else:
-        _, y = np.unique(y, return_inverse=True)
+    if clf:
+        y = clf.predict(ch.Tensor(X))
 
-    plt.scatter(X[:, 0], X[:, 1], c=y)
+    # Also handles the cases when y is None
+    unq, y = np.unique(y, return_inverse=True)
+    colors = [(np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)) for i in range(len(unq))]
+
+    colored_y = [colors[y[i]] for i in range(len(y))]
+
+    plt.scatter(X[:, 0], X[:, 1], c=colored_y)
 
     if xlim is None:
         xlim = plt.xlim()
