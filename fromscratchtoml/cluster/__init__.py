@@ -1,1 +1,1 @@
-from .dbscan import DBSCAN
+from .dbscan import DBSCAN # noqa:F401
