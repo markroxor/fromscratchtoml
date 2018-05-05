@@ -45,6 +45,7 @@ class DBSCAN(BaseModel):
         """Initializing the dbscan class parameters.
 
         Parameters
+        ----------
         eps : float, int
             The eucledian range within which the next point should lie.
         min_neigh : int
@@ -63,7 +64,20 @@ class DBSCAN(BaseModel):
         self.min_walking_dist = eps
         self.min_neigh = min_neigh
 
-    def get_neighbours(self, villager_id):
+    def __get_neighbours(self, villager_id):
+        """Get all the surrounding neighbors in range of eps.
+
+        Parameters
+        ----------
+        villager_id : int
+            The index of the point in our feature vector.
+
+        Returns
+        -------
+        neighbor_ids : list
+            The index of all the surrounding neighbors in range eps.
+        """
+
         villager = self.village[villager_id]
         neighbor_ids = []
 
@@ -98,7 +112,7 @@ class DBSCAN(BaseModel):
             # if the villager is not assigned a clan
             if self.clan[villager_id] is None:
                 # get all his neighbors, fitting the criteria in __init__
-                neighbor_ids = self.get_neighbours(villager_id)
+                neighbor_ids = self.__get_neighbours(villager_id)
 
                 # if he is an isolated villager he will be assigned -1 clan
                 # AKA the isolated clan.
@@ -113,7 +127,7 @@ class DBSCAN(BaseModel):
                 for neighbor_id in neighbor_ids:
                     # these neighbors will try to convince their neighbors
                     # to join there clan.
-                    neighbors_neighbors_ids = self.get_neighbours(neighbor_id)
+                    neighbors_neighbors_ids = self.__get_neighbours(neighbor_id)
 
                     # if their number is more than the required threshold they
                     # are allowed to join the clan.
