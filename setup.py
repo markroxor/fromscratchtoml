@@ -8,6 +8,8 @@ with open('requirements.txt') as f:
 linux_testenv = [
     'pytest-cov',
     'python-coveralls',
+    'sklearn',
+    'scipy',
 ]
 
 setup(
