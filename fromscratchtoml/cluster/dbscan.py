@@ -7,6 +7,7 @@
 import numpy as np
 
 from fromscratchtoml.models.base_model import BaseModel
+from fromscratchtoml.toolbox.exceptions import InvalidArgumentError
 
 import logging
 
@@ -44,16 +45,23 @@ class DBSCAN(BaseModel):
         """Initializing the dbscan class parameters.
 
         Parameters
-        eps : float
+        eps : float, int
             The eucledian range within which the next point should lie.
         min_neigh : int
             The minimum number of points required to form a cluster.
 
         """
+        if not (isinstance(eps, float) or isinstance(eps, int)) or eps < 0:
+            raise InvalidArgumentError("Expected eps to be a positive float or int "
+                                       "but got type {} and value {}".format(type(eps), eps))
+
+        if not isinstance(min_neigh, int) or min_neigh < 0:
+            raise InvalidArgumentError("Expected min_neigh to be positive int "
+                                       "but got type {} and value {}".format(type(min_neigh), min_neigh))
+
         self.eps = eps
         self.min_walking_dist = eps
         self.min_neigh = min_neigh
-        self.a = 5
 
     def get_neighbours(self, villager_id):
         villager = self.village[villager_id]
@@ -65,7 +73,7 @@ class DBSCAN(BaseModel):
             # finds the euclidian distance between the points.
             walking_dist = np.linalg.norm(villager - potential_neighbor)
 
-            if walking_dist < self.min_walking_dist:
+            if walking_dist <= self.min_walking_dist:
                 neighbor_ids.append(potential_neighbor_id)
 
         return neighbor_ids
@@ -121,7 +129,7 @@ class DBSCAN(BaseModel):
                                 neighbor_ids.append(neighbors_neighbor_id)
                                 self.clan[neighbors_neighbor_id] = current_clan_id
 
-                            # isloated ones have already been given the chance to
+                            # isolated ones have already been given the chance to
                             # recruit more members, but they are indeed isloated.
                             elif self.clan[neighbors_neighbor_id] == -1:
                                 self.clan[neighbors_neighbor_id] = current_clan_id
