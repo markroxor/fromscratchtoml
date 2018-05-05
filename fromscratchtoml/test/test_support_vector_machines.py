@@ -7,9 +7,10 @@
 import unittest
 
 import torch as ch
+import numpy as np
 
 from fromscratchtoml.models import svm
-from fromscratchtoml.test.toolbox import _tempfile, _test_data_path, torch_equal
+from fromscratchtoml.test.toolbox import _tempfile, _test_data_path
 from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
 from fromscratchtoml.toolbox.random import Distribution
 
@@ -77,10 +78,10 @@ class TestNN(unittest.TestCase):
         X2 = Distribution.linear(pts=100, mean=[9, 5],
                                  covr=[[1.5, 1], [1, 1.5]], seed=100)
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X2.size()[0])
-        X_train = ch.cat((X1, X2))
-        y_train = ch.cat((Y1, Y2))
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X2.shape[0])
+        X_train = np.vstack((X1, X2))
+        y_train = np.hstack((Y1, Y2))
 
         clf_lin = svm.SVC(kernel='linear')
         clf_lin.fit(X_train, y_train)
@@ -90,23 +91,22 @@ class TestNN(unittest.TestCase):
         X2 = Distribution.linear(pts=10, mean=[9, 5],
                                  covr=[[1.5, 1], [1, 1.5]], seed=100)
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X2.size()[0])
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X2.shape[0])
 
-        X_test = ch.cat((X1, X2))
-        y_test = ch.cat((Y1, Y2))
+        X_test = np.vstack((X1, X2))
+        y_test = np.hstack((Y1, Y2))
 
         predictions, projections = clf_lin.predict(X_test,
                                                    return_projection=True)
 
-        expected_projections = ch.Tensor([5.2845, 2.8847, 3.8985, 2.4527, 4.2714,
-                                        4.6425, 5.1706, 3.3409, 5.3939, 2.7791,
-                                        -2.9095, -5.3093, -4.2954, -5.7412,
-                                        -3.9226, -3.5514, -3.0234, -4.8531,
-                                        -2.8000, -5.4149])
-
-        self.assertTrue(torch_equal(projections, expected_projections))
-        self.assertTrue(torch_equal(predictions, y_test))
+        expected_projections = np.array([5.2844825, 2.8846788, 3.898558, 2.4527097, 4.271367,
+                                            4.6425023, 5.170607, 3.3408344, 5.3939104, 2.779106,
+                                           -2.909471, -5.3092747, -4.2953954, -5.7412434, -3.9225864,
+                                           -3.551451, -3.0233462, -4.853119, -2.8000426, -5.4148474]
+                                           )
+        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
+        self.assertTrue(np.allclose(predictions.numpy(), y_test))
 
     def test_poly_kernel(self):
         # Tests polynomial kernel of svc.
@@ -120,14 +120,14 @@ class TestNN(unittest.TestCase):
         X4 = Distribution.linear(pts=50, mean=[15, 15],
                                  covr=[[1.5, -1], [-1, 2]], seed=100)
 
-        X1 = ch.cat((X1, X2))
-        X2 = ch.cat((X3, X4))
+        X1 = np.vstack((X1, X2))
+        X2 = np.vstack((X3, X4))
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X2.size()[0])
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X2.shape[0])
 
-        X_train = ch.cat((X1, X2))
-        y_train = ch.cat((Y1, Y2))
+        X_train = np.vstack((X1, X2))
+        y_train = np.hstack((Y1, Y2))
 
         clf = svm.SVC(kernel='polynomial', const=1, degree=2)
         clf.fit(X_train, y_train)
@@ -142,104 +142,109 @@ class TestNN(unittest.TestCase):
         X4 = Distribution.linear(pts=5, mean=[15, 15],
                                  covr=[[1.5, -1], [-1, 2]], seed=100)
 
-        X1 = ch.cat((X1, X2))
-        X2 = ch.cat((X3, X4))
+        X1 = np.vstack((X1, X2))
+        X2 = np.vstack((X3, X4))
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X2.size()[0])
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X2.shape[0])
 
-        X_test = ch.cat((X1, X2))
-        y_test = ch.cat((Y1, Y2))
+        X_test = np.vstack((X1, X2))
+        y_test = np.hstack((Y1, Y2))
 
         predictions, projections = clf.predict(X_test, return_projection=True)
-        expected_projections = ch.Tensor([1.9282, 4.1054, 4.4496, 2.8150, 3.3379,
-                                         1.5935, 4.2374, 3.6997, 3.8549, 2.8403,
-                                         -6.7379, -2.9163, -2.5978, -4.8333,
-                                         -4.4217, -5.2334, -2.2745, -3.0599,
-                                         -2.4423, -3.8900])
-
-        self.assertTrue(torch_equal(projections, expected_projections))
-        self.assertTrue(torch_equal(predictions, y_test))
+        expected_projections = np.array([1.2630574, 1.3302442, 1.502788, 1.2003369, 1.4567516,
+                                            1.0555044, 1.434326, 1.4227715, 1.1069533, 1.104987,
+                                           -1.6992458, -1.5001097, -1.0005158, -1.8284273, -1.0863144,
+                                           -2.238042, -1.2274336, -1.2235101, -2.1250129, -2.0870237]
+                                           )
+        expected_projections = np.array([1.9282368, 4.1053743, 4.449601, 2.8149981, 3.337817,
+                                            1.5934888, 4.237419, 3.699658, 3.8548565, 2.8402433,
+                                           -6.7378554, -2.9163127, -2.5978136, -4.833237, -4.421687,
+                                           -5.2333884, -2.2744238, -3.0598483, -2.4422958, -3.890006],
+                                           )
+        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
+        self.assertTrue(np.allclose(predictions.numpy(), y_test))
 
     def test_rbf_kernel(self):
         # Tests RBF kernel of svc.
-        X1 = Distribution.radial_binary(pts=100, mean=[0, 0], start=1, end=2,
+        X1 = Distribution.radial_binary(pts=100, mean=[0, 0], st=1, ed=2,
                                         seed=100)
-        X2 = Distribution.radial_binary(pts=100, mean=[0, 0], start=4, end=5,
+        X2 = Distribution.radial_binary(pts=100, mean=[0, 0], st=4, ed=5,
                                         seed=100)
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X1.size()[0])
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X1.shape[0])
 
-        X_train = ch.cat((X1, X2))
-        y_train = ch.cat((Y1, Y2))
+        X_train = np.vstack((X1, X2))
+        y_train = np.hstack((Y1, Y2))
 
         clf = svm.SVC(kernel='rbf', gamma=10)
         clf.fit(X_train, y_train)
 
-        X1 = Distribution.radial_binary(pts=10, mean=[0, 0], start=1, end=2,
+        X1 = Distribution.radial_binary(pts=10, mean=[0, 0], st=1, ed=2,
                                         seed=100)
-        X2 = Distribution.radial_binary(pts=10, mean=[0, 0], start=4, end=5,
+        X2 = Distribution.radial_binary(pts=10, mean=[0, 0], st=4, ed=5,
                                         seed=100)
 
-        Y1 = ch.ones(X1.size()[0])
-        Y2 = -ch.ones(X2.size()[0])
+        Y1 = np.ones(X1.shape[0])
+        Y2 = -np.ones(X2.shape[0])
 
-        X_test = ch.cat((X1, X2))
-        y_test = ch.cat((Y1, Y2))
+        X_test = np.vstack((X1, X2))
+        y_test = np.hstack((Y1, Y2))
 
         predictions, projections = clf.predict(X_test, return_projection=True)
 
-        expected_projections = ch.Tensor([1.2631, 1.3302, 1.5028, 1.2003, 1.4568,
-                                         1.0555, 1.4343, 1.4228, 1.1070, 1.1050,
-                                         -1.6992, -1.5001, -1.0005, -1.8284,
-                                         -1.0863, -2.2380, -1.2274, -1.2235,
-                                         -2.1250, -2.0870])
+        expected_projections = np.array([1.2630574, 1.3302442, 1.502788, 1.2003369, 1.4567516,
+                                         1.0555044, 1.434326, 1.4227715, 1.1069533, 1.104987,
+                                         -1.6992458, -1.5001097, -1.0005158, -1.8284273, -1.0863144,
+                                         -2.238042, -1.2274336, -1.2235101, -2.1250129, -2.0870237],
+                                          )
 
-        self.assertTrue(torch_equal(projections, expected_projections))
-        self.assertTrue(torch_equal(predictions, y_test))
+        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
+        self.assertTrue(np.allclose(predictions.numpy(), y_test))
 
     def test_multiclass(self):
-        X1 = Distribution.radial_binary(pts=100, mean=[0, 0], start=1, end=2,
+        X1 = Distribution.radial_binary(pts=10, mean=[0, 0], st=1, ed=2,
                                         seed=100)
-        X2 = Distribution.radial_binary(pts=100, mean=[0, 0], start=4, end=5,
+        X2 = Distribution.radial_binary(pts=10, mean=[0, 0], st=4, ed=5,
                                         seed=100)
-        X3 = Distribution.radial_binary(pts=100, mean=[0, 0], start=6, end=7,
+        X3 = Distribution.radial_binary(pts=10, mean=[0, 0], st=6, ed=7,
                                         seed=100)
-        X4 = Distribution.radial_binary(pts=100, mean=[0, 0], start=8, end=9,
+        X4 = Distribution.radial_binary(pts=10, mean=[0, 0], st=8, ed=9,
                                         seed=100)
 
-        Y1 = -ch.ones(X1.size()[0])
-        Y2 = ch.ones(X2.size()[0])
-        Y3 = 2 * ch.ones(X3.size()[0])
-        Y4 = 3000 * ch.ones(X4.size()[0])
+        Y1 = -np.ones(X1.shape[0])
+        Y2 = np.ones(X2.shape[0])
+        Y3 = 2 * np.ones(X3.shape[0])
+        Y4 = 3000 * np.ones(X4.shape[0])
 
-        X_train = ch.cat((X1, X2, X3, X4))
-        y_train = ch.cat((Y1, Y2, Y3, Y4))
+        X_train = np.vstack((X1, X2, X3, X4))
+        y_train = np.hstack((Y1, Y2, Y3, Y4))
 
         clf = svm.SVC(kernel='rbf', gamma=10)
         clf.fit(X_train, y_train)
 
-        X1 = Distribution.radial_binary(pts=10, mean=[0, 0], start=1, end=2,
+        X1 = Distribution.radial_binary(pts=10, mean=[0, 0], st=1, ed=2,
                                         seed=100)
-        X2 = Distribution.radial_binary(pts=10, mean=[0, 0], start=4, end=5,
+        X2 = Distribution.radial_binary(pts=10, mean=[0, 0], st=4, ed=5,
                                         seed=100)
-        X3 = Distribution.radial_binary(pts=10, mean=[0, 0], start=6, end=7,
+        X3 = Distribution.radial_binary(pts=10, mean=[0, 0], st=6, ed=7,
                                         seed=100)
-        X4 = Distribution.radial_binary(pts=10, mean=[0, 0], start=8, end=9,
+        X4 = Distribution.radial_binary(pts=10, mean=[0, 0], st=8, ed=9,
                                         seed=100)
 
-        X_test = ch.cat((X1, X2, X3, X4))
+        X_test = np.vstack((X1, X2, X3, X4))
 
         _, projections = clf.predict(X_test, return_projection=True)
 
-        expected_projections = ch.Tensor([1.2607, 1.3279, 1.5005, 1.1980, 1.4544,
-                               1.0532, 1.4320, 1.4205, 1.1046, 1.1027,
-                               1.1062, 1.0377, 0.8997, 1.0960, 1.0411,
-                               1.0289, 0.9724, 0.9620, 1.0358, 1.0679,
-                               1.1600, 1.0981, 0.0609, 1.1698, 1.1084,
-                               1.1597, 0.9454, 0.9914, 1.1755, 1.1143,
-                               2.0801, 1.7532, 0.0329, 2.2153, 1.0000,
-                               2.6483, 1.3649, 1.3261, 2.5342, 2.5862])
+        expected_projections = np.array([1.2356423, 1.1552206, 1.3244298, 1.044992, 1.2974104,
+                                         1.0000014, 1.2556306, 1.2292726, 1.0000055, 1.1191963,
+                                         0.29907486, 0.23834696, 0.5536205, 0.29669908, 0.,
+                                         0.59981525, 0.52742934, 0.30471632, 0.60282767, 0.33748698,
+                                         0., 0.04998485, 0.12111297, 0.12295954, 0.,
+                                         0.19644868, 0.11843737, 0.06227912, 0.24561723, 0.,
+                                         1.0000006, 0.99999857, 0.99999964, 1.1995112, 0.999999,
+                                         1.177406, 1.4059596, 1.6094441, 1.4153401, 1.2792733],
+                                         )
 
-        self.assertTrue(torch_equal(projections, expected_projections))
+        self.assertTrue(np.allclose(projections.numpy(), expected_projections))

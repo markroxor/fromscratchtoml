@@ -3,8 +3,6 @@
 #
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
-
-import torch as ch
 import numpy as np
 
 
@@ -19,8 +17,8 @@ def linear(x, y, **kwargs):
 
     Parameters
     ----------
-    x : torch.Tensor
-    y : torch.Tensor
+    x : numpy.ndarray
+    y : numpy.ndarray
 
     Returns
     -------
@@ -30,7 +28,7 @@ def linear(x, y, **kwargs):
 
     """
 
-    return ch.dot(x, y)
+    return np.dot(x, y)
 
 
 def polynomial(x, y, const=0, degree=1, **kwargs):
@@ -40,8 +38,8 @@ def polynomial(x, y, const=0, degree=1, **kwargs):
 
     Parameters
     ----------
-    x : torch.Tensor
-    y : torch.Tensor
+    x : numpy.ndarray
+    y : numpy.ndarray
     const : int, optional
             a polynomial kernel parameter
     degree : int, optional
@@ -49,13 +47,13 @@ def polynomial(x, y, const=0, degree=1, **kwargs):
 
     Returns
     -------
-    kernel_trick : float
+    kernel_trick : numpy.ndarray
                    Returns the kernel trick to transform the data into `degree`
                    dimensions.
 
     """
 
-    return pow((ch.dot(x, y) + const), degree)
+    return pow((np.dot(x, y) + const), degree)
 
 
 def rbf(x, y, gamma=0.1, **kwargs):
@@ -65,18 +63,17 @@ def rbf(x, y, gamma=0.1, **kwargs):
 
     Parameters
     ----------
-    x : torch.Tensor
-    y : torch.Tensor
+    x : numpy.ndarray
+    y : numpy.ndarray
     gamma : float, optional
             a RBF parameter
 
     Returns
     -------
-    kernel_trick : torch.Tensor
+    kernel_trick : numpy.ndarray
                    Returns the kernel trick to transform the data into infinite
                    dimensions.
 
     """
-
-    euclidean_dist = pow(ch.norm(x - y), 2)
+    euclidean_dist = pow(np.linalg.norm(x - y), 2)
     return np.exp(- euclidean_dist / (2 * pow(gamma, 2)))
