@@ -73,8 +73,10 @@ class SVC(BaseModel):
 
         """
 
-        kernel_matrix = [self.kernel(X[i], X[j]) for i in range(self.n)
+        kernel_matrix = [self.kernel(X[i].numpy(), X[j].numpy()) for i in range(self.n)
                      for j in range(self.n)]
+
+        kernel_matrix = np.array(kernel_matrix)
 
         kernel_matrix = ch.Tensor(kernel_matrix).view(self.n, self.n)
         return kernel_matrix
@@ -96,7 +98,6 @@ class SVC(BaseModel):
         kernel_matrix : list of svm.SVC
             A list of all the classifiers used for multi class classification
         """
-
         X = ch.Tensor(X)
         self.y = ch.Tensor(y)
         self.n = self.y.size()[0]
@@ -106,7 +107,7 @@ class SVC(BaseModel):
 
         # Do multi class classification
         if sorted(self.uniques) != [-1, 1]:
-            y_list = [np.where(y.numpy() == u, 1, -1) for u in self.uniques]
+            y_list = [np.where(self.y.numpy() == u, 1, -1) for u in self.uniques]
 
             for y_i in y_list:
                 # Copy the current initializer
@@ -181,14 +182,14 @@ class SVC(BaseModel):
             margin.
 
         """
-        if len(X.size()) == 1:
-            X = X.unsqueeze(0)
+        if len(X.shape) == 1:
+            X = np.expand_dims(X, axis=0)
 
         if len(self.classifiers) == 0:
             raise ModelNotFittedError("Predict called before fitting the model.")
 
-        projections = ch.zeros(X.size()[0])
-        predictions = ch.zeros(X.size()[0])
+        projections = ch.zeros(X.shape[0])
+        predictions = ch.zeros(X.shape[0])
 
         # If the input labels are not of as desired by svc i.e - [-1, 1]
         if sorted(self.uniques) != [-1, 1]:
@@ -206,7 +207,7 @@ class SVC(BaseModel):
                 projection = self.b
                 for i in range(self.n_support_vectors):
                     projection += self.support_lagrange_multipliers[i] * self.support_vectors_y[i] *\
-                                  self.kernel(self.support_vectors[i], x)
+                                  self.kernel(self.support_vectors[i].numpy(), x)
                 projections[j] = projection
                 predictions[j] = np.sign(projection)
 
