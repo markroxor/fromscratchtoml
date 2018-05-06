@@ -1,4 +1,4 @@
-:mod:`fromscratchtoml.decomposition.decomposition` -- decomposition
+:mod:`decomposition.decomposition` -- decomposition
 ===================================================================
 
 .. automodule:: fromscratchtoml.decomposition.decomposition

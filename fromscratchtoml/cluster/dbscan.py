@@ -6,7 +6,7 @@
 
 import numpy as np
 
-from fromscratchtoml.models.base_model import BaseModel
+from ..base import BaseModel
 from fromscratchtoml.toolbox.exceptions import InvalidArgumentError
 
 import logging

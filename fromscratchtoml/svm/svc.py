@@ -10,7 +10,7 @@ import numpy as np
 
 from functools import partial
 
-from fromscratchtoml.models.base_model import BaseModel
+from ..base import BaseModel
 from fromscratchtoml.toolbox import kernels
 from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
 
