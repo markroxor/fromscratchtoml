@@ -9,9 +9,9 @@ Welcome to fromscratchtoml's documentation!
 .. toctree::
    :maxdepth: 2
 
-   models/nn
-   models/LinearRegressionClassifier
-   models/svm
+   neural_network/nn
+   linear_regression/LinearRegressionClassifier
+   svm/svc
    decomposition/decomposition
    cluster/dbscan
 

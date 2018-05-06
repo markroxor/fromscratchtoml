@@ -6,7 +6,7 @@
 
 import torch as ch
 from .activations import Activations
-from fromscratchtoml.models.base_model import BaseModel
+from ..base import BaseModel
 
 import logging
 

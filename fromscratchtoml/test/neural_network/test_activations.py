@@ -7,7 +7,7 @@
 import unittest
 
 import numpy as np
-from fromscratchtoml.models.nn import Activations
+from fromscratchtoml.neural_network import Activations
 
 import logging
 
