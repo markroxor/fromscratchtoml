@@ -29,7 +29,7 @@ class TestKNN(unittest.TestCase):
 
         X = iris.data[:, :2]
         Y = iris.target[:]
-        X, Y = shuffle(X, Y)
+        X, Y = shuffle(X, Y, random_state=10)
 
         self.Xtrain = X[:120]
         self.Ytrain = Y[:120]
