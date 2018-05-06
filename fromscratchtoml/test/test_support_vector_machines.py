@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestNN(unittest.TestCase):
+class TestSVM(unittest.TestCase):
     def setUp(self):
         # Linearly separable data.
         self.X = ch.Tensor([[8.0, 7], [4, 10], [9, 7], [7, 10], [9, 6], [4, 8],
