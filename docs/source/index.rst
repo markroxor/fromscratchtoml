@@ -15,6 +15,7 @@ Welcome to fromscratchtoml's documentation!
    decomposition/decomposition
    cluster/dbscan
    neighbors/knn
+   cluster/kmeans
 
 
 
