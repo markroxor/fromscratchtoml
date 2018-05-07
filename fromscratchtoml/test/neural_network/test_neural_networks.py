@@ -10,7 +10,7 @@ import torch as ch
 from fromscratchtoml.neural_network import NeuralNetwork
 import torch.utils.data
 
-from fromscratchtoml.test.toolbox import _tempfile, _test_data_path # noqa:F401
+from fromscratchtoml.test.toolbox import _tempfile, _test_data_path  # noqa:F401
 
 import logging
 

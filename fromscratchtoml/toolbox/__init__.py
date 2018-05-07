@@ -8,7 +8,7 @@ import numpy as np
 
 import matplotlib
 matplotlib.use('agg')
-import matplotlib.pyplot as plt # noqa:F402
+import matplotlib.pyplot as plt  # noqa:F402
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
