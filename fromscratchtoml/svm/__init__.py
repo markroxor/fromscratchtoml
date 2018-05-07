@@ -1,1 +1,1 @@
-from .svc import SVC # noqa:F401
+from .svc import SVC  # noqa:F401
