@@ -1,1 +1,1 @@
-from .decomposition import Decomposition # noqa:F401
+from .decomposition import Decomposition  # noqa:F401

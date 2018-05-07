@@ -1,1 +1,1 @@
-from .LinearRegressionClassifier import LinearRegressionClassifier # noqa:F401
+from .LinearRegressionClassifier import LinearRegressionClassifier  # noqa:F401
