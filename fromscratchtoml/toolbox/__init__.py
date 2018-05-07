@@ -4,7 +4,6 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import torch as ch
 import numpy as np
 
 import matplotlib
@@ -12,21 +11,21 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt # noqa:F402
 
 
-def binary_visualize(X, y=None, clf=None, coarse=10, xlabel=None, ylabel=None, title=None,
-                     multicolor_contour=False, color_seed=10):
+def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
+                    title="2D visualization", multicolor_contour=False, color_seed=1980):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
     ----------
-    X : an 2xN torch.Tensor
+    X : numpy.ndarray
         The input 2D data to be plotted.
-    y : an 2xN torch.Tensor, optional
+    y : numpy.ndarray, optional
         The corresponding labels. If not provided, will be predicted.
     clf : a classifier object, optional
         The classifier which forms a basis for plotting margin. Should be passed in case of
         supervised algorithms only.
     coarse: int, optional
-        the granualirity of the separating boundries.
+        the granula3rity of the separating boundries.
     xlabel: str, optional
         The label of the x axis.
     ylabel: str, optional
@@ -46,7 +45,9 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel=None, ylabel=None, t
 
     # Also handles the cases when y is None
     unq, y = np.unique(y, return_inverse=True)
-    colors = [(np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)) for i in range(len(unq))]
+    color_intensity = (0.5, 1)
+    colors = [(np.random.uniform(*color_intensity), np.random.uniform(*color_intensity),
+               np.random.uniform(*color_intensity)) for i in range(len(unq))]
 
     colored_y = [colors[y[i]] for i in range(len(y))]
 
@@ -74,13 +75,14 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel=None, ylabel=None, t
 
                 Z = Z.reshape(_X.shape)
 
-                plt.set_cmap(plt.cm.Paired)
-                plt.pcolormesh(_X, _Y, Z)
+                # plt.set_cmap(plt.cm.Paired)
+                cMap = matplotlib.colors.ListedColormap(colors)
+                plt.pcolormesh(_X, _Y, Z, cmap=cMap)
 
             elif type(_clf).__name__ == 'SVC':
                 _X, _Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
                 Z = np.array([[_x, _y] for _x, _y in zip(np.ravel(_X), np.ravel(_Y))])
-                _, Z = _clf.predict(ch.Tensor(Z), return_projection=True)
+                _, Z = _clf.predict(Z, return_projection=True)
                 Z = Z.numpy()
 
                 Z = Z.reshape(_X.shape)
@@ -92,16 +94,12 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel=None, ylabel=None, t
 
     plt.scatter(X[:, 0], X[:, 1], c=colored_y, edgecolors='k')
 
-    if xlabel:
-        plt.xlabel(xlabel)
-
-    if ylabel:
-        plt.ylabel(ylabel)
-
-    if title:
-        plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
 
     plt.xlim(xlim)
     plt.ylim(ylim)
+
     plt.grid()
     plt.show()

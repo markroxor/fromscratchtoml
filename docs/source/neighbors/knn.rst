@@ -1,8 +1,8 @@
 :mod:`neighbors.KNeighborsClassifier` -- decomposition
-===================================================================
+======================================================
 
 .. automodule:: fromscratchtoml.neighbors.knn
-    :synopsis: DBSCAN
+    :synopsis: KNN
     :members:
     :inherited-members:
     :undoc-members:
