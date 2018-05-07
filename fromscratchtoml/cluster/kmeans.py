@@ -17,8 +17,31 @@ logger.setLevel(logging.INFO)
 
 
 class KMeans(BaseModel):
+    """Implements the kmeans unsupervised clustering algorithm.
 
-    def __init__(self, n_clusters=2, max_iter=500, seed=100):
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fromscratchtoml.cluster import KMeans as KMeans
+    >>> from fromscratchtoml.toolbox.random import Distribution
+    >>> X1 = Distribution.linear(pts=500, covr=[[1.2, -1],[-1, 1]], mean=[0, 0])
+    >>> X2 = Distribution.linear(pts=500, covr=[[1.2, -1],[-1, 1]], mean=[-1, -2])
+    >>> X3 = Distribution.linear(pts=500, covr=[[1.2, -1],[-1, 1]], mean=[6, -3])
+    >>> X = np.vstack([X1, X2, X3])
+    >>> KMeans(n_clusters=3).fit_predict(X)
+    array([1., 0., 1., ..., 2., 2., 2.])
+
+    Parameters
+    ----------
+    n_clusters : int
+        The number of clusters in which data will be clustered.
+    max_iter : int, optional
+        The upper limit of the number of iterations to perform before converging.
+    seed: int, optional
+        Numpy's random seed.
+    """
+
+    def __init__(self, n_clusters, max_iter=500, seed=None):
         if not isinstance(n_clusters, int) or n_clusters <= 0:
             raise InvalidArgumentError("Expected n_clusters to be a positive int "
                                        "but got type {} and value {}".format(type(n_clusters), n_clusters))
@@ -27,7 +50,12 @@ class KMeans(BaseModel):
             raise InvalidArgumentError("Expected n_clusters to be a positive int "
                                        "but got type {} and value {}".format(type(max_iter), max_iter))
 
-        np.random.seed(seed)
+        if not isinstance(seed, int) or seed <= 0:
+            raise InvalidArgumentError("Expected n_clusters to be a positive int "
+                                       "but got type {} and value {}".format(type(seed), seed))
+
+        if seed:
+            np.random.seed(seed)
         self.n_clusters = n_clusters
         self.max_iter = max_iter
 
@@ -46,6 +74,14 @@ class KMeans(BaseModel):
         return centers, converged
 
     def fit(self, X):
+        """Fits the kmeans unsupervised clustering algorithm.
+
+        Parameters
+        ----------
+        X : numpy.ndarray
+            The training features.
+
+        """
         self.X = X
 
         center_ids = np.random.randint(self.X.shape[0], size=self.n_clusters)
@@ -74,5 +110,17 @@ class KMeans(BaseModel):
         return self
 
     def fit_predict(self, X):
+        """Fits and predicts using the knn unsupervised clustering algorithm.
+
+        Parameters
+        ----------
+        X : numpy.ndarray
+            The training features.
+
+        Returns
+        -------
+        labels : numpy.ndarray
+            The class label corresponding to each data point.
+        """
         self.fit(X)
         return self.labels
