@@ -14,6 +14,7 @@ Welcome to fromscratchtoml's documentation!
    svm/svc
    decomposition/decomposition
    cluster/dbscan
+   neighbors/knn
 
 
 

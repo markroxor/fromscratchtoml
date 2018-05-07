@@ -21,9 +21,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestNN(unittest.TestCase):
+class TestDBSCAN(unittest.TestCase):
     def setUp(self):
-        # sets up a basic input dataset from iris dataset.
         self.eps = 0.5
         self.min_points = 5
 
