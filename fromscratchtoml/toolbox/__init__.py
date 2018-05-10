@@ -60,37 +60,21 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
     y_min, y_max = ylim
 
     if clf is not None:
-        if hasattr(clf, 'classifiers'):
-            clf = clf.classifiers
+        _X, _Y = np.meshgrid(np.arange(x_min, x_max, 1 / (coarse * 1.0)), np.arange(y_min, y_max, 1 / (coarse * 1.0)))
+        _ = np.c_[_X.ravel(), _Y.ravel()]
+
+        _, Z = clf.predict(_, return_projection=True)
+
+        unq, y = np.unique(_, return_inverse=True)
+
+        _ = _.reshape(_X.shape)
+        Z = Z.reshape(_X.shape)
+
+        if multicolor_contour is True:
+            plt.contour(_X, _Y, Z, [0.0], colors=[colors[i]])
         else:
-            clf = [clf]
-
-        for i, _clf in enumerate(clf):
-
-            if type(_clf).__name__ == 'KNeighborsClassifier':
-                coarse = 1 / (coarse * 1.0)
-                _X, _Y = np.meshgrid(np.arange(x_min, x_max, coarse), np.arange(y_min, y_max, coarse))
-                Z = np.c_[_X.ravel(), _Y.ravel()]
-                Z = _clf.predict(Z)
-
-                Z = Z.reshape(_X.shape)
-
-                # plt.set_cmap(plt.cm.Paired)
-                cMap = matplotlib.colors.ListedColormap(colors)
-                plt.pcolormesh(_X, _Y, Z, cmap=cMap)
-
-            elif type(_clf).__name__ == 'SVC':
-                _X, _Y = np.meshgrid(np.linspace(x_min, x_max, coarse), np.linspace(y_min, y_max, coarse))
-                Z = np.array([[_x, _y] for _x, _y in zip(np.ravel(_X), np.ravel(_Y))])
-                _, Z = _clf.predict(Z, return_projection=True)
-                Z = Z.numpy()
-
-                Z = Z.reshape(_X.shape)
-
-                if multicolor_contour is True:
-                    plt.contour(_X, _Y, Z, [0.0], colors=[colors[i]])
-                else:
-                    plt.contour(_X, _Y, Z, [0.0], colors='k')
+            # plt.contour(_X, _Y, Z, [0.0], colors='k') cmap=plt.cm.Spectral
+            plt.contourf(_X, _Y, _, c=colored_y)
 
     plt.scatter(X[:, 0], X[:, 1], c=colored_y, edgecolors='k')
 
