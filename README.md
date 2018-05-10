@@ -6,7 +6,7 @@ https://jellAIfish.github.io/fromscratchtoml/
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jellAIfish/from-scratch-to-ml)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml?ref=badge_shield)
-
+[![PyPI version](https://badge.fury.io/py/fromscratchtoml.svg)](https://badge.fury.io/py/fromscratchtoml)
 
 
 *An intuitive machine learning library for beginners, in python.*  
