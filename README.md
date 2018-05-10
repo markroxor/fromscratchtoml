@@ -12,23 +12,15 @@ https://jellAIfish.github.io/fromscratchtoml/
 *An intuitive machine learning library for beginners, in python.*  
 This library targets individuals who want to learn machine learning code from scratch keeping _code-readability_ and _simplicity_ over efficiency.
 
-## Highlights
-* Every bit of code is well documented and easy to understand.
-* The only dependency used is `pytorch` because it is a better alternative of `numpy` as it can run computations by harnessing the power of GPUs as well.
-* `pytorch` is only used for mathematical computations - mostly matrix multiplication and operations. It is not used as a backend for machine learning algorithms
+## Goals
+ - To document every bit of code and make it easy to understand.
+ - To bridge the gap between the theoretical and coding aspects of machine learning algorithms.
+ - To write [intuitive blogs as python notebooks](https://jellaifish.github.io/fromscratchtoml/showroom/) so as to juxtapose theory and code. Explaining the fundamentals of the algorithm from the very basics.  
+ - To minimise the use of external dependencies except the fundamental ones like `numpy` and `matplotlib`.
+ - To make sure that the developed algorithms are coherent with already existing machine learning frameworks.
+ - And above all - to be a one stop repository for understanding almost all the basic machine learning algorithms.
 
 ## Installation
-#### Prerequisites
-Before proceeding with installation -
-One of the dependencies of our project is `pytorch` which is not availabe on `pip` as of now, you must install it manually -
-* Easy (recommended) - Run the script
-
-        wget https://raw.githubusercontent.com/jellAIfish/fromscratchtoml/master/scripts/install_pytorch.sh
-        ./install_pytorch.sh
-
-     It will auto-identify the system configuration and install the corresponding `pytorch` version _without GPU support_.
-* Manually - In case you face any error, you can head over to [pytorch.org](http://pytorch.org/) for a more customized installation.
-
 #### Python pypi <a name="pypi"></a>
 You can install from [pipy](https://pypi.org/project/fromscratchtoml/).
 
