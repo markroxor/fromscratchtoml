@@ -33,8 +33,9 @@ This is the most stable build.
 If you are interested in installing the most bleeding edge but not too stable version. You can install
 from source -  
 
-    pip install -r requirements.txt  
+
     git clone https://github.com/jellAIfish/fromscratchtoml.git
+    pip install -r requirements.txt  
     python setup.py install
 
 ## Tutorials and support
