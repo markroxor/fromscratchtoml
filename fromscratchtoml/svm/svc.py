@@ -139,7 +139,7 @@ class SVC(BaseModel):
                                                                 b)['x']))
 
         lagrange_multiplier_indices = np.greater_equal(lagrange_multipliers, multiplier_threshold)
-        lagrange_multiplier_indices = map(list, lagrange_multiplier_indices.nonzero())[0]
+        lagrange_multiplier_indices = list(map(list, lagrange_multiplier_indices.nonzero()))[0]
 
         # self.support_vectors = np.take(X, lagrange_multiplier_indices, axis=1)
         self.support_vectors = X[lagrange_multiplier_indices]

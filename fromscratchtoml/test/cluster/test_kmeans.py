@@ -23,9 +23,9 @@ logger.setLevel(logging.INFO)
 class TestKMeans(unittest.TestCase):
     def setUp(self):
         self.n_clusters = 3
-        X1 = Distribution.linear(pts=10, covr=[[0, -1], [-1, 0]], mean=[0, 0])
-        X2 = Distribution.linear(pts=10, covr=[[0, -1], [-1, 0]], mean=[0, -6])
-        X3 = Distribution.linear(pts=10, covr=[[0, -1], [-1, 0]], mean=[6, -3])
+        X1 = Distribution.linear(pts=10, covr=[[1, -1], [-1, 1]], mean=[0, 0])
+        X2 = Distribution.linear(pts=10, covr=[[1, -1], [-1, 1]], mean=[0, -6])
+        X3 = Distribution.linear(pts=10, covr=[[1, -1], [-1, 1]], mean=[6, -3])
 
         self.X = np.vstack([X1, X2, X3])
 
