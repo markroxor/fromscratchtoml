@@ -6,7 +6,6 @@
 
 import unittest
 
-import torch as ch
 import numpy as np
 
 from fromscratchtoml import svm
@@ -24,10 +23,10 @@ logger.setLevel(logging.INFO)
 class TestSVM(unittest.TestCase):
     def setUp(self):
         # Linearly separable data.
-        self.X = ch.Tensor([[8.0, 7], [4, 10], [9, 7], [7, 10], [9, 6], [4, 8],
+        self.X = np.array([[8.0, 7], [4, 10], [9, 7], [7, 10], [9, 6], [4, 8],
                             [10, 10], [2, 7], [8, 3], [7, 5], [4, 4], [4, 6],
                             [1, 3], [2, 5]])
-        self.y = ch.Tensor([1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1])
+        self.y = np.array([1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1])
 
     def model_equal(self, m1, m2):
         # compares two svc models by comparing their support vectors and
@@ -35,10 +34,10 @@ class TestSVM(unittest.TestCase):
         self.assertTrue(m1.b, m1.b)
 
         for s1, s2 in zip(m1.support_vectors, m2.support_vectors):
-            self.assertTrue(ch.equal(s1, s2))
+            self.assertTrue(np.allclose(s1, s2))
 
-        self.assertTrue(ch.equal(m1.support_vectors_y, m2.support_vectors_y))
-        self.assertTrue(ch.equal(m1.support_lagrange_multipliers,
+        self.assertTrue(np.allclose(m1.support_vectors_y, m2.support_vectors_y))
+        self.assertTrue(np.allclose(m1.support_lagrange_multipliers,
                                  m2.support_lagrange_multipliers))
 
     def test_consistency(self):
@@ -107,8 +106,8 @@ class TestSVM(unittest.TestCase):
                                            -2.909471, -5.3092747, -4.2953954, -5.7412434, -3.9225864,
                                            -3.551451, -3.0233462, -4.853119, -2.8000426, -5.4148474]
                                            )
-        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
-        self.assertTrue(np.allclose(predictions.numpy(), y_test))
+        self.assertTrue(np.allclose(projections, expected_projections))
+        self.assertTrue(np.allclose(predictions, y_test))
 
     def test_poly_kernel(self):
         # Tests polynomial kernel of svc.
@@ -164,8 +163,8 @@ class TestSVM(unittest.TestCase):
                                            -6.7378554, -2.9163127, -2.5978136, -4.833237, -4.421687,
                                            -5.2333884, -2.2744238, -3.0598483, -2.4422958, -3.890006],
                                            )
-        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
-        self.assertTrue(np.allclose(predictions.numpy(), y_test))
+        self.assertTrue(np.allclose(projections, expected_projections))
+        self.assertTrue(np.allclose(predictions, y_test))
 
     def test_rbf_kernel(self):
         # Tests RBF kernel of svc.
@@ -202,8 +201,8 @@ class TestSVM(unittest.TestCase):
                                          -2.238042, -1.2274336, -1.2235101, -2.1250129, -2.0870237],
                                           )
 
-        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
-        self.assertTrue(np.allclose(predictions.numpy(), y_test))
+        self.assertTrue(np.allclose(projections, expected_projections))
+        self.assertTrue(np.allclose(predictions, y_test))
 
     def test_multiclass(self):
         X1 = Distribution.radial_binary(pts=10, mean=[0, 0], st=1, ed=2,
@@ -239,14 +238,15 @@ class TestSVM(unittest.TestCase):
 
         _, projections = clf.predict(X_test, return_projection=True)
 
-        expected_projections = np.array([1.2356423, 1.1552206, 1.3244298, 1.044992, 1.2974104,
-                                         1.0000014, 1.2556306, 1.2292726, 1.0000055, 1.1191963,
-                                         0.29907486, 0.23834696, 0.5536205, 0.29669908, 0.,
-                                         0.59981525, 0.52742934, 0.30471632, 0.60282767, 0.33748698,
-                                         0., 0.04998485, 0.12111297, 0.12295954, 0.,
-                                         0.19644868, 0.11843737, 0.06227912, 0.24561723, 0.,
-                                         1.0000006, 0.99999857, 0.99999964, 1.1995112, 0.999999,
-                                         1.177406, 1.4059596, 1.6094441, 1.4153401, 1.2792733],
+        expected_projections = np.array(
+                                        [1.23564788, 1.15519477, 1.32441802, 1.04496554, 1.29740627, 0.,
+                                         1.25561797, 1.22925452, 0., 1.11920321, 0.2991908, 0.23818634,
+                                         0.55359011, 0.29655677, 0., 0.59992803, 0.52733203, 0.30456398,
+                                         0.6027897, 0.33755249, 0., 0.04997651, 0.12099712, 0.12276944,
+                                         0., 0.19631702, 0.11836214, 0.06221966, 0.24539362, 0.,
+                                         1.00000106, 1.0000021, 1.00000092, 1.19952335, 1.00000283, 1.17741522,
+                                         1.40596479, 1.60945299, 1.41534644, 1.27928235]
                                          )
 
-        self.assertTrue(np.allclose(projections.numpy(), expected_projections))
+        print(projections)
+        self.assertTrue(np.allclose(projections, expected_projections))
