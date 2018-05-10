@@ -61,20 +61,20 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
 
     if clf is not None:
         _X, _Y = np.meshgrid(np.arange(x_min, x_max, 1 / (coarse * 1.0)), np.arange(y_min, y_max, 1 / (coarse * 1.0)))
-        _ = np.c_[_X.ravel(), _Y.ravel()]
 
-        _, Z = clf.predict(_, return_projection=True)
+        Z = np.c_[_X.ravel(), _Y.ravel()]
+        Z = clf.predict(Z)
 
-        unq, y = np.unique(_, return_inverse=True)
-
-        _ = _.reshape(_X.shape)
+        unq, _ = np.unique(Z, return_inverse=True)
         Z = Z.reshape(_X.shape)
 
-        if multicolor_contour is True:
-            plt.contour(_X, _Y, Z, [0.0], colors=[colors[i]])
-        else:
-            # plt.contour(_X, _Y, Z, [0.0], colors='k') cmap=plt.cm.Spectral
-            plt.contourf(_X, _Y, _, c=colored_y)
+        _colors = colors
+        if len(_colors) < len(unq):
+            _colors += [(np.random.uniform(*color_intensity), np.random.uniform(*color_intensity),
+                       np.random.uniform(*color_intensity)) for i in range(len(unq) - len(colors))]
+
+        cMap = matplotlib.colors.ListedColormap(_colors)
+        plt.contourf(_X, _Y, Z, cmap=cMap)
 
     plt.scatter(X[:, 0], X[:, 1], c=colored_y, edgecolors='k')
 
