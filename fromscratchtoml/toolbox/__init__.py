@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt  # noqa:F402
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
-                    title="2D visualization", multicolor_contour=False, color_seed=1980):
+                    title="2D visualization", draw_contour=False, color_seed=1980):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
@@ -45,6 +45,7 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
 
     # Also handles the cases when y is None
     unq, y = np.unique(y, return_inverse=True)
+
     color_intensity = (0.5, 1)
     colors = [(np.random.uniform(*color_intensity), np.random.uniform(*color_intensity),
                np.random.uniform(*color_intensity)) for i in range(len(unq))]
@@ -65,18 +66,19 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
         Z = np.c_[_X.ravel(), _Y.ravel()]
         Z = clf.predict(Z)
 
-        unq, _ = np.unique(Z, return_inverse=True)
+        unq, Z = np.unique(Z, return_inverse=True)
         Z = Z.reshape(_X.shape)
 
         _colors = colors
-        if len(_colors) < len(unq):
-            _colors += [(np.random.uniform(*color_intensity), np.random.uniform(*color_intensity),
-                       np.random.uniform(*color_intensity)) for i in range(len(unq) - len(colors))]
+        if len(_colors) < len(unq) + 1:
+            _colors = [(np.random.uniform(*color_intensity), np.random.uniform(*color_intensity),
+                       np.random.uniform(*color_intensity)) for i in range(1 + len(unq) - len(colors))] + _colors[::-1]
 
         cMap = matplotlib.colors.ListedColormap(_colors)
-        plt.contourf(_X, _Y, Z, cmap=cMap)
 
-    plt.scatter(X[:, 0], X[:, 1], c=colored_y, edgecolors='k')
+        plt.contourf(_X, _Y, Z, cmap='Pastel1')
+
+    plt.scatter(X[:, 0], X[:, 1], c=colored_y, cmap='Pastel1', edgecolors='k')
 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
