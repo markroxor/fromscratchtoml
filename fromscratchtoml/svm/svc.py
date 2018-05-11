@@ -204,6 +204,7 @@ class SVC(BaseModel):
                         if projections[j] != 0:
                             projections[j] = 0
                             predictions[j] = 0
+                            break
                         else:
                             predictions[j] = self.y[self.ind[i]]
                             projections[j] = float(projection)

@@ -50,7 +50,7 @@ class KMeans(BaseModel):
             raise InvalidArgumentError("Expected n_clusters to be a positive int "
                                        "but got type {} and value {}".format(type(max_iter), max_iter))
 
-        if not isinstance(seed, int) or seed <= 0:
+        if seed and (not isinstance(seed, int) or seed <= 0):
             raise InvalidArgumentError("Expected n_clusters to be a positive int "
                                        "but got type {} and value {}".format(type(seed), seed))
 
