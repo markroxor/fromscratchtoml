@@ -11,8 +11,8 @@ import numpy as np
 from functools import partial
 
 from ..base import BaseModel
-from fromscratchtoml.toolbox import kernels
-from fromscratchtoml.toolbox.exceptions import ModelNotFittedError
+from ..toolbox import kernels
+from ..toolbox.exceptions import ModelNotFittedError
 
 import logging
 
