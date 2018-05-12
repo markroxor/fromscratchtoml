@@ -6,6 +6,8 @@
 
 import numpy as np
 
+from .exceptions import ParameterRequiredException
+
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt  # noqa:F402
@@ -60,7 +62,10 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
     x_min, x_max = xlim
     y_min, y_max = ylim
 
-    if clf is not None:
+    if draw_contour:
+        if clf is None:
+            raise ParameterRequiredException("Missing required parameter clf for drawing contour.")
+
         _X, _Y = np.meshgrid(np.arange(x_min, x_max, 1 / (coarse * 1.0)), np.arange(y_min, y_max, 1 / (coarse * 1.0)))
 
         Z = np.c_[_X.ravel(), _Y.ravel()]

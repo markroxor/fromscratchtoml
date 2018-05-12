@@ -5,13 +5,13 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-class Error(Exception):
+class ModelNotFittedError(Exception):
     pass
 
 
-class ModelNotFittedError(Error):
+class InvalidArgumentError(Exception):
     pass
 
 
-class InvalidArgumentError(Error):
+class ParameterRequiredException(Exception):
     pass
