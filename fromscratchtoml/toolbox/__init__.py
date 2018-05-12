@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+import sys
 
 import numpy as np
 
@@ -11,6 +12,24 @@ from .exceptions import ParameterRequiredException
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt  # noqa:F402
+
+
+def progress(generator):
+    n = len(list(generator))
+
+    for i, g in enumerate(generator):
+        i = i + 1
+        j = int(100 * (i / (n * 1.0)))
+
+        bar = ("[%s%s] %d%%" % ('█' * j, ' ' * (100 - j), j))
+
+        sys.stdout.write('\r' + bar)
+        sys.stdout.flush()
+
+        if i == n:
+            sys.stdout.write('\n')
+
+        yield g
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
