@@ -7,7 +7,7 @@
 import numpy as np
 
 from ..base import BaseModel
-from fromscratchtoml.toolbox.exceptions import InvalidArgumentError
+from ..toolbox.exceptions import InvalidArgumentError
 
 import logging
 

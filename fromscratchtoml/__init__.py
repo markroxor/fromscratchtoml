@@ -1,3 +1,9 @@
-from fromscratchtoml.neural_network import nn  # noqa:F401
-from fromscratchtoml.linear_regression import LinearRegressionClassifier  # noqa:F401
-from .base import BaseModel  # noqa:F401
+from . import base  # noqa:F401
+from . import neural_network  # noqa:F401
+from . import DecisionTree  # noqa:F401
+from . import linear_regression  # noqa:F401
+from . import svm  # noqa:F401
+from . import cluster  # noqa:F401
+from . import neighbors  # noqa:F401
+from . import decomposition  # noqa:F401
+from . import toolbox  # noqa:F401
