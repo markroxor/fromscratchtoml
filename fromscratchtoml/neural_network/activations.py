@@ -33,7 +33,7 @@ class Activations(object):
         return x * alpha
 
     @staticmethod
-    def sigmoid(x):
+    def sigmoid(x, return_deriv=False):
         """Returns the sigmoid of x.
 
         Parameters
@@ -46,7 +46,12 @@ class Activations(object):
             sigmoid of x
 
         """
-        return 1.0 / (1.0 + np.exp(-x))
+        _sigmoid = 1.0 / (1.0 + np.exp(-x))
+
+        if return_deriv:
+            return _sigmoid, _sigmoid * (1 - _sigmoid)
+
+        return _sigmoid
 
     @staticmethod
     def tanh(x):
