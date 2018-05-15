@@ -23,31 +23,38 @@ class Dense(object):
         self.weights = None
 
         if input_dim:
-            self.biases = np.random.randn(units, 1)
-            self.weights = np.random.randn(input_dim, units)
+            self.biases = np.random.randn(self.units, 1)
+            self.weights = np.random.randn(input_dim, self.units)
 
-    def initialize_params(self, input_dim, optimizer):
+    def initialize_params(self, input_dim):
         self.biases = np.random.randn(input_dim, 1)
         self.weights = np.random.randn(input_dim, self.units)
-        self.optimizer = optimizer
 
-    def forward(self, X, **kwargs):
+    def forward(self, X, return_deriv=False):
+        if len(X.shape) == 1:
+            X = np.expand_dims(X, axis=1)
+        print("layer has ", self.units)
+        if self.weights is None:
+            self.biases = np.random.randn(self.units, 1)
+            self.weights = np.random.randn(X.shape[0], self.units)
+
         self.input = X
-        print(X)
-        print(self.weights)
-        print(np.dot(X, self.weights))
-        print(self.biases)
-        self.output = np.dot(X, self.weights) + self.biases
+        self.output = np.dot(self.weights.T, X) + self.biases
+        if return_deriv:
+            return self.output, 0
 
         return self.output
 
     def back_propogate(self, delta):
-        delta = np.dot(self.weights.T, delta) * self.output_deriv
+        # print("popo")
+        # print(delta.shape)
+        # print(self.weights.shape)
+        delta = np.dot(self.weights, delta)
         return delta
 
-    def optimize(self, der_cost_bias, der_cost_weight):
-        self.weights = self.optimizer.update_weights(self.weights, der_cost_weight)
-        self.biases = self.optimizer.update_weights(self.biases, der_cost_bias)
+    def optimize(self, optimizer, der_cost_bias, der_cost_weight):
+        self.weights = optimizer.update_weights(self.weights, der_cost_weight)
+        self.biases = optimizer.update_weights(self.biases, der_cost_bias)
 
 
 class Activation(object):
@@ -55,6 +62,7 @@ class Activation(object):
         self.activation = partial(getattr(Activations, activation))
 
     def forward(self, X, return_deriv=False):
+        self.input = X
         self.output, self.output_deriv = self.activation(X, return_deriv=True)
 
         if return_deriv:
@@ -66,3 +74,5 @@ class Activation(object):
         delta = delta * self.output_deriv
 
         return delta
+
+    def optimize(self, optimizer, der_cost_bias, der_cost_weight):

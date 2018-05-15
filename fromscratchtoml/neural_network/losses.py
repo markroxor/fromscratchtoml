@@ -14,6 +14,8 @@ logger.setLevel(logging.INFO)
 
 
 def mean_squared_error(y_predicted, y_target, return_deriv=False):
+    if len(y_target.shape) == 1:
+        y_target = np.expand_dims(y_target, axis=1)
     if return_deriv:
         return np.mean(np.square(y_predicted - y_target)), y_predicted - y_target
     return np.mean(np.square(y_predicted - y_target))

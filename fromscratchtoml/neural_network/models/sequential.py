@@ -32,10 +32,11 @@ class Sequential(object):
     def __update_batch(self, X, Y):
         der_cost_bias = None
         der_cost_weight = None
+
         for x, y in zip(X, Y):
-            y_pred, y_pred_deriv = self.predict(x, return_deriv=True)
-            delta_der_cost_bias, delta_der_cost_weight = self.forward_propogation(x, y)
-            if delta_der_cost_bias is None:
+            delta_der_cost_bias, delta_der_cost_weight = self.back_propogation(x, y)
+
+            if der_cost_bias is None:
                 der_cost_bias, der_cost_weight = delta_der_cost_bias, delta_der_cost_weight
             else:
                 der_cost_bias += delta_der_cost_bias
@@ -43,30 +44,38 @@ class Sequential(object):
 
         # updates weights in each layer
         for layer in self.layers:
-            layer.optimize(der_cost_bias, der_cost_weight)
+            layer.optimize(self.optimizer, der_cost_bias, der_cost_weight)
 
         return
+
+    def back_propogation(self, X, y):
         y_pred, y_pred_deriv = self.predict(X, return_deriv=True)
         loss, loss_grad = self.loss(y_pred, y, return_deriv=True)
         delta = loss_grad * y_pred_deriv
-        self.back_propogation(X, y, delta)
-        return loss
 
-    def forward_propogation(self, X):
-        for layer in self.layers:
-            act, act_deriv = layer.forward(X)
-            output = act
-            output_deriv = act_deriv
-        return output, output_deriv
+        delta_nabla_b = []
+        delta_nabla_w = []
 
-    def back_propogation(self, X, y, delta):
+        delta_nabla_b.append(np.array(delta))
+        delta_nabla_w.append(np.dot(delta, self.layers[-3].output.T))
+
         for i in reversed(range(len(self.layers) - 1)):
-            delta = self.layer[i + 1].back_propogate(delta)
+            # updates delta
+            delta = self.layers[i + 1].back_propogate(delta)
+
+            if hasattr(self.layers[i + 1], 'activation'):
+                delta_nabla_b.append(np.array(delta))
+                delta_nabla_w.append(np.dot(delta, self.layers[i + 1].input.transpose()))
+            else:
+                delta_nabla_b.append([0])
+                delta_nabla_w.append([0])
+
+        return np.array(delta_nabla_b[::-1]), np.array(delta_nabla_w[::-1])
 
     def predict(self, X, return_deriv=False):
         z = X
         for layer in self.layers:
-            z, z_deriv = layer.forward(z)
+            z, z_deriv = layer.forward(z, return_deriv=True)
 
         if return_deriv:
             return z, z_deriv
@@ -79,5 +88,5 @@ class Sequential(object):
 
     def add(self, layer):
         if hasattr(layer, 'input_dim') and layer.input_dim is None:
-            layer.initialize_params(input_dim=self.layers[-1].units, optimizer=self.optimizer)
+            layer.initialize_params(input_dim=self.layers[-1].units)
         self.layers.append(layer)
