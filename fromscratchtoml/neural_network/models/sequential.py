@@ -27,53 +27,54 @@ class Sequential(object):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
-                self.__update_batch(batch_X, batch_y)
+                loss = self.__update_batch(batch_X, batch_y)
+            print(loss, "loss")
 
     def __update_batch(self, X, Y):
-        der_cost_bias = None
-        der_cost_weight = None
+        der_error_bias = None
+        der_error_weight = None
 
         for x, y in zip(X, Y):
-            delta_der_cost_bias, delta_der_cost_weight = self.back_propogation(x, y)
-
-            if der_cost_bias is None:
-                der_cost_bias, der_cost_weight = delta_der_cost_bias, delta_der_cost_weight
+            delta_der_error_bias, delta_der_error_weight, loss = self.back_propogation(x, y)
+            if der_error_bias is None:
+                der_error_bias, der_error_weight = delta_der_error_bias, delta_der_error_weight
             else:
-                der_cost_bias += delta_der_cost_bias
-                der_cost_weight += delta_der_cost_weight
+                der_error_bias += delta_der_error_bias
+                der_error_weight += delta_der_error_weight
 
         # updates weights in each layer
-        for layer in self.layers:
-            layer.optimize(self.optimizer, der_cost_bias, der_cost_weight)
+        # for layer, db, dw in zip(self.layers, der_error_bias, der_error_weight):
+        #     layer.optimize(self.optimizer, db, dw)
 
-        return
+        return loss
 
     def back_propogation(self, X, y):
         y_pred, y_pred_deriv = self.predict(X, return_deriv=True)
+
         loss, loss_grad = self.loss(y_pred, y, return_deriv=True)
-        delta = loss_grad * y_pred_deriv
 
-        delta_nabla_b = []
-        delta_nabla_w = []
+        delta = loss_grad
 
-        delta_nabla_b.append(np.array(delta))
-        delta_nabla_w.append(np.dot(delta, self.layers[-3].output.T))
+        der_error_biases = []
+        der_error_weights = []
 
-        for i in reversed(range(len(self.layers) - 1)):
+        for layer in reversed(self.layers):
             # updates delta
-            delta = self.layers[i + 1].back_propogate(delta)
+            delta, der_error_bias, der_error_weight = layer.back_propogate(delta)
 
-            if hasattr(self.layers[i + 1], 'activation'):
-                delta_nabla_b.append(np.array(delta))
-                delta_nabla_w.append(np.dot(delta, self.layers[i + 1].input.transpose()))
-            else:
-                delta_nabla_b.append([0])
-                delta_nabla_w.append([0])
+            if hasattr(layer, 'weights'):
+                layer.optimize(self.optimizer, der_error_bias, der_error_weight)
 
-        return np.array(delta_nabla_b[::-1]), np.array(delta_nabla_w[::-1])
+            der_error_biases.append(der_error_bias)
+            der_error_weights.append(der_error_weight)
+
+        return np.array(der_error_biases[::-1]), np.array(der_error_weights[::-1]), loss
 
     def predict(self, X, return_deriv=False):
+        if len(X.shape) == 1:
+            X = np.expand_dims(X, axis=1)
         z = X
+
         for layer in self.layers:
             z, z_deriv = layer.forward(z, return_deriv=True)
 

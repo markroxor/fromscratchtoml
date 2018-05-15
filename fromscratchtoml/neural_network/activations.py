@@ -5,6 +5,7 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import numpy as np
+import math
 
 import logging
 
@@ -74,7 +75,7 @@ class Activations(object):
         return 2 * Activations.sigmoid(2 * x) - 1
 
     @staticmethod
-    def relu(x):
+    def relu(x, return_deriv=False):
         """Returns the REctified Linear Unit.
 
         Parameters
@@ -87,8 +88,16 @@ class Activations(object):
             relu of x
 
         """
-
-        return np.clip(x, 0, max(x))
+        _relu = np.clip(x, 0, max(x))
+        if return_deriv:
+            a = []
+            for i in x:
+                if i > 0:
+                    a.append(1)
+                else:
+                    a.append(0)
+            return _relu, np.array(a)
+        return _relu
 
     @staticmethod
     def leaky_relu(x, alpha=0.3):
