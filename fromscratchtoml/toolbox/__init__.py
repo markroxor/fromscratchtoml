@@ -21,7 +21,7 @@ def progress(generator):
         i = i + 1
         j = int(100 * (i / (n * 1.0)))
 
-        bar = ("[%s%s] %d%%" % ('█' * j, ' ' * (100 - j), j))
+        bar = ("[%s%s] %d%%\n" % ('█' * j, ' ' * (100 - j), j))
 
         sys.stdout.write('\r' + bar)
         sys.stdout.flush()
