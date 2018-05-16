@@ -18,43 +18,46 @@ logger.setLevel(logging.INFO)
 
 
 class Sequential(object):
-    def __init__(self):
+    def __init__(self, verbose=False):
         self.layers = []
+        self.verbose = verbose
 
     def compile(self, optimizer, loss):
         self.optimizer = optimizer
         self.loss = getattr(losses, loss)
 
     def accuracy(self, X, y):
-        y_pred = self.predict(X)
-        print(y_pred[0])
-        print(y[0])
-        return (y.shape[0] - np.count_nonzero(np.count_nonzero(y_pred - y, axis=1))) / (.01 * y.shape[0])
+        y_pred = self.predict(X, one_hot=bool(len(y[0].shape)))
+        print(y_pred.shape, y.shape)
+        print(y_pred)
+        print(y)
+        return (y.shape[0] - np.count_nonzero(np.count_nonzero(y_pred - y, axis=int(bool(len(y[0].shape)))))) / (.01 * y.shape[0])
 
     def fit(self, X, y, epochs, batch_size):
         for epoch in progress(range(epochs)):
-            print("epoch: {}/{} ".format(epoch + 1, epochs), end="")
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
                 self.__update_batch(batch_X, batch_y)
 
-            # print("acc: {}".format(self.accuracy(X, y)))
-            # y_pred = self.predict(X)
-            # loss = self.loss(y_pred, y)
-            # print("loss: {:0.3f} ".format(loss))
+            if self.verbose or epoch == epochs - 1:
+                y_pred = self.predict(X, one_hot=True)
+                loss = self.loss(y_pred, y)
+                print(" epoch: {}/{} ".format(epoch + 1, epochs), end="")
+                print(" acc: {:0.2f} ".format(self.accuracy(X, y)), end="")
+                print(" loss: {:0.3f} ".format(loss))
 
     def __update_batch(self, X, Y):
-        der_error_bias = None
-        der_error_weight = None
+        # der_error_bias = None
+        # der_error_weight = None
 
         for x, y in zip(X, Y):
             delta_der_error_bias, delta_der_error_weight = self.back_propogation(x, y)
-            if der_error_bias is None:
-                der_error_bias, der_error_weight = delta_der_error_bias, delta_der_error_weight
-            else:
-                der_error_bias += delta_der_error_bias
-                der_error_weight += delta_der_error_weight
+            # if der_error_bias is None:
+            #     der_error_bias, der_error_weight = delta_der_error_bias, delta_der_error_weight
+            # else:
+            #     der_error_bias += delta_der_error_bias
+            #     der_error_weight += delta_der_error_weight
 
         # updates weights in each layer
         # for layer, db, dw in zip(self.layers, der_error_bias, der_error_weight):
@@ -80,6 +83,7 @@ class Sequential(object):
             der_error_biases.append(der_error_bias)
             der_error_weights.append(der_error_weight)
 
+        # print("delta", delta)
         return np.array(der_error_biases[::-1]), np.array(der_error_weights[::-1])
 
     def forwardpass(self, x, return_deriv=False):
@@ -95,18 +99,17 @@ class Sequential(object):
 
         return z
 
-    def predict(self, X):
-        # print(X[0])
-        # if len(X.shape) == 1:
-        #     X = np.expand_dims(X, axis=0)
-
+    def predict(self, X, one_hot=False):
         Z = []
         for x in X:
             z = self.forwardpass(x)
 
             t = np.zeros_like(z)
-            t[np.argmax(z)] = 1
-            Z.append(t.flatten())
+            if one_hot:
+                t[np.argmax(z)] = 1
+                Z.append(t.flatten())
+            else:
+                Z.append(np.argmax(z))
 
         return np.array(Z)
 

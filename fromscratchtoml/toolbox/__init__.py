@@ -18,18 +18,25 @@ def progress(generator):
     n = len(list(generator))
 
     for i, g in enumerate(generator):
-        i = i + 1
-        j = int(100 * (i / (n * 1.0)))
+        length = 40
 
-        bar = ("[%s%s] %d%%\n" % ('█' * j, ' ' * (100 - j), j))
+        # if i:
+        i = i + 1
+        j = length * (i / (n * 1.0))
+
+        bar = ("[%s%s] %d%% " % ('█' * int(j), ' ' * (length - int(j)), (100 / (length * 1.0)) * j))
 
         sys.stdout.write('\r' + bar)
         sys.stdout.flush()
 
-        if i == n:
-            sys.stdout.write('\n')
-
         yield g
+
+    # i = i + 1
+    # j = length * (i / (n * 1.0))
+    # bar = ("[%s%s] %d%%" % ('█' * int(j), ' ' * (length - int(j)), (100 / (length * 1.0)) * j))
+    #
+    # sys.stdout.write('\r' + bar)
+    # sys.stdout.flush()
 
 
 def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",

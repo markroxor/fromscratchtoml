@@ -54,7 +54,7 @@ class Activations(object):
         return _sigmoid
 
     @staticmethod
-    def tanh(x):
+    def tanh(x, return_deriv=False):
         """Returns the sigmoid of x.
 
         Parameters
@@ -71,7 +71,14 @@ class Activations(object):
         '''
         same as (e^x - e^-x) / (e^x + e^-x)
         '''
-        return 2 * Activations.sigmoid(2 * x) - 1
+        _tanh = 2 * Activations.sigmoid(2 * x) - 1
+
+        if return_deriv:
+            _, _tanh_deriv = Activations.sigmoid(2 * x)
+            _tanh_deriv = 4 * _tanh_deriv
+            return _tanh, _tanh_deriv
+
+        return _tanh
 
     @staticmethod
     def relu(x, return_deriv=False):

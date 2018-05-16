@@ -17,4 +17,5 @@ class StochasticGradientDescent(object):
         self.learning_rate = learning_rate
 
     def update_weights(self, w, grad_wrt_w):
+        # print(grad_wrt_w)
         return w - self.learning_rate * grad_wrt_w
