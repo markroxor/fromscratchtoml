@@ -15,8 +15,9 @@ logger.setLevel(logging.INFO)
 
 
 class Dense(object):
-    def __init__(self, units, input_dim=None, trainable=True, ln=None):
-        self.ln = ln
+    def __init__(self, units, input_dim=None, trainable=True, seed=None):
+        if seed is not None:
+            np.random.seed(seed)
 
         self.units = units
         self.biases = None
@@ -27,10 +28,6 @@ class Dense(object):
             # x=1 single row
             self.biases = np.random.randn(1, self.units)
             self.weights = np.random.randn(input_dim, self.units)
-
-    def initialize_params(self, input_dim):
-        self.biases = np.random.randn(1, self.units)
-        self.weights = np.random.randn(input_dim, self.units)
 
     def forward(self, X, return_deriv=False):
         if len(X.shape) == 1:

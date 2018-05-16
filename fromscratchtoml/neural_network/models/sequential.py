@@ -7,7 +7,7 @@
 from __future__ import print_function
 import numpy as np
 
-from fromscratchtoml.toolbox import progress
+from fromscratchtoml.toolbox import progress, binary_visualize
 from .. import losses
 
 import logging
@@ -18,22 +18,27 @@ logger.setLevel(logging.INFO)
 
 
 class Sequential(object):
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, vis_each_epoch=False, seed=None):
         self.layers = []
         self.verbose = verbose
+        self.vis_each_epoch = vis_each_epoch
 
     def compile(self, optimizer, loss):
         self.optimizer = optimizer
         self.loss = getattr(losses, loss)
 
     def accuracy(self, X, y):
-        y_pred = self.predict(X, one_hot=bool(len(y[0].shape)))
-        print(y_pred.shape, y.shape)
-        print(y_pred)
-        print(y)
-        return (y.shape[0] - np.count_nonzero(np.count_nonzero(y_pred - y, axis=int(bool(len(y[0].shape)))))) / (.01 * y.shape[0])
+        y_pred = self.predict(X, one_hot=True)
+        diff_arr = y - y_pred
+        total_samples = y.shape[0]
 
-    def fit(self, X, y, epochs, batch_size):
+        errors = np.count_nonzero(diff_arr) / 2
+        return (100 - (errors / (total_samples * 0.01)))
+
+    def fit(self, X, y, epochs, batch_size=None):
+        if batch_size is None:
+            batch_size = X.shape[0]
+
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
@@ -43,9 +48,12 @@ class Sequential(object):
             if self.verbose or epoch == epochs - 1:
                 y_pred = self.predict(X, one_hot=True)
                 loss = self.loss(y_pred, y)
-                print(" epoch: {}/{} ".format(epoch + 1, epochs), end="")
-                print(" acc: {:0.2f} ".format(self.accuracy(X, y)), end="")
+                acc = self.accuracy(X, y)
+                print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
+                print(" acc: {:0.2f} ".format(acc), end="")
                 print(" loss: {:0.3f} ".format(loss))
+                if self.vis_each_epoch:
+                    binary_visualize(X, clf=self, draw_contour=True)
 
     def __update_batch(self, X, Y):
         # der_error_bias = None
@@ -83,12 +91,9 @@ class Sequential(object):
             der_error_biases.append(der_error_bias)
             der_error_weights.append(der_error_weight)
 
-        # print("delta", delta)
         return np.array(der_error_biases[::-1]), np.array(der_error_weights[::-1])
 
     def forwardpass(self, x, return_deriv=False):
-        # if len(X.shape) == 1:
-        #     X = np.expand_dims(X, axis=1)
         z = x
 
         for layer in self.layers:
@@ -106,18 +111,14 @@ class Sequential(object):
 
             t = np.zeros_like(z)
             if one_hot:
+                # returns one hot
                 t[np.argmax(z)] = 1
                 Z.append(t.flatten())
             else:
+                # returns class
                 Z.append(np.argmax(z))
 
         return np.array(Z)
 
-    def evaluate(self, X, y, batch_size):
-        '''compute loss batch by batch.'''
-        pass
-
     def add(self, layer):
-        if hasattr(layer, 'input_dim') and layer.input_dim is None:
-            layer.initialize_params(input_dim=self.layers[-1].units)
         self.layers.append(layer)
