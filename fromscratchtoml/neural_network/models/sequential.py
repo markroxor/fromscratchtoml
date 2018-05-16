@@ -10,6 +10,8 @@ import numpy as np
 from fromscratchtoml.toolbox import progress, binary_visualize
 from .. import losses
 
+from fromscratchtoml.base import BaseModel
+
 import logging
 
 logging.basicConfig()
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class Sequential(object):
+class Sequential(BaseModel):
     def __init__(self, verbose=False, vis_each_epoch=False, seed=None):
         self.layers = []
         self.verbose = verbose
