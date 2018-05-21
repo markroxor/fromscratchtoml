@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 class Activations(object):
     @staticmethod
-    def linear(x, alpha=1):
+    def linear(x, alpha=1, return_deriv=False):
         """Returns the scaled input back.
 
         Parameters
@@ -30,6 +30,9 @@ class Activations(object):
             x
 
         """
+        if return_deriv:
+            return x * alpha, alpha
+
         return x * alpha
 
     @staticmethod
@@ -74,7 +77,7 @@ class Activations(object):
         _tanh = 2 * Activations.sigmoid(2 * x) - 1
 
         if return_deriv:
-            _, _tanh_deriv = Activations.sigmoid(2 * x)
+            _, _tanh_deriv = Activations.sigmoid(2 * x, return_deriv=True)
             _tanh_deriv = 4 * _tanh_deriv
             return _tanh, _tanh_deriv
 
@@ -94,19 +97,12 @@ class Activations(object):
             relu of x
 
         """
-        _relu = np.clip(x, 0, max(x))
         if return_deriv:
-            a = []
-            for i in x:
-                if i > 0:
-                    a.append(1)
-                else:
-                    a.append(0)
-            return _relu, np.array(a)
-        return _relu
+            return np.clip(x, 0, None), np.greater_equal(x, np.zeros_like(x)).astype(np.int64)
+        return np.clip(x, 0, None)
 
     @staticmethod
-    def leaky_relu(x, alpha=0.3):
+    def leaky_relu(x, alpha=0.3, return_deriv=False):
         """Returns the leaky - REctified Linear Unit.
 
         Parameters
@@ -119,41 +115,13 @@ class Activations(object):
             leaky - relu of x
 
         """
-        def leakit(x, alpha):
-            if x >= 0:
-                return x
-            return x * alpha
+        if return_deriv:
+            return np.where(x >= 0, x, x * alpha), np.where(x >= 0, 1, alpha)
 
-        # I <3 python
-        # perform elementwise ops using nps vectorize
-        return np.vectorize(leakit)(x, alpha)
+        return np.where(x >= 0, x, x * alpha)
 
     @staticmethod
-    def step(x):
-        """Returns the signum of x.
-
-        Parameters
-        ----------
-        x : numpy.ndarray
-
-        Returns
-        -------
-        _ : numpy.ndarray
-            signum of x
-
-        """
-        def stepit(x):
-            if x > 0:
-                return 1
-            elif x < 0:
-                return -1
-            return 0
-
-        # perform elementwise ops using nps vectorize
-        return np.vectorize(stepit)(x)
-
-    @staticmethod
-    def softmax(x):
+    def softmax(x, return_deriv=False):
         """Returns the softmax of x.
 
         Parameters
@@ -168,5 +136,8 @@ class Activations(object):
         """
         n = np.exp(x)
         d = np.sum(np.exp(x))
+
+        if return_deriv:
+            return n / d, 1 - (n / d)
 
         return n / d

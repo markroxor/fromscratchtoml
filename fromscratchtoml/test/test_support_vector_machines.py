@@ -248,5 +248,4 @@ class TestSVM(unittest.TestCase):
                                          1.40596479, 1.60945299, 1.41534644, 1.27928235]
                                          )
 
-        print(projections)
         self.assertTrue(np.allclose(projections, expected_projections))
