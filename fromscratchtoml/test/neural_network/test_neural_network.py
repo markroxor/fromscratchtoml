@@ -55,7 +55,6 @@ class TestNN(unittest.TestCase):
         model.add(Dense(2, seed=5))
         model.add(Activation('softmax'))
 
-
         model.add(Dense(2, seed=2))
         model.add(Activation('relu'))
 
@@ -64,7 +63,6 @@ class TestNN(unittest.TestCase):
 
         model.add(Dense(2, seed=4))
         model.add(Activation('linear'))
-
 
         model.add(Dense(2, seed=6))
 
@@ -76,7 +74,7 @@ class TestNN(unittest.TestCase):
         expected_biases = np.array([[0.08650937, 1.00013189]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-1].biases))
 
-        expected_weights = np.array([[-0.49908263, -0.17316507], [-0.42623203,  0.48448988]], dtype=np.float128)
+        expected_weights = np.array([[-0.49908263, -0.17316507], [-0.42623203, 0.48448988]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-1].weights))
 
         predictions = model.predict(self.X_test, one_hot=1)
