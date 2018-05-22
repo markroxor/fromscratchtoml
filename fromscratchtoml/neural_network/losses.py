@@ -14,6 +14,23 @@ logger.setLevel(logging.INFO)
 
 
 def mean_squared_error(y_predicted, y_target, return_deriv=False):
+    """
+    Forward pass the output of the previous layer by applying activation function to it.
+
+    Parameters
+    ----------
+    y_predicted : numpy.ndarray
+        The ouput predicted by the model.
+    y_target : numpy.ndarray
+        The expected output.
+    return_deriv : bool, optional
+        If set to true, the function returns derivative of the error along with the error.
+
+    Returns
+    -------
+    numpy.array : The error.
+    numpy.array : The error's derivative, optional.
+    """
     if len(y_target.shape) == 1:
         y_target = np.expand_dims(y_target, axis=1)
     if return_deriv:
