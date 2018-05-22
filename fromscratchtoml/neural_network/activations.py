@@ -21,13 +21,15 @@ class Activations(object):
         Parameters
         ----------
         x : numpy.ndarray
+            the input
         alpha: int, optional
             the scaling factor
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            x
+        numpy.ndarray : the scaled input.
 
         """
         if return_deriv:
@@ -42,12 +44,13 @@ class Activations(object):
         Parameters
         ----------
         x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            sigmoid of x
-
+        numpy.ndarray : sigmoid of x
         """
         _sigmoid = 1.0 / (1.0 + np.exp(-x))
 
@@ -58,17 +61,18 @@ class Activations(object):
 
     @staticmethod
     def tanh(x, return_deriv=False):
-        """Returns the sigmoid of x.
+        """Returns the hyperbolic tan of x.
 
         Parameters
         ----------
         x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            tanh of x
-
+        numpy.ndarray : tanh of x
         """
 
         '''
@@ -90,12 +94,13 @@ class Activations(object):
         Parameters
         ----------
         x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            relu of x
-
+        numpy.ndarray : relu of x
         """
         if return_deriv:
             return np.clip(x, 0, None), np.greater_equal(x, np.zeros_like(x)).astype(np.int64)
@@ -108,12 +113,13 @@ class Activations(object):
         Parameters
         ----------
         x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            leaky - relu of x
-
+        numpy.ndarray : leaky relu of x
         """
         if return_deriv:
             return np.where(x >= 0, x, x * alpha), np.where(x >= 0, 1, alpha)
@@ -127,12 +133,13 @@ class Activations(object):
         Parameters
         ----------
         x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
 
         Returns
         -------
-        _ : numpy.ndarray
-            softmax of x
-
+        numpy.ndarray : softmax of x
         """
         n = np.exp(x)
         d = np.sum(np.exp(x))

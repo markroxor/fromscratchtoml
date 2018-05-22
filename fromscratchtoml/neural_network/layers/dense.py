@@ -68,7 +68,7 @@ class Dense(Layer):
 
     def forward(self, X, return_deriv=False):
         """
-        Forward pass the output of the previous layer by using the current layers weights and biases.
+        Forward pass the output of the previous layer by using the current layer's weights and biases.
 
         Parameters
         ----------

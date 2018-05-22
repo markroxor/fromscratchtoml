@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 def mean_squared_error(y_predicted, y_target, return_deriv=False):
     """
-    Forward pass the output of the previous layer by applying activation function to it.
+    Calculates the mean square error between the predicted and the target ouputs.
 
     Parameters
     ----------

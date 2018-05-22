@@ -84,7 +84,7 @@ class Sequential(BaseModel):
 
         Returns
         -------
-        int : The accuracy in percentage.
+        float : The accuracy in percentage.
         """
         y_pred = self.predict(X, one_hot=True)
         diff_arr = y - y_pred
@@ -156,8 +156,7 @@ class Sequential(BaseModel):
 
     def back_propogation(self, x, y):
         """
-        Backpropogate the error, this function adds the share of dense layer to the accumulated
-        delta and then optimize the weights.
+        Backpropogate the error from the last layer to the first and then optimize the weights.
 
         Parameters
         ----------
