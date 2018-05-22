@@ -64,11 +64,11 @@ class SVC(BaseModel):
 
         Parameters
         ----------
-        X : tornp.array
+        X : numpy.array
 
         Returns
         -------
-        kernel_matrix : tornp.array
+        kernel_matrix : numpy.array
             The gram kernel matrix.
 
         """
@@ -84,9 +84,9 @@ class SVC(BaseModel):
 
         Parameters
         ----------
-        X : tornp.array
+        X : numpy.array
             The training features.
-        y : tornp.array
+        y : numpy.array
             The training labels.
         multiplier_threshold : float
             The threshold for selecting lagrange multipliers.
@@ -169,7 +169,7 @@ class SVC(BaseModel):
 
         Parameters
         ----------
-        x : tornp.array
+        x : numpy.array
             The test data which is to be classified.
         return_projection : bool, optional
             returns the projection of test data on the margin
@@ -177,10 +177,10 @@ class SVC(BaseModel):
 
         Returns
         -------
-        prediction : tornp.array
-            A tornp.array consisting of 1, 0, -1 denoting the class of
+        prediction : numpy.array
+            A numpy.array consisting of 1, 0, -1 denoting the class of
             test data
-        projections : tornp.array, optional
+        projections : numpy.array, optional
             The projection formed by the test data point on the
             margin.
 

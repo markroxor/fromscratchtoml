@@ -4,6 +4,7 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 import sys
+import logging
 
 import numpy as np
 
@@ -13,26 +14,37 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt  # noqa:F402
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def progress(generator):
     n = len(list(generator))
 
     for i, g in enumerate(generator):
-        i = i + 1
-        j = int(100 * (i / (n * 1.0)))
+        length = 40
 
-        bar = ("[%s%s] %d%%" % ('█' * j, ' ' * (100 - j), j))
+        if i:
+            # i = i + 1
+            j = length * (i / (n * 1.0))
 
-        sys.stdout.write('\r' + bar)
-        sys.stdout.flush()
+            bar = ("[%s%s] %d%% " % ('█' * int(j), ' ' * (length - int(j)), (100 / (length * 1.0)) * j))
 
-        if i == n:
-            sys.stdout.write('\n')
+            sys.stdout.write('\r' + bar)
+            sys.stdout.flush()
 
         yield g
+    i = i + 1
+    j = length * (i / (n * 1.0))
+
+    bar = ("[%s%s] %d%% " % ('█' * int(j), ' ' * (length - int(j)), (100 / (length * 1.0)) * j))
+
+    sys.stdout.write('\r' + bar)
+    sys.stdout.flush()
 
 
-def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
+def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
                     title="2D visualization", draw_contour=False, color_seed=1980):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
@@ -60,6 +72,10 @@ def binary_visualize(X, y=None, clf=None, coarse=10, xlabel="x", ylabel="y",
 
     """
     np.random.seed(color_seed)
+
+    if len(X.shape) != 2 or X.shape[1] != 2:
+        logger.warn("Cannot plot {} dimensional data.".format(X.shape[1]))
+        return None
 
     if clf:
         y = clf.predict(X)
