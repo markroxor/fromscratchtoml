@@ -9,7 +9,12 @@ Welcome to fromscratchtoml's documentation!
 .. toctree::
    :maxdepth: 2
 
-   neural_network/nn
+   neural_network/models/sequential
+   neural_network/losses
+   neural_network/layers/activation
+   neural_network/layers/dense
+   neural_network/optimizers/sgd
+   neural_network/activations
    linear_regression/LinearRegressionClassifier
    svm/svc
    decomposition/decomposition
