@@ -49,3 +49,9 @@ from source -
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FjellAIfish%2Ffromscratchtoml?ref=badge_large)
+
+## Inspiration
+> Good programmers know what to write. Great ones know what to rewrite (and reuse).
+While I don't claim to be a great programmer, I try to imitate one. An important trait of the great ones is constructive laziness. They know that you get an A not for effort but for results, and that it's almost always easier to start from a good partial solution than from nothing at all.
+Linus Torvalds, for example, didn't actually try to write Linux from scratch. Instead, he started by reusing code and ideas from Minix, a tiny Unix-like operating system for PC clones. Eventually all the Minix code went away or was completely rewritten—but while it was there, it provided scaffolding for the infant that would eventually become Linux.
+
