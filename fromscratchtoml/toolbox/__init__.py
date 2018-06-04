@@ -45,7 +45,7 @@ def progress(generator):
 
 
 def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
-                    title="2D visualization", draw_contour=False, color_seed=1980):
+                    title="2D visualization", draw_contour=False, color_seed=1980, plot=True):
     """Plots the scatter plot of 2D data, along with the margins if clf is provided.
 
     Parameters
@@ -121,4 +121,6 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
     plt.ylim(ylim)
 
     plt.grid()
-    plt.show()
+
+    if plot:
+        plt.show()

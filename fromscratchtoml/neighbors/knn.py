@@ -69,7 +69,7 @@ class KNeighborsClassifier(BaseModel):
         return self
 
     def predict(self, X_test):
-        """Fits and predicts using the dbscan unsupervised clustering algorithm.
+        """Fits and predicts using the k nearest neighbours supervised clustering algorithm.
 
         Parameters
         ----------
