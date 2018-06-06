@@ -14,6 +14,7 @@ RUN pip3 install --upgrade pip
 
 RUN git clone $REPOSITORY
 RUN cd /fromscratchtoml \
+&& git checkout $BRANCH \
 && pip2 install -r requirements.txt \
 && pip2 install jupyter \
 && pip3 install -r requirements.txt \
@@ -29,5 +30,5 @@ RUN ipython3 kernel install
 RUN chmod +x /fromscratchtoml/docker/start_jupyter_notebook.sh
 
 # Define the starting command for this container and expose its running port
-CMD sh -c '/fromscratchtoml/docker/start_jupyter_notebook.sh 9000'
+CMD sh -c '/fromscratchtoml/docker/start_jupyter_notebook.sh 7777'
 EXPOSE 7777
