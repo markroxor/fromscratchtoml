@@ -31,7 +31,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
-    url='https://github.com/jellAIfish/fromscratchtoml',
+    url='https://github.com/markoxor/fromscratchtoml',
     author='markroxor',
     author_email='mrmohitrathoremr@gmail.com',
     license='GPL-3.0',
