@@ -1,5 +1,6 @@
 # ignore nb generated data
 data/*
+docs/notebooks/mldata/
 docs/notebook/data
 
 # Sphinx documentation
@@ -31,3 +32,4 @@ htmlcov/
 .ipynb_checkpoints
 
 .idea/
+.vscode/
