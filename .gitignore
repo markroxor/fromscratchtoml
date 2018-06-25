@@ -31,5 +31,9 @@ htmlcov/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# IDE
 .idea/
 .vscode/
+
+# venv
+env/
