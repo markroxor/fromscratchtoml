@@ -76,7 +76,7 @@ class Activation(Layer):
 
         return self.output
 
-    def back_propogate(self, delta):
+    def back_propogate(self, delta, optimizer):
         """
         Backpropogate the error, this function adds the share of activation layer to the accumulated delta.
 
@@ -92,4 +92,4 @@ class Activation(Layer):
         numpy.array : Current updated derivative of error with respect to weight.
         """
         delta = delta * self.output_deriv
-        return delta, 0, 0
+        return delta

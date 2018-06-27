@@ -143,16 +143,7 @@ class Sequential(BaseModel):
         # der_error_weight = None
 
         for x, y in zip(X, Y):
-            delta_der_error_bias, delta_der_error_weight = self.back_propogation(x, y)
-            # if der_error_bias is None:
-            #     der_error_bias, der_error_weight = delta_der_error_bias, delta_der_error_weight
-            # else:
-            #     der_error_bias += delta_der_error_bias
-            #     der_error_weight += delta_der_error_weight
-
-        # updates weights in each layer
-        # for layer, db, dw in zip(self.layers, der_error_bias, der_error_weight):
-        #     layer.optimize(self.optimizer, db, dw)
+            self.back_propogation(x, y)
 
     def back_propogation(self, x, y):
         """
@@ -176,20 +167,12 @@ class Sequential(BaseModel):
 
         delta = loss_grad
 
-        der_error_biases = []
-        der_error_weights = []
-
         for layer in reversed(self.layers):
             # updates delta
-            delta, der_error_bias, der_error_weight = layer.back_propogate(delta)
+            delta = layer.back_propogate(delta, self.optimizer)
 
-            if hasattr(layer, 'weights'):
-                layer.optimize(self.optimizer, der_error_bias, der_error_weight)
-
-            der_error_biases.append(der_error_bias)
-            der_error_weights.append(der_error_weight)
-
-        return np.array(der_error_biases[::-1]), np.array(der_error_weights[::-1])
+            # if hasattr(layer, 'weights'):
+            #     layer.optimize(self.optimizer, der_error_bias, der_error_weight)
 
     def forwardpass(self, x, return_deriv=False):
         """

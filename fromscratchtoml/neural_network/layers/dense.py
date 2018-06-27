@@ -37,7 +37,7 @@ class Dense(Layer):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, units, input_dim=None, trainable=True, seed=None):
+    def __init__(self, units, input_dim=None, trainable=True, optimizer=None, seed=None):
         """
         Initialising the layer parameters.
 
@@ -60,6 +60,7 @@ class Dense(Layer):
         self.biases = None
         self.weights = None
         self.trainable = trainable
+        self.optimizer = optimizer
 
         if input_dim:
             # x=1 single row
@@ -96,7 +97,7 @@ class Dense(Layer):
 
         return self.output
 
-    def back_propogate(self, delta):
+    def back_propogate(self, delta, optimizer):
         """
         Backpropogate the error, this function adds the share of dense layer to the accumulated delta.
 
@@ -114,4 +115,6 @@ class Dense(Layer):
         der_error_bias = delta.T
         der_error_weight = np.dot(delta, self.input.T).T
         delta = np.dot(self.weights, delta)
-        return delta, der_error_bias, der_error_weight
+
+        self.optimize(optimizer, der_error_bias, der_error_weight)
+        return delta
