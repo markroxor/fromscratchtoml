@@ -11776,15 +11776,15 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
-<span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.optimizers</span> <span class="kn">import</span> <span class="n">StochasticGradientDescent</span>
-<span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.layers</span> <span class="kn">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Activation</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.models</span> <span class="k">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.optimizers</span> <span class="k">import</span> <span class="n">StochasticGradientDescent</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.neural_network.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Activation</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 
-<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox.random</span> <span class="kn">import</span> <span class="n">Distribution</span>
-<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox.preprocess</span> <span class="kn">import</span> <span class="n">to_onehot</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox.random</span> <span class="k">import</span> <span class="n">Distribution</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox.preprocess</span> <span class="k">import</span> <span class="n">to_onehot</span>
 </pre></div>
 
 </div>
@@ -11797,10 +11797,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
-<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
 
-<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox</span> <span class="kn">import</span> <span class="n">binary_visualize</span>
+<span class="kn">from</span> <span class="nn">fromscratchtoml.toolbox</span> <span class="k">import</span> <span class="n">binary_visualize</span>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
@@ -11831,7 +11831,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -11851,7 +11851,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">X1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
 <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
 <span class="n">y1</span>
 </pre></div>
@@ -11889,7 +11889,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> model1.fit(X1, y1, batch_size=4, epochs=100)
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> model1.fit(X1, y1, batch_size=4, epochs=100)
 </pre></div>
 
 </div>
@@ -11923,7 +11923,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">biases</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">biases</span>
 </pre></div>
 
 </div>
@@ -11956,7 +11956,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span>
 </pre></div>
 
 </div>
@@ -11993,7 +11993,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12029,7 +12029,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model1</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model1</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12072,9 +12072,9 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">fetch_mldata</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">fetch_mldata</span>
 <span class="n">mnist</span> <span class="o">=</span> <span class="n">fetch_mldata</span><span class="p">(</span><span class="s1">&#39;MNIST original&#39;</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mnist</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mnist</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
 <span class="n">X2</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">data</span><span class="o">/</span><span class="mf">256.</span>
 <span class="n">y2</span> <span class="o">=</span> <span class="n">to_onehot</span><span class="p">(</span><span class="n">mnist</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
 </pre></div>
@@ -12107,7 +12107,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">X_train2</span><span class="p">,</span> <span class="n">X_test2</span><span class="p">,</span> <span class="n">y_train2</span><span class="p">,</span> <span class="n">y_test2</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train2</span><span class="p">,</span> <span class="n">X_test2</span><span class="p">,</span> <span class="n">y_train2</span><span class="p">,</span> <span class="n">y_test2</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">X_train2</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y_train2</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
@@ -12141,7 +12141,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
@@ -12160,7 +12160,7 @@ Wall time: 168 ms
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> model2.fit(X_train2, y_train2, batch_size=10, epochs=5)
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> model2.fit(X_train2, y_train2, batch_size=10, epochs=5)
 </pre></div>
 
 </div>
@@ -12202,7 +12202,7 @@ Wall time: 26.3 s
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">X_test2</span><span class="p">,</span> <span class="n">y_test2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">X_test2</span><span class="p">,</span> <span class="n">y_test2</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12243,7 +12243,7 @@ Wall time: 26.3 s
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model3</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model3</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 <span class="n">model3</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 <span class="n">model3</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
 <span class="n">sgd</span> <span class="o">=</span> <span class="n">StochasticGradientDescent</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -12260,7 +12260,7 @@ Wall time: 26.3 s
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">X3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">y3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">])</span>
 </pre></div>
 
@@ -12274,7 +12274,7 @@ Wall time: 26.3 s
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> model3.fit(X3, y3, epochs=200)
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> model3.fit(X3, y3, epochs=200)
 </pre></div>
 
 </div>
@@ -12308,7 +12308,7 @@ Wall time: 266 ms
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model3</span><span class="o">.</span><span class="n">forwardpass</span><span class="p">(</span><span class="n">X3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model3</span><span class="o">.</span><span class="n">forwardpass</span><span class="p">(</span><span class="n">X3</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12349,7 +12349,7 @@ Wall time: 266 ms
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
 
 <span class="n">X4</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">Y4</span> <span class="o">=</span> <span class="n">to_onehot</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">target</span><span class="p">[:])</span>
@@ -12371,7 +12371,7 @@ Wall time: 266 ms
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model4</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model4</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 <span class="n">model4</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">model4</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
 <span class="n">model4</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -12390,7 +12390,7 @@ Wall time: 266 ms
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> model4.fit(Xtrain4, Ytrain4, epochs=100)
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> model4.fit(Xtrain4, Ytrain4, epochs=100)
 </pre></div>
 
 </div>
@@ -12424,7 +12424,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model4</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xtrain4</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">one_hot</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">Ytest4</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model4</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xtrain4</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">one_hot</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">Ytest4</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12465,7 +12465,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">Xtest4</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model4</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">Xtest4</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model4</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12500,7 +12500,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">Xtest4</span><span class="p">,</span> <span class="n">Ytest4</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">Xtest4</span><span class="p">,</span> <span class="n">Ytest4</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12543,7 +12543,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">X11</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">radial_binary</span><span class="p">(</span><span class="n">pts</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X11</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">radial_binary</span><span class="p">(</span><span class="n">pts</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
                <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                <span class="n">st</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                <span class="n">ed</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
@@ -12569,7 +12569,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">y5</span> <span class="o">=</span> <span class="n">to_onehot</span><span class="p">(</span><span class="n">y5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y5</span> <span class="o">=</span> <span class="n">to_onehot</span><span class="p">(</span><span class="n">y5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12582,7 +12582,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">X_train5</span><span class="p">,</span> <span class="n">X_test5</span><span class="p">,</span> <span class="n">y_train5</span><span class="p">,</span> <span class="n">y_test5</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X5</span><span class="p">,</span> <span class="n">y5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train5</span><span class="p">,</span> <span class="n">X_test5</span><span class="p">,</span> <span class="n">y_train5</span><span class="p">,</span> <span class="n">y_test5</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X5</span><span class="p">,</span> <span class="n">y5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12595,7 +12595,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">y_train5</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_train5</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
 </div>
@@ -12628,7 +12628,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">model5</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vis_each_epoch</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model5</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vis_each_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">model5</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">model5</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
 <span class="n">model5</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -12649,7 +12649,7 @@ Wall time: 894 ms
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> model5.fit(X_train5, y_train5, epochs=5)
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> model5.fit(X_train5, y_train5, epochs=5)
 </pre></div>
 
 </div>
@@ -12816,7 +12816,7 @@ Wall time: 35 s
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">X_test5</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model5</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_visualize</span><span class="p">(</span><span class="n">X_test5</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="n">model5</span><span class="p">,</span> <span class="n">draw_contour</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
