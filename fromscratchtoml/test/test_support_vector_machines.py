@@ -40,31 +40,6 @@ class TestSVM(unittest.TestCase):
         self.assertTrue(np.allclose(m1.support_lagrange_multipliers,
                                  m2.support_lagrange_multipliers))
 
-    def test_consistency(self):
-        # tests for model's load save consistency.
-        old_model = svm.SVC()
-        old_model.fit(self.X, self.y)
-
-        fname = _tempfile("model.fs2ml")
-        old_model.save_model(fname)
-
-        new_model = svm.SVC()
-        new_model.load_model(fname)
-        self.model_equal(old_model, new_model)
-
-    # TODO this test is breaking too often bcz of persistent change in model
-    # add it once repo is stablised
-    # def test_persistence(self):
-    #     # ensure backward compatiblity and persistence of the model.
-    #     model = svm.SVC()
-    #     model.fit(self.X, self.y)
-    #
-    #     saved_model = svm.SVC()
-    #     # NOTE save the model using py36 or else pickle will error out.
-    #     saved_model.load_model(_test_data_path("suc_svm.fs2ml"))
-    #
-    #     self.model_equal(model, saved_model)
-
     def test_not_fitted(self):
         # ensure that ModelNotFittedError is raised when predict is called
         # before predict.
