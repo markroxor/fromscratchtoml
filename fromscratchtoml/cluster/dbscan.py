@@ -102,13 +102,13 @@ class DBSCAN(BaseModel):
 
         """
         self.village = X
-        self.n_houses = len(self.village)
+        self.villager = len(self.village)
 
         # When a villager is not assigned a clan his clan is None
-        self.clan = np.array([None] * self.n_houses)
+        self.clan = np.array([None] * self.villager)
         current_clan_id = 0
 
-        for villager_id in range(self.n_houses):
+        for villager_id in range(self.villager):
             # if the villager is not assigned a clan
             if self.clan[villager_id] is None:
                 # get all his neighbors, fitting the criteria in __init__
@@ -166,4 +166,4 @@ class DBSCAN(BaseModel):
             The class label corresponding to each data point.
         """
         self.fit(X)
-        return self.clan
+        return self.clan + 1

@@ -8,6 +8,8 @@ import numpy as np
 
 from ..base import BaseModel
 from ..toolbox.exceptions import InvalidArgumentError
+from fromscratchtoml.toolbox import binary_visualize
+
 
 import logging
 
@@ -41,7 +43,7 @@ class KMeans(BaseModel):
         Numpy's random seed.
     """
 
-    def __init__(self, n_clusters, max_iter=500, seed=None):
+    def __init__(self, n_clusters, max_iter=500, vis_iter=False, seed=None):
         if not isinstance(n_clusters, int) or n_clusters <= 0:
             raise InvalidArgumentError("Expected n_clusters to be a positive int "
                                        "but got type {} and value {}".format(type(n_clusters), n_clusters))
@@ -58,6 +60,7 @@ class KMeans(BaseModel):
             np.random.seed(seed)
         self.n_clusters = n_clusters
         self.max_iter = max_iter
+        self.vis_iter = vis_iter
 
     def __get_new_centers(self, centers):
         converged = True
@@ -90,6 +93,7 @@ class KMeans(BaseModel):
 
         converged = False
         for i in range(self.max_iter):
+            print("here")
             if converged:
                 break
 
@@ -107,10 +111,14 @@ class KMeans(BaseModel):
 
             centers, converged = self.__get_new_centers(centers)
 
+            if self.vis_iter:
+                binary_visualize(X, plot=False)
+                binary_visualize(centers, np.array([[3]]), color_seed=5)
+
         return self
 
     def fit_predict(self, X):
-        """Fits and predicts using the knn unsupervised clustering algorithm.
+        """Fits and predicts using the kmeans unsupervised clustering algorithm.
 
         Parameters
         ----------
