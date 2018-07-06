@@ -15,7 +15,18 @@ logger.setLevel(logging.INFO)
 
 
 def to_onehot(y):
-    unq, y5 = np.unique(y, return_inverse=True)
+    unq, _ = np.unique(y, return_inverse=True)
+
+    a = []
+    for i in range(len(y)):
+        x = np.zeros(len(unq))
+        x[int(y[i])] = 1.
+        a.append(x)
+
+    return np.array(a, dtype=np.float128)
+
+def vocab_one_hot(y, vocab_size):
+    unq, _ = np.unique(y, return_inverse=True)
 
     a = []
     for i in range(len(y)):

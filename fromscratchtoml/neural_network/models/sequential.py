@@ -118,7 +118,7 @@ class Sequential(BaseModel):
                 self.__update_batch(batch_X, batch_y)
 
             if self.verbose or epoch == epochs - 1:
-                y_pred = self.predict(X, one_hot=True)
+                y_pred = self.predict(X)
                 loss = self.loss(y_pred, y)
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
@@ -161,9 +161,9 @@ class Sequential(BaseModel):
         numpy.array : The derivative of error with respect to biases.
         numpy.array : The derivative of error with respect to weights.
         """
-        y_pred, y_pred_deriv = self.forwardpass(x, return_deriv=True)
+        y_pred = self.forwardpass(x)
 
-        loss, loss_grad = self.loss(y_pred, y, return_deriv=True)
+        _, loss_grad = self.loss(y_pred, y, return_deriv=True)
 
         delta = loss_grad
 
@@ -171,10 +171,7 @@ class Sequential(BaseModel):
             # updates delta
             delta = layer.back_propogate(delta, self.optimizer)
 
-            # if hasattr(layer, 'weights'):
-            #     layer.optimize(self.optimizer, der_error_bias, der_error_weight)
-
-    def forwardpass(self, x, return_deriv=False):
+    def forwardpass(self, x):
         """
         Forward pass the input through all the layers in the current model.
 
@@ -182,8 +179,6 @@ class Sequential(BaseModel):
         ----------
         x : numpy.ndarray
             The input to the model.
-        return_deriv : bool, optional
-            If set to true, the function returns derivative of the output along with the output.
 
         Returns
         -------
@@ -192,10 +187,7 @@ class Sequential(BaseModel):
         z = x
 
         for layer in self.layers:
-            z, z_deriv = layer.forward(z, return_deriv=True)
-
-        if return_deriv:
-            return z, z_deriv
+            z = layer.forward(z)
 
         return z
 
