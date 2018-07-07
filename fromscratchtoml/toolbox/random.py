@@ -13,7 +13,6 @@ class Distribution:
     Examples
     --------
     >>> from fromscratchtoml.toolbox.random import Distribution
-    >>> import torch as ch
     >>> X1 = Distribution.linear(pts=50, mean=[8, 20], covr=[[1.5, 1], [1, 2]])
     >>> X2 = Distribution.radial_binary(pts=50, mean=[0, 0], st=4, ed=5)
 
@@ -40,7 +39,7 @@ class Distribution:
 
         Returns
         -------
-        _ : pts x N-D torch.Tensor
+        _ : pts x N-D np.ndarray
             The multivariate distribution generated from mean and covariance matrix.
 
         """

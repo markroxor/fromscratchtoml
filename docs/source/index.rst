@@ -15,7 +15,6 @@ Welcome to fromscratchtoml's documentation!
    neural_network/layers/dense
    neural_network/optimizers/sgd
    neural_network/activations
-   linear_regression/LinearRegressionClassifier
    svm/svc
    decomposition/decomposition
    cluster/dbscan

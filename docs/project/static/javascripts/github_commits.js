@@ -1,7 +1,7 @@
 // modded from https://github.com/TylerLH/github-latest-commits-widget
 
 githubCommits = function() {
-  var username = 'jellAIfish';
+  var username = 'markroxor';
   var repo = 'fromscratchtoml';
   var limit = '5';
 

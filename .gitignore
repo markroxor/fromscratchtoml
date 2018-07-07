@@ -1,5 +1,6 @@
 # ignore nb generated data
 data/*
+docs/notebooks/mldata/
 docs/notebook/data
 
 # Sphinx documentation
@@ -30,4 +31,9 @@ htmlcov/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# IDE
 .idea/
+.vscode/
+
+# venv
+env/
