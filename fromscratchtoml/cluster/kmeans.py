@@ -93,7 +93,7 @@ class KMeans(BaseModel):
 
         converged = False
         for i in range(self.max_iter):
-            print("here")
+            #print("here")
             if converged:
                 break
 
