@@ -148,20 +148,24 @@ class RNN(Layer):
             dEdW_hht = np.zeros_like(self.W_hh)
             dEdW_xht = np.zeros_like(self.W_xh)
             for tt in memory_indices:
-                print(tt)
+#                 print(tt)
                 _, dhdz = Activations.tanh(self.z[tt], return_deriv=True)
-
+                
                 dEdW_hht +=  self.h[tt-1]
-                dEdW_hht *=  np.dot(dhdz, self.W_hh)
-                dEdW_xht +=  self.input[tt]
-                dEdW_xht *=  self.W_hh * dhdz
-        
-            dEdW_hht *= delta[t] * self.W_hh
-            dEdW_xht *= delta[t] * self.W_hh
+                dEdW_hht *=  np.dot(dhdz,self.W_hh)
+                dEdW_xht +=  self.input[tt].reshape(self.vocab_size,1)
+                dEdW_xht =  np.dot(dEdW_xht,self.W_hh * (dhdz.reshape(self.units,1)))
+            
+            
+#             dEdW_hht *= delta[t] * self.W_hy
+            dEdW_hht *= np.dot(self.W_hy,delta[t])  
+            dEdW_xht *= np.dot(self.W_hy,delta[t])
             dEdW_hh += dEdW_hht
             dEdW_xh += dEdW_xht
 
-            delta[t] *= (Activations.tanh(self.z[t]) * self.W_xh)
+            _, dhdz = Activations.tanh(self.z[t], return_deriv=True)
+#             print(dhdz.shape,delta[t].shape)
+            delta[t] *= np.dot(dhdz ,self.W_xh.T)
 
         self.W_xh = optimizer.update_weights(self.W_xh, dEdW_xh)
         self.W_hh = optimizer.update_weights(self.W_hh, dEdW_hh)

@@ -120,7 +120,7 @@ class Sequential(BaseModel):
             if self.verbose or epoch == epochs - 1:
                 y_pred = self.predict(X)
                 loss = self.loss(y_pred, y)
-                acc = self.accuracy(X, y)
+                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
                 print(" loss: {:0.3f} ".format(loss))
