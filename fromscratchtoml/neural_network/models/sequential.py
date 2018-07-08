@@ -118,7 +118,7 @@ class Sequential(BaseModel):
                 self.__update_batch(batch_X, batch_y)
 
             if self.verbose or epoch == epochs - 1:
-                y_pred = self.predict(X, one_hot=True)
+                y_pred = self.predict(X)
                 loss = self.loss(y_pred, y)
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
@@ -143,16 +143,7 @@ class Sequential(BaseModel):
         # der_error_weight = None
 
         for x, y in zip(X, Y):
-            delta_der_error_bias, delta_der_error_weight = self.back_propogation(x, y)
-            # if der_error_bias is None:
-            #     der_error_bias, der_error_weight = delta_der_error_bias, delta_der_error_weight
-            # else:
-            #     der_error_bias += delta_der_error_bias
-            #     der_error_weight += delta_der_error_weight
-
-        # updates weights in each layer
-        # for layer, db, dw in zip(self.layers, der_error_bias, der_error_weight):
-        #     layer.optimize(self.optimizer, db, dw)
+            self.back_propogation(x, y)
 
     def back_propogation(self, x, y):
         """
@@ -170,28 +161,17 @@ class Sequential(BaseModel):
         numpy.array : The derivative of error with respect to biases.
         numpy.array : The derivative of error with respect to weights.
         """
-        y_pred, y_pred_deriv = self.forwardpass(x, return_deriv=True)
+        y_pred = self.forwardpass(x)
 
-        loss, loss_grad = self.loss(y_pred, y, return_deriv=True)
+        _, loss_grad = self.loss(y_pred, y, return_deriv=True)
 
         delta = loss_grad
 
-        der_error_biases = []
-        der_error_weights = []
-
         for layer in reversed(self.layers):
             # updates delta
-            delta, der_error_bias, der_error_weight = layer.back_propogate(delta)
+            delta = layer.back_propogate(delta, self.optimizer)
 
-            if hasattr(layer, 'weights'):
-                layer.optimize(self.optimizer, der_error_bias, der_error_weight)
-
-            der_error_biases.append(der_error_bias)
-            der_error_weights.append(der_error_weight)
-
-        return np.array(der_error_biases[::-1]), np.array(der_error_weights[::-1])
-
-    def forwardpass(self, x, return_deriv=False):
+    def forwardpass(self, x):
         """
         Forward pass the input through all the layers in the current model.
 
@@ -199,8 +179,6 @@ class Sequential(BaseModel):
         ----------
         x : numpy.ndarray
             The input to the model.
-        return_deriv : bool, optional
-            If set to true, the function returns derivative of the output along with the output.
 
         Returns
         -------
@@ -209,10 +187,7 @@ class Sequential(BaseModel):
         z = x
 
         for layer in self.layers:
-            z, z_deriv = layer.forward(z, return_deriv=True)
-
-        if return_deriv:
-            return z, z_deriv
+            z = layer.forward(z)
 
         return z
 

@@ -37,7 +37,7 @@ class Dense(Layer):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, units, input_dim=None, trainable=True, seed=None):
+    def __init__(self, units, input_dim=None, optimizer=None, seed=None):
         """
         Initialising the layer parameters.
 
@@ -59,14 +59,14 @@ class Dense(Layer):
         self.units = units
         self.biases = None
         self.weights = None
-        self.trainable = trainable
+        self.optimizer = optimizer
 
         if input_dim:
             # x=1 single row
             self.biases = np.random.randn(1, self.units)
             self.weights = np.random.randn(input_dim, self.units)
 
-    def forward(self, X, return_deriv=False):
+    def forward(self, X):
         """
         Forward pass the output of the previous layer by using the current layer's weights and biases.
 
@@ -74,8 +74,6 @@ class Dense(Layer):
         ----------
         X : numpy.ndarray
             The ouput of the previous layer
-        return_deriv : bool, optional
-            If set to true, the function returns derivative of the output along with the output.
 
         Returns
         -------
@@ -91,12 +89,9 @@ class Dense(Layer):
         self.input = X
         self.output = (np.dot(X.T, self.weights) + self.biases).T
 
-        if return_deriv:
-            return self.output, 0
-
         return self.output
 
-    def back_propogate(self, delta):
+    def back_propogate(self, delta, optimizer):
         """
         Backpropogate the error, this function adds the share of dense layer to the accumulated delta.
 
@@ -111,7 +106,11 @@ class Dense(Layer):
         numpy.array : Current updated derivative of error with respect to bias.
         numpy.array : Current updated derivative of error with respect to weight.
         """
-        der_error_bias = delta.T
-        der_error_weight = np.dot(delta, self.input.T).T
+        dEdB = delta.T
+        dEdW = np.dot(delta, self.input.T).T
         delta = np.dot(self.weights, delta)
-        return delta, der_error_bias, der_error_weight
+
+        self.weights = optimizer.update_weights(self.weights, dEdW)
+        self.biases = optimizer.update_weights(self.biases, dEdB)
+        
+        return delta
