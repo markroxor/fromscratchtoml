@@ -141,24 +141,22 @@ class RNN(Layer):
 
         for t in reversed(range(self.time_steps)):
             dEdW_hy += np.outer(delta[t], self.h[t].T).T
-            
+
             memory_indices = np.arange(t-self.memory_window, t+1)
             memory_indices = memory_indices[memory_indices >= 0]
 
             dEdW_hht = np.zeros_like(self.W_hh)
             dEdW_xht = np.zeros_like(self.W_xh)
             for tt in memory_indices:
-#                 print(tt)
                 _, dhdz = Activations.tanh(self.z[tt], return_deriv=True)
-                
+
                 dEdW_hht +=  self.h[tt-1]
                 dEdW_hht *=  np.dot(dhdz,self.W_hh)
                 dEdW_xht +=  self.input[tt].reshape(self.vocab_size,1)
                 dEdW_xht =  np.dot(dEdW_xht,self.W_hh * (dhdz.reshape(self.units,1)))
+
             
-            
-#             dEdW_hht *= delta[t] * self.W_hy
-            dEdW_hht *= np.dot(self.W_hy,delta[t])  
+            dEdW_hht *= np.dot(self.W_hy,delta[t])
             dEdW_xht *= np.dot(self.W_hy,delta[t])
             dEdW_hh += dEdW_hht
             dEdW_xh += dEdW_xht
