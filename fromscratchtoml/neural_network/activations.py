@@ -143,10 +143,9 @@ class Activations(object):
         """
         # shifting for numerical stability
         # refer https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative
-
-        x -= np.max(x)
+        x -= np.max(x, axis=-1, keepdims=True)
         n = np.exp(x)
-        d = np.sum(n)
+        d = np.sum(n, axis=-1, keepdims=True)
         _softmax = n / d
 
         if return_deriv:

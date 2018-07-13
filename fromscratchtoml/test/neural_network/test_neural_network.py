@@ -31,7 +31,7 @@ class TestNN(unittest.TestCase):
         X22 = Distribution.radial_binary(pts=300,
                        mean=[0, 0],
                        st=4,
-                       ed=5, seed=20)
+                       ed=5, seed=10)
 
         Y11 = np.ones(X11.shape[0])
         Y22 = np.zeros(X11.shape[0])
@@ -52,9 +52,6 @@ class TestNN(unittest.TestCase):
         model.add(Dense(2, seed=7))
         model.add(Activation('tanh'))
 
-        model.add(Dense(2, seed=5))
-        model.add(Activation('softmax'))
-
         model.add(Dense(2, seed=2))
         model.add(Activation('relu'))
 
@@ -65,18 +62,19 @@ class TestNN(unittest.TestCase):
         model.add(Activation('linear'))
 
         model.add(Dense(2, seed=6))
+        model.add(Activation('softmax'))
 
         sgd = StochasticGradientDescent(learning_rate=0.05)
         model.compile(optimizer=sgd, loss="mean_squared_error")
 
-        model.fit(self.X_train, self.y_train, epochs=14)
+        model.fit(self.X_train, self.y_train, epochs=14, batch_size=4)
 
-        expected_biases = np.array([[0.08650937, 1.00013189]], dtype=np.float128)
-        self.assertTrue(np.allclose(expected_biases, model.layers[-1].biases))
+        expected_biases = np.array([[1.38503523, -0.51962709]], dtype=np.float128)
+        self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
-        expected_weights = np.array([[-0.49908263, -0.17316507], [-0.42623203, 0.48448988]], dtype=np.float128)
-        self.assertTrue(np.allclose(expected_weights, model.layers[-1].weights))
+        expected_weights = np.array([[-1.31788536, 1.49334281], [-0.10027775, -1.39507145]], dtype=np.float128)
+        self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
 
-        predictions = model.predict(self.X_test, one_hot=1)
+        predictions = model.predict(self.X_test)
 
-        self.assertTrue(np.allclose(predictions, self.y_test))
+        self.assertTrue(np.allclose((predictions), np.argmax(self.y_test, axis=1)))

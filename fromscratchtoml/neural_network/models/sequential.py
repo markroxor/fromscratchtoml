@@ -39,7 +39,7 @@ class Sequential(BaseModel):
     >>> sgd = StochasticGradientDescent(learning_rate=0.1)
     >>> model.compile(optimizer=sgd, loss="mean_squared_error")
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
-    >>> model.predict(X1, one_hot=True)
+    >>> model.predict(X1)
     """
     def __init__(self, verbose=False, vis_each_epoch=False):
         """
@@ -86,7 +86,11 @@ class Sequential(BaseModel):
         -------
         float : The accuracy in percentage.
         """
-        y_pred = self.predict(X, one_hot=True)
+
+        if len(y.shape) > 1:
+            y = np.argmax(y, axis=1)
+        y_pred = self.predict(X)
+
         diff_arr = y - y_pred
         total_samples = y.shape[0]
 
@@ -118,9 +122,8 @@ class Sequential(BaseModel):
                 batch_y = y[current_batch: current_batch + batch_size]
                 self.__update_batch(batch_X, batch_y)
 
-            # if  self.verbose or epoch == epochs - 1:
-            if 1:
-                y_pred = self.predict(X)
+            if self.verbose or epoch == epochs - 1:
+                y_pred = self.predict(X, prob=True)
                 loss = self.loss(y_pred, y)
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
@@ -140,60 +143,52 @@ class Sequential(BaseModel):
         Y : numpy.ndarray
             The corresponding label to the input.
         """
-        # TODO write mini batch SGD
+        y_pred = self.forwardpass(X)
 
-        for x, y in zip(X, Y):
-            y_pred = self.forwardpass(x)
+        _, dEdO = self.loss(y_pred, Y, return_deriv=True)
 
-            _, loss_grad = self.loss(y_pred, y, return_deriv=True)
-            #print("loss", _, np.mean(_))
+        self.back_propogate_and_update(dEdO, self.optimizer)
 
-            delta = loss_grad
-            self.back_propogation(delta)
-
-    def back_propogation(self, delta):
+    def back_propogate_and_update(self, dEdO, optimizer):
         """
         Backpropogate the error from the last layer to the first and then optimize the weights.
 
         Parameters
         ----------
-        x : numpy.ndarray
-            The input to the model.
-        y : numpy.ndarray
-            The corresponding label to the input.
-
-        Returns
-        -------
-        numpy.array : The derivative of error with respect to biases.
-        numpy.array : The derivative of error with respect to weights.
+        dEdO : numpy.ndarray
+            The accumulated delta used for calculating error gradient with respect to parameters.
+        optimizer : fromscratchtoml.neural_network.optimizers
+            The optimizing procedure followed for updating the weights.
         """
 
-
         for layer in reversed(self.layers):
-            # updates delta
-            delta = layer.back_propogate(delta, self.optimizer)
+            dEdO = layer.back_propogate(dEdO)
+            layer.optimize(optimizer)
 
-    def forwardpass(self, x):
+    def forwardpass(self, X, return_deriv=False):
         """
         Forward pass the input through all the layers in the current model.
 
         Parameters
         ----------
-        x : numpy.ndarray
+        X : numpy.ndarray
             The input to the model.
 
         Returns
         -------
         numpy.array : The output of the model.
         """
-        z = x
+        Z = X
 
         for layer in self.layers:
-            z = layer.forward(z)
+            Z, Z_deriv = layer.forward(Z, return_deriv=True)
 
-        return z
+        if return_deriv:
+            return Z, Z_deriv
 
-    def predict(self, X, one_hot=False):
+        return Z
+
+    def predict(self, X, prob=False):
         """
         Predicts the ouput of the model based on the trained parameters.
 
@@ -201,27 +196,19 @@ class Sequential(BaseModel):
         ----------
         X : numpy.ndarray
             The input to be predicted.
-        one_hot : bool, optional
-            If set to true, it returns output in one hot fashion instead of a single label.
+        prob : bool, optional
+            If set to true, it returns output probabilities of each class.
 
         Returns
         -------
         numpy.array : The prediction.
         """
-        Z = []
-        for x in X:
-            z = self.forwardpass(x)
+        predictions = self.forwardpass(X)
 
-            t = np.zeros_like(z)
-            if one_hot:
-                # returns one hot
-                t[np.argmax(z)] = 1
-                Z.append(t.flatten())
-            else:
-                # returns class
-                Z.append(np.argmax(z))
+        if prob is False:
+            predictions = np.argmax(predictions, axis=1)
 
-        return np.array(Z)
+        return predictions
 
     def add(self, layer):
         """

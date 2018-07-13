@@ -33,6 +33,14 @@ class Layer(object):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1, one_hot=True)
     """
+    def optimize(self, optimizer):
+        """
+        Optimize the weights corresponding to the optimizer function supplied.
 
-    def __init__(self):
-        self.trainable = True
+        Parameters
+        ----------
+        optimizer : fromscratchtoml.neural_network.optimizers
+            The optimizing procedure followed for updating the weights.
+        """
+        pass
+        return
