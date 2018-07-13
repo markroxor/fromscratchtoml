@@ -76,20 +76,19 @@ class Activation(Layer):
 
         return self.output
 
-    def back_propogate(self, delta):
+    def back_propogate(self, dEdO):
         """
         Backpropogate the error, this function adds the share of activation layer to the accumulated delta.
 
         Parameters
         ----------
-        delta : numpy.ndarray
+        dEdO : numpy.ndarray
             The accumulated delta used for calculating error gradient with respect to parameters.
 
         Returns
         -------
         numpy.array : The accumulated delta.
-        numpy.array : Current updated derivative of error with respect to bias.
-        numpy.array : Current updated derivative of error with respect to weight.
         """
-        delta = delta * self.output_deriv
-        return delta, 0, 0
+
+        dEdO = dEdO * self.output_deriv
+        return dEdO

@@ -33,7 +33,7 @@ class Layer(object):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1, one_hot=True)
     """
-    def optimize(self, optimizer, der_cost_bias, der_cost_weight):
+    def optimize(self, optimizer):
         """
         Optimize the weights corresponding to the optimizer function supplied.
 
@@ -41,12 +41,6 @@ class Layer(object):
         ----------
         optimizer : fromscratchtoml.neural_network.optimizers
             The optimizing procedure followed for updating the weights.
-        der_cost_bias : numpy.ndarray
-            The derivative of error with respect to bias.
-        der_cost_weights : numpy.ndarray
-            The derivative of error with respect to weights.
         """
-        if self.trainable:
-            self.weights = optimizer.update_weights(self.weights, der_cost_weight)
-            self.biases = optimizer.update_weights(self.biases, der_cost_bias)
+        pass
         return

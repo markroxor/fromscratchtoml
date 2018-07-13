@@ -86,17 +86,17 @@ class Dense(Layer):
 
         if self.weights is None:
             self.biases = np.random.randn(1, self.units)
-            self.weights = np.random.randn(X.shape[0], self.units)
+            self.weights = np.random.randn(X.shape[1], self.units)
 
         self.input = X
-        self.output = (np.dot(X.T, self.weights) + self.biases).T
+        self.output = np.dot(X, self.weights) + self.biases
 
         if return_deriv:
             return self.output, 0
 
         return self.output
 
-    def back_propogate(self, delta):
+    def back_propogate(self, dEdO):
         """
         Backpropogate the error, this function adds the share of dense layer to the accumulated delta.
 
@@ -108,10 +108,13 @@ class Dense(Layer):
         Returns
         -------
         numpy.array : The accumulated delta.
-        numpy.array : Current updated derivative of error with respect to bias.
-        numpy.array : Current updated derivative of error with respect to weight.
         """
-        der_error_bias = delta.T
-        der_error_weight = np.dot(delta, self.input.T).T
-        delta = np.dot(self.weights, delta)
-        return delta, der_error_bias, der_error_weight
+
+        self.dEdB = np.sum(dEdO)
+        self.dEdW = np.dot(self.input.T, dEdO)
+        dEdO = np.dot(dEdO, self.weights.T)
+        return dEdO
+
+    def optimize(self, optimizer):
+        self.weights = optimizer.update_weights(self.weights, self.dEdW)
+        self.biases = optimizer.update_weights(self.biases, self.dEdB)

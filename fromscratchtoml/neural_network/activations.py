@@ -141,10 +141,15 @@ class Activations(object):
         -------
         numpy.ndarray : softmax of x
         """
+        # shifting for numerical stability
+        # refer https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative
+
+        x -= np.max(x, axis=-1, keepdims=True)
         n = np.exp(x)
-        d = np.sum(np.exp(x))
+        d = np.sum(n, axis=-1, keepdims=True)
+        _softmax = n / d
 
         if return_deriv:
-            return n / d, 1 - (n / d)
+            return _softmax, _softmax * (1 - _softmax)
 
-        return n / d
+        return _softmax
