@@ -25,6 +25,7 @@ def to_onehot(y):
 
     return np.array(a, dtype=np.float128)
 
+
 def vocab_one_hot(y, vocab_size):
     unq, _ = np.unique(y, return_inverse=True)
 

@@ -112,5 +112,5 @@ class Dense(Layer):
 
         self.weights = optimizer.update_weights(self.weights, dEdW)
         self.biases = optimizer.update_weights(self.biases, dEdB)
-        
+
         return delta

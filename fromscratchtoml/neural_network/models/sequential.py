@@ -113,14 +113,16 @@ class Sequential(BaseModel):
 
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
+                # print(current_batch, current_batch + batch_size)
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
                 self.__update_batch(batch_X, batch_y)
 
-            if self.verbose or epoch == epochs - 1:
+            # if  self.verbose or epoch == epochs - 1:
+            if 1:
                 y_pred = self.predict(X)
                 loss = self.loss(y_pred, y)
-                 acc = self.accuracy(X, y)
+                acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
                 print(" loss: {:0.3f} ".format(loss))
@@ -139,13 +141,17 @@ class Sequential(BaseModel):
             The corresponding label to the input.
         """
         # TODO write mini batch SGD
-        # der_error_bias = None
-        # der_error_weight = None
 
         for x, y in zip(X, Y):
-            self.back_propogation(x, y)
+            y_pred = self.forwardpass(x)
 
-    def back_propogation(self, x, y):
+            _, loss_grad = self.loss(y_pred, y, return_deriv=True)
+            #print("loss", _, np.mean(_))
+
+            delta = loss_grad
+            self.back_propogation(delta)
+
+    def back_propogation(self, delta):
         """
         Backpropogate the error from the last layer to the first and then optimize the weights.
 
@@ -161,11 +167,7 @@ class Sequential(BaseModel):
         numpy.array : The derivative of error with respect to biases.
         numpy.array : The derivative of error with respect to weights.
         """
-        y_pred = self.forwardpass(x)
 
-        _, loss_grad = self.loss(y_pred, y, return_deriv=True)
-
-        delta = loss_grad
 
         for layer in reversed(self.layers):
             # updates delta

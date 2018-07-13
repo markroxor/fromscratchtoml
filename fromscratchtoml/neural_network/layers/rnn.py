@@ -10,6 +10,8 @@ from fromscratchtoml.neural_network.layers import Layer
 from fromscratchtoml.neural_network.activations import Activations
 import logging
 
+import copy
+
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,7 +40,7 @@ class RNN(Layer):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, units=100, vocab_size=None, memory_window=3, optimizer=None, seed=None):
+    def __init__(self, units=100, vocab_size=None, memory_window=4, seed=None):
         """
         Initialising the layer parameters.
 
@@ -56,12 +58,34 @@ class RNN(Layer):
             np.random.seed(seed)
 
         self.units = units
-        self.optimizer = optimizer
-        self.memory_window = memory_window
 
-        self.W_xh = np.random.randn(vocab_size, self.units)
-        self.W_hh = np.random.randn(self.units, self.units)
-        self.W_hy = np.random.randn(self.units, vocab_size)
+        self.xh_optim = None
+        self.hh_optim = None
+        self.hy_optim = None
+
+        self.memory_window = memory_window
+        self.vocab_size = vocab_size
+
+        self.W_xh = np.random.uniform(-np.sqrt(1./vocab_size), np.sqrt(1./vocab_size), (self.vocab_size, self.units))
+        self.W_hh = np.random.uniform(-np.sqrt(1./units), np.sqrt(1./units), (self.units, self.units))
+        self.W_hy = np.random.uniform(-np.sqrt(1./units), np.sqrt(1./units), (self.units, self.vocab_size))
+
+        self.W_hy = np.random.uniform(-np.sqrt(1./vocab_size), np.sqrt(1./vocab_size), (self.vocab_size, self.units))
+        self.W_xh = np.random.uniform(-np.sqrt(1./units), np.sqrt(1./units), (self.units, self.vocab_size))
+
+        np.random.seed(10)
+
+    def to_onehot(self, X, reverse=False):
+        temp = []
+        for word in X:
+            if reverse:
+                temp.append(np.argmax(word))
+            else:
+                t = np.zeros(self.vocab_size)
+                t[word] = 1
+                temp.append(t)
+        temp = np.array(temp)
+        return temp
 
     def forward(self, X, return_deriv=False):
         """
@@ -94,21 +118,24 @@ class RNN(Layer):
         if len(X.shape) == 1:
             X = np.expand_dims(X, axis=1)
 
+        # X = self.to_onehot(X)
+
         self.input = X
 
         self.time_steps, self.vocab_size = X.shape
-        self.h = np.random.randn(self.time_steps, self.units)
+        self.h = np.zeros((self.time_steps+1, self.units))
         self.h[-1] = np.zeros(self.units)
-        self.z = np.random.randn(self.time_steps, self.units)
+        self.z = np.zeros((self.time_steps+1, self.units))
         self.z[-1] = np.zeros(self.units)
 
         self.outputs = np.zeros_like(X)
         for t in range(self.time_steps):
-            self.z[t] = np.dot(X[t], self.W_xh) + np.dot(self.h[t-1], self.W_hh)
+            self.z[t] = np.dot(X[t], self.W_xh.T) + np.dot(self.h[t - 1], self.W_hh.T)
             self.h[t] = Activations.tanh(self.z[t])
-            y_t = np.dot(self.W_hy.T, self.h[t])
+            y_t = np.dot(self.h[t], self.W_hy.T)
             self.outputs[t] = y_t
 
+        # self.outputs = self.to_onehot(self.outputs, reverse=True)
         if return_deriv:
             return self.outputs, 0
 
@@ -134,41 +161,53 @@ class RNN(Layer):
         delta -> time_steps, vocab
         h     -> time_steps, units
         """
+        if self.xh_optim is None:
+            self.xh_optim = copy.copy(optimizer)
+            self.hh_optim = copy.copy(optimizer)
+            self.hy_optim = copy.copy(optimizer)
+
 
         dEdW_hy = np.zeros_like(self.W_hy)
         dEdW_hh = np.zeros_like(self.W_hh)
         dEdW_xh = np.zeros_like(self.W_xh)
 
+        accum_grad_next = np.zeros_like(delta)
+        # print("\na1", self.W_hh[0][0])
+        # print(delta, "delta")
+
         for t in reversed(range(self.time_steps)):
-            dEdW_hy += np.outer(delta[t], self.h[t].T).T
-            
-            memory_indices = np.arange(t-self.memory_window, t+1)
+            _, dhdz = Activations.tanh(self.z[t], return_deriv=True)
+            # units
+            dEdZ = np.dot(delta[t], self.W_hy) * dhdz
+            # dEdW_hy += np.outer(self.h[t], delta[t])
+            dEdW_hy += np.outer(delta[t], self.h[t])
+            accum_grad_next[t] = np.dot(dEdZ, self.W_xh)
+            # delta[t] *= np.dot(dhdz, self.W_xh.T)
+
+
+            memory_indices = np.arange(t - self.memory_window, t+1)
             memory_indices = memory_indices[memory_indices >= 0]
 
-            dEdW_hht = np.zeros_like(self.W_hh)
-            dEdW_xht = np.zeros_like(self.W_xh)
-            for tt in memory_indices:
-#                 print(tt)
-                _, dhdz = Activations.tanh(self.z[tt], return_deriv=True)
-                
-                dEdW_hht +=  self.h[tt-1]
-                dEdW_hht *=  np.dot(dhdz,self.W_hh)
-                dEdW_xht +=  self.input[tt].reshape(self.vocab_size,1)
-                dEdW_xht =  np.dot(dEdW_xht,self.W_hh * (dhdz.reshape(self.units,1)))
-            
-            
-#             dEdW_hht *= delta[t] * self.W_hy
-            dEdW_hht *= np.dot(self.W_hy,delta[t])  
-            dEdW_xht *= np.dot(self.W_hy,delta[t])
-            dEdW_hh += dEdW_hht
-            dEdW_xh += dEdW_xht
+            # print(list(reversed(memory_indices)), t)
+            for tt in reversed(memory_indices):
+                dEdW_xh += np.outer(dEdZ, self.input[tt])
+                dEdW_hh += np.dot(dEdZ.T, self.h[tt-1])
+                _, dhdz = Activations.tanh(self.z[tt-1], return_deriv=True)
+                # dEdZ *= np.dot(self.W_hh, dhdz) 
+                dEdZ = np.dot(dEdZ, self.W_hh) * dhdz
 
-            _, dhdz = Activations.tanh(self.z[t], return_deriv=True)
-#             print(dhdz.shape,delta[t].shape)
-            delta[t] *= np.dot(dhdz ,self.W_xh.T)
+            # for tt in memory_indices:
+            #     _, dhdz = Activations.tanh(self.z[tt], return_deriv=True)
+            #     dEdW_xh += np.outer(self.input[tt], np.dot(self.W_hh, dhdz) * dEdZ)
+            #     dEdW_hh += np.dot(self.h[tt-1], np.dot(self.W_hh, dhdz) * dEdZ)
 
-        self.W_xh = optimizer.update_weights(self.W_xh, dEdW_xh)
-        self.W_hh = optimizer.update_weights(self.W_hh, dEdW_hh)
-        self.W_hy = optimizer.update_weights(self.W_hy, dEdW_hy)
+            # dEdW_xh += np.outer(self.input[t], dEdZ)
+            # dEdW_hh += np.dot(dEdZ, self.h[t-1].T).T
 
-        return delta
+        # print(self.W_xh[0][0], self.W_hy[0][0], self.W_hh[0][0])
+        # print(dEdW_xh[0][0], dEdW_hy[0][0], dEdW_hh[0][0], "\n")
+        self.W_xh = self.xh_optim.update_weights(self.W_xh, dEdW_xh)
+        self.W_hh = self.hh_optim.update_weights(self.W_hh, dEdW_hh)
+        self.W_hy = self.hy_optim.update_weights(self.W_hy, dEdW_hy)
+
+        return accum_grad_next
