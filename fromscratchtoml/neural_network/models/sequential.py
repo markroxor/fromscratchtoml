@@ -87,12 +87,16 @@ class Sequential(BaseModel):
         float : The accuracy in percentage.
         """
 
-        if len(y.shape) > 1:
-            y = np.argmax(y, axis=1)
+        if len(y.shape) > 2:
+            y = np.argmax(y, axis=len(y.shape)-1)
+
         y_pred = self.predict(X)
 
         diff_arr = y - y_pred
-        total_samples = y.shape[0]
+
+        total_samples = 1
+        for dim in range(len(y.shape)):
+            total_samples *= y.shape[dim]
 
         errors = np.count_nonzero(diff_arr) / 2
         return (100 - (errors / (total_samples * 0.01)))
@@ -117,18 +121,17 @@ class Sequential(BaseModel):
 
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
-                # print(current_batch, current_batch + batch_size)
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
                 self.__update_batch(batch_X, batch_y)
 
             if self.verbose or epoch == epochs - 1:
                 y_pred = self.predict(X, prob=True)
-                loss = self.loss(y_pred, y)
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
-                print(" loss: {:0.3f} ".format(loss))
+                loss = self.loss(y_pred, y)
+                print(" loss: {:0.3f} ".format(np.sum(loss)))
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 
@@ -165,7 +168,7 @@ class Sequential(BaseModel):
             dEdO = layer.back_propogate(dEdO)
             layer.optimize(optimizer)
 
-    def forwardpass(self, X, return_deriv=False):
+    def forwardpass(self, X):
         """
         Forward pass the input through all the layers in the current model.
 
@@ -181,10 +184,7 @@ class Sequential(BaseModel):
         Z = X
 
         for layer in self.layers:
-            Z, Z_deriv = layer.forward(Z, return_deriv=True)
-
-        if return_deriv:
-            return Z, Z_deriv
+            Z = layer.forward(Z)
 
         return Z
 
@@ -206,7 +206,7 @@ class Sequential(BaseModel):
         predictions = self.forwardpass(X)
 
         if prob is False:
-            predictions = np.argmax(predictions, axis=1)
+            predictions = np.argmax(predictions, axis=len(predictions.shape)-1)
 
         return predictions
 
