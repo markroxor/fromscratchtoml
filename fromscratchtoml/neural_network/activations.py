@@ -155,7 +155,7 @@ class Activations(object):
 
     @staticmethod
     def tan(x, return_deriv=False):
-        """Returns the softmax of x.
+        """Returns the tan of x.
 
         Parameters
         ----------
@@ -166,10 +166,10 @@ class Activations(object):
 
         Returns
         -------
-        numpy.ndarray : softmax of x
+        numpy.ndarray : tan of x
         """
 
         if return_deriv:
-            return np.tan(x), (1./np.cos(x)) ** 2
+            return np.tan(x), (1. / np.cos(x)) ** 2
 
         return np.tan(x)
