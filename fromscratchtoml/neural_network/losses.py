@@ -37,9 +37,10 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
         return np.mean(np.square(y_predicted - y_target)), y_predicted - y_target
     return np.mean(np.square(y_predicted - y_target))
 
+
 def cross_entropy(y_predicted, y_target, return_deriv=False):
     """
-    Calculates the mean square error between the predicted and the target ouputs.
+    Calculates the cross entropy loss between the predicted and the target ouputs.
 
     Parameters
     ----------
@@ -58,7 +59,10 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
     if len(y_target.shape) == 1:
         y_target = np.expand_dims(y_target, axis=1)
 
-    y_predicted = np.clip(y_predicted, 1e-15, 1 - 1e-15)
+    eps = 1e-9
+
+    y_predicted[y_predicted < eps] = eps
+    y_predicted[y_predicted > 1 - eps] = 1 - eps
 
     crl = -(y_target * np.log(y_predicted) + (1 - y_target) * np.log(1 - y_predicted))
 
