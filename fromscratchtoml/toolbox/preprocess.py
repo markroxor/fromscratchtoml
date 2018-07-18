@@ -26,13 +26,10 @@ def to_onehot(y):
     return np.array(a, dtype=np.float128)
 
 
-def vocab_one_hot(y, vocab_size):
-    unq, _ = np.unique(y, return_inverse=True)
+def vocab_one_hot(Y, vocab_size):
+    temp = np.zeros((Y.shape[0], Y.shape[1], vocab_size))
 
-    a = []
-    for i in range(len(y)):
-        x = np.zeros(len(unq))
-        x[int(y[i])] = 1.
-        a.append(x)
+    for i, _ in enumerate(Y):
+        temp[i] = np.eye(vocab_size)[Y[i]]
 
-    return np.array(a, dtype=np.float128)
+    return temp
