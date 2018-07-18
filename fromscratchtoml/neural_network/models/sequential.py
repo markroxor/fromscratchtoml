@@ -88,7 +88,7 @@ class Sequential(BaseModel):
         """
 
         if len(y.shape) > 2:
-            y = np.argmax(y, axis=len(y.shape)-1)
+            y = np.argmax(y, axis=len(y.shape) - 1)
 
         y_pred = self.predict(X)
 
@@ -206,7 +206,7 @@ class Sequential(BaseModel):
         predictions = self.forwardpass(X)
 
         if prob is False:
-            predictions = np.argmax(predictions, axis=len(predictions.shape)-1)
+            predictions = np.argmax(predictions, axis=len(predictions.shape) - 1)
 
         return predictions
 
