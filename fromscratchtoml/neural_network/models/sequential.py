@@ -5,7 +5,7 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 from __future__ import print_function
-import numpy as np
+from fromscratchtoml import np
 
 from fromscratchtoml.toolbox import progress, binary_visualize
 from .. import losses
@@ -95,7 +95,7 @@ class Sequential(BaseModel):
         total_samples = y.shape[0]
 
         errors = np.count_nonzero(diff_arr) / 2
-        return (100 - (errors / (total_samples * 0.01)))
+        return float(100 - (errors / (total_samples * 0.01)))
 
     def fit(self, X, y, epochs, batch_size=None):
         """
@@ -112,6 +112,9 @@ class Sequential(BaseModel):
         batch_size : int, optional
             The number of data points to be processed in a single iteration.
         """
+        X = np.asarray(X, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
+
         if batch_size is None:
             batch_size = X.shape[0]
 
@@ -127,7 +130,7 @@ class Sequential(BaseModel):
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
-                print(" loss: {:0.3f} ".format(loss))
+                print(" loss: {:0.3f} ".format(float(loss)))
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 
@@ -204,6 +207,7 @@ class Sequential(BaseModel):
         -------
         numpy.array : The prediction.
         """
+        X = np.asarray(X)
         predictions = self.forwardpass(X)
 
         if prob is False:

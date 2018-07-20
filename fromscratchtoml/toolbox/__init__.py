@@ -6,6 +6,7 @@
 import sys
 import logging
 
+# from fromscratchtoml import np
 import numpy as np
 
 from .exceptions import ParameterRequiredException
@@ -71,6 +72,18 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
         The seed value for randomising plot colors.
 
     """
+
+
+    try:
+        import cupy
+        if isinstance(y, cupy.core.core.ndarray):
+            y = cupy.asnumpy(y)
+        if isinstance(X, cupy.core.core.ndarray):
+            X = cupy.asnumpy(X)
+    except ImportError:
+        pass
+
+
     np.random.seed(color_seed)
 
     if len(X.shape) != 2 or X.shape[1] != 2:
@@ -79,6 +92,7 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
 
     if clf:
         y = clf.predict(X)
+        y = cupy.asnumpy(y)
 
     # Also handles the cases when y is None
     unq, y = np.unique(y, return_inverse=True)
@@ -104,7 +118,7 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
         _X, _Y = np.meshgrid(np.arange(x_min, x_max, 1 / (coarse * 1.0)), np.arange(y_min, y_max, 1 / (coarse * 1.0)))
 
         Z = np.c_[_X.ravel(), _Y.ravel()]
-        Z = clf.predict(Z)
+        Z = cupy.asnumpy(clf.predict(Z))
 
         unq, Z = np.unique(Z, return_inverse=True)
         Z = Z.reshape(_X.shape)

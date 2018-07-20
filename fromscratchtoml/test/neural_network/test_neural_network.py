@@ -6,7 +6,7 @@
 
 import unittest
 
-import numpy as np
+from fromscratchtoml import np
 from fromscratchtoml.neural_network.models import Sequential
 from fromscratchtoml.neural_network.layers import Dense, Activation
 from fromscratchtoml.neural_network.optimizers import StochasticGradientDescent

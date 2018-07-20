@@ -4,8 +4,8 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import numpy as np
-
+from fromscratchtoml import np
+import numpy
 
 class Distribution:
     """Objects of this class are the various distributions.
@@ -83,13 +83,13 @@ class Distribution:
 
         """
         if seed:
-            np.random.seed(seed)
+            numpy.random.seed(seed)
 
-        r_theta = np.random.uniform([st, tmin], [ed, tmax], [pts, 2])
+        r_theta = numpy.random.uniform([st, tmin], [ed, tmax], [pts, 2])
 
         r = r_theta[..., 0]
         theta = r_theta[..., 1]
 
-        dist = np.stack((r * np.cos(theta) + mean[0], r * np.sin(theta) + mean[1]), axis=-1)
+        dist = numpy.stack((r * numpy.cos(theta) + mean[0], r * numpy.sin(theta) + mean[1]), axis=-1)
 
-        return dist
+        return np.asarray(dist)
