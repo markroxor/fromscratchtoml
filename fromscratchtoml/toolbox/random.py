@@ -7,6 +7,7 @@
 from fromscratchtoml import np
 import numpy
 
+
 class Distribution:
     """Objects of this class are the various distributions.
 

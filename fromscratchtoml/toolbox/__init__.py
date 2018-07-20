@@ -72,8 +72,6 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
         The seed value for randomising plot colors.
 
     """
-
-
     try:
         import cupy
         if isinstance(y, cupy.core.core.ndarray):
@@ -82,7 +80,6 @@ def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
             X = cupy.asnumpy(X)
     except ImportError:
         pass
-
 
     np.random.seed(color_seed)
 
