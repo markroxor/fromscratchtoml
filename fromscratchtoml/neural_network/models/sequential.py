@@ -130,7 +130,7 @@ class Sequential(BaseModel):
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
-                print(" loss: {:0.3f} ".format(float(loss)))
+                print(" loss: {:0.3f} ".format(float(np.sum(loss))))
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 
