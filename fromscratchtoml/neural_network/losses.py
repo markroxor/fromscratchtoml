@@ -39,6 +39,7 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
 
     return np.mean(np.square(y_predicted - y_target))
 
+
 def cross_entropy(y_predicted, y_target, return_deriv=False):
     """
     Calculates the cross entropy loss between the predicted and the target ouputs.
