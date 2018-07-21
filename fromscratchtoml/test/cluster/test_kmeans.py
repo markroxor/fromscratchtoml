@@ -5,7 +5,7 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 import unittest
-import numpy as np
+from fromscratchtoml import np
 
 from sklearn.cluster import KMeans as skl_KMeans
 from fromscratchtoml.cluster import KMeans as fs2ml_KMeans

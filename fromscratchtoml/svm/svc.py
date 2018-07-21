@@ -6,7 +6,7 @@
 
 import cvxopt
 # import torch as ch
-import numpy as np
+from fromscratchtoml import np
 
 from functools import partial
 
