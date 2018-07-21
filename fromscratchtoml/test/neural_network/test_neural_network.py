@@ -43,7 +43,7 @@ class TestNN(unittest.TestCase):
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=50, random_state=42)
 
-    def test_dense_acts_sgd(self):
+    def test_dense_acts_sgd_mse(self):
         model = Sequential()
 
         model.add(Dense(10, input_dim=2, seed=1))
@@ -73,6 +73,42 @@ class TestNN(unittest.TestCase):
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
         expected_weights = np.array([[-1.31788536, 1.49334281], [-0.10027775, -1.39507145]], dtype=np.float128)
+        self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
+
+        predictions = model.predict(self.X_test)
+
+        self.assertTrue(np.allclose((predictions), np.argmax(self.y_test, axis=1)))
+
+    def test_dense_acts_sgd_cross_entropy(self):
+        model = Sequential()
+
+        model.add(Dense(10, input_dim=2, seed=1))
+        model.add(Activation('sigmoid'))
+
+        model.add(Dense(2, seed=7))
+        model.add(Activation('tanh'))
+
+        model.add(Dense(2, seed=2))
+        model.add(Activation('relu'))
+
+        model.add(Dense(2, seed=3))
+        model.add(Activation('leaky_relu'))
+
+        model.add(Dense(2, seed=4))
+        model.add(Activation('linear'))
+
+        model.add(Dense(2, seed=6))
+        model.add(Activation('softmax'))
+
+        sgd = StochasticGradientDescent(learning_rate=0.05)
+        model.compile(optimizer=sgd, loss="cross_entropy")
+
+        model.fit(self.X_train, self.y_train, epochs=9, batch_size=2)
+
+        expected_biases = np.array([[1.38503523, -0.51962709]], dtype=np.float128)
+        self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
+
+        expected_weights = np.array([[-1.15492119, 1.33037864], [0.04502013, -1.54036933]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
 
         predictions = model.predict(self.X_test)
