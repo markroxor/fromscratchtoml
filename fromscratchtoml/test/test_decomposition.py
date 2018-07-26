@@ -6,7 +6,7 @@
 import unittest
 
 from fromscratchtoml.decomposition import Decomposition
-import numpy as np
+from fromscratchtoml import np
 
 import logging
 

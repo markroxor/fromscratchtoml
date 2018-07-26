@@ -6,7 +6,7 @@
 
 import unittest
 
-import numpy as np
+from fromscratchtoml import np
 
 from fromscratchtoml import svm
 from fromscratchtoml.test.toolbox import _tempfile, _test_data_path  # noqa:F401

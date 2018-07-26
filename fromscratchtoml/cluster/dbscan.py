@@ -4,7 +4,7 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import numpy as np
+from fromscratchtoml import np
 
 from ..base import BaseModel
 from ..toolbox.exceptions import InvalidArgumentError

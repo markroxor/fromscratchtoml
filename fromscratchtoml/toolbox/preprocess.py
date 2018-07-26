@@ -4,8 +4,8 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-import numpy as np
-
+from fromscratchtoml import np
+import numpy
 
 import logging
 
@@ -15,15 +15,24 @@ logger.setLevel(logging.INFO)
 
 
 def to_onehot(y):
-    unq, _ = np.unique(y, return_inverse=True)
 
-    a = []
+    try:
+        import cupy
+        if isinstance(y, cupy.core.core.ndarray):
+            y = np.asnumpy(y)
+    except ImportError:
+        pass
+
+    unq, _ = numpy.unique(y, return_inverse=True)
+
+    # a = []
+    a = np.zeros((len(y), len(unq)))
     for i in range(len(y)):
-        x = np.zeros(len(unq))
-        x[int(y[i])] = 1.
-        a.append(x)
+        # x = np.zeros(len(unq))
+        a[i][int(y[i])] = 1.
+        # a.append(x)
 
-    return np.array(a, dtype=np.float128)
+    return a
 
 
 def vocab_one_hot(Y, vocab_size):

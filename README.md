@@ -22,7 +22,7 @@ This library targets individuals who want to learn machine learning code from sc
 
 ## Installation
 #### Python pypi <a name="pypi"></a>
-You can install from [pipy](https://pypi.org/project/fromscratchtoml/).
+You can install from [pypi](https://pypi.org/project/fromscratchtoml/).
 
     pip install fromscratchtoml
 
