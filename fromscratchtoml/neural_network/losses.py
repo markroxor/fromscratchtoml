@@ -68,6 +68,6 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
 
     if return_deriv:
         deriv = -(y_target / y_predicted) + (1 - y_target) / (1 - y_predicted)
-        return crl, deriv
+        return crl / len(y_target), deriv / len(y_target)
 
-    return crl
+    return crl / len(y_target)
