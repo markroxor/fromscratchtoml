@@ -86,8 +86,7 @@ class Sequential(BaseModel):
         -------
         float : The accuracy in percentage.
         """
-
-        if len(y.shape) > 2:
+        if len(y.shape) > 1:
             y = np.argmax(y, axis=len(y.shape) - 1)
 
         y_pred = self.predict(X)
@@ -133,12 +132,11 @@ class Sequential(BaseModel):
                 acc = self.accuracy(X, y)
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
-<<<<<<< HEAD
+
                 loss = self.loss(y_pred, y)
-                print(" loss: {:0.3f} ".format(np.sum(loss)))
-=======
+
                 print(" loss: {:0.3f} ".format(float(np.sum(loss))))
->>>>>>> af1f77910847270589582c75082cd40cc9b10bbc
+
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 

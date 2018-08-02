@@ -39,7 +39,7 @@ class TestNN(unittest.TestCase):
         X = np.vstack((X11, X22))
         y = np.hstack((Y11, Y22))
 
-        # y = to_onehot(y)
+        y = to_onehot(y)
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=50, random_state=42)
 
