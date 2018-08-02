@@ -25,12 +25,9 @@ def to_onehot(y):
 
     unq, _ = numpy.unique(y, return_inverse=True)
 
-    # a = []
     a = np.zeros((len(y), len(unq)))
     for i in range(len(y)):
-        # x = np.zeros(len(unq))
         a[i][int(y[i])] = 1.
-        # a.append(x)
 
     return a
 
