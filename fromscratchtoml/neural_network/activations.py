@@ -144,7 +144,6 @@ class Activations(object):
         """
         # shifting for numerical stability
         # refer https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative
-
         x -= np.max(x, axis=-1, keepdims=True)
         n = np.exp(x)
         d = np.sum(n, axis=-1, keepdims=True)
@@ -154,3 +153,24 @@ class Activations(object):
             return _softmax, _softmax * (1 - _softmax)
 
         return _softmax
+
+    @staticmethod
+    def tan(x, return_deriv=False):
+        """Returns the tan of x.
+
+        Parameters
+        ----------
+        x : numpy.ndarray
+            the input
+        return_deriv : bool, optional
+            if True, returns the derivative of the output along with the output.
+
+        Returns
+        -------
+        numpy.ndarray : tan of x
+        """
+
+        if return_deriv:
+            return np.tan(x), (1. / np.cos(x)) ** 2
+
+        return np.tan(x)
