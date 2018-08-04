@@ -138,10 +138,6 @@ class TestNN(unittest.TestCase):
 
         model.fit(self.X_train, self.y_train, epochs=10, batch_size=2)
 
-        print(model.accuracy(self.X_test, self.y_test))
-        print(model.layers[-2].biases)
-        print(model.layers[-2].weights)
-
         expected_biases = np.array([[-0.39717598, -0.87858446]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
