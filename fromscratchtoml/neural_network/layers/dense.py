@@ -4,7 +4,6 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
-# from fromscratchtoml import np
 from fromscratchtoml import np
 
 from fromscratchtoml.neural_network.layers import Layer
@@ -38,7 +37,7 @@ class Dense(Layer):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, units, input_dim=None, optimizer=None, seed=None):
+    def __init__(self, units, input_dim=None, optimizer=None, kernel_regularizer=None, seed=None):
         """
         Initialising the layer parameters.
 
@@ -61,11 +60,12 @@ class Dense(Layer):
         self.biases = None
         self.weights = None
         self.optimizer = optimizer
+        self.kernel_regularizer = kernel_regularizer
 
         if input_dim:
-            # x=1 single row
-            self.biases = np.random.randn(1, self.units)
-            self.weights = np.random.randn(input_dim, self.units)
+            # weight initialisation followed as per http://cs231n.github.io/neural-networks-2/
+            self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
+            self.weights = np.random.randn(input_dim, self.units) * np.sqrt(2.0 / self.units)
 
     def forward(self, X):
         """
@@ -84,8 +84,9 @@ class Dense(Layer):
             X = np.expand_dims(X, axis=1)
 
         if self.weights is None:
-            self.biases = np.random.randn(1, self.units)
-            self.weights = np.random.randn(X.shape[1], self.units)
+            # weight initialisation followed as per http://cs231n.github.io/neural-networks-2/
+            self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
+            self.weights = np.random.randn(X.shape[1], self.units) * np.sqrt(2.0 / self.units)
 
         self.input = X
         self.output = np.dot(X, self.weights) + self.biases
@@ -114,3 +115,8 @@ class Dense(Layer):
     def optimize(self, optimizer):
         self.weights = optimizer.update_weights(self.weights, self.dEdW)
         self.biases = optimizer.update_weights(self.biases, self.dEdB)
+
+        if self.kernel_regularizer is not None:
+            batch_size = self.input.shape[0]
+            self.weights -= self.kernel_regularizer.grad(self.weights, batch_size)
+            self.biases -= self.kernel_regularizer.grad(self.biases, batch_size)
