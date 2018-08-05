@@ -8,7 +8,7 @@ import unittest
 
 from fromscratchtoml import np
 from fromscratchtoml.neural_network.models import Sequential
-from fromscratchtoml.neural_network.layers import Dense, Activation
+from fromscratchtoml.neural_network.layers import Dense, Activation, Dropout
 from fromscratchtoml.neural_network.optimizers import StochasticGradientDescent
 from fromscratchtoml.neural_network.regularizers import l1, l2, l1_l2
 
@@ -47,21 +47,27 @@ class TestNN(unittest.TestCase):
     def test_dense_l2_sgd_mse(self):
         model = Sequential()
         lmda = 0.001
+        dropout_rate = 0.
 
         model.add(Dense(10, kernel_regularizer=l2(lmda), input_dim=2, seed=1))
         model.add(Activation('sigmoid'))
+        model.add(Dropout(dropout_rate, seed=6))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=7))
         model.add(Activation('tanh'))
+        model.add(Dropout(dropout_rate, seed=8))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=2))
         model.add(Activation('relu'))
+        model.add(Dropout(dropout_rate, seed=9))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=3))
         model.add(Activation('leaky_relu'))
+        model.add(Dropout(dropout_rate, seed=10))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=4))
         model.add(Activation('linear'))
+        model.add(Dropout(dropout_rate, seed=6))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=6))
         model.add(Activation('softmax'))
