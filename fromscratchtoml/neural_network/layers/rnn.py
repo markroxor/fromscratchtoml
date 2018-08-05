@@ -69,7 +69,7 @@ class RNN(Layer):
 
         self.params = self.W_hh.size + self.W_xh.size + self.W_hy.size
 
-    def forward(self, X):
+    def forward(self, X, train=False):
         """
         Forward pass the output of the previous layer by using the current layer's weights.
 

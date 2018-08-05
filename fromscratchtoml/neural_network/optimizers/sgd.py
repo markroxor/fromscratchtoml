@@ -56,5 +56,4 @@ class StochasticGradientDescent(object):
         grad_wrt_w : numpy.ndarray
             The derivative of error with respect to weight.
         """
-        # print(grad_wrt_w)
         return w - self.learning_rate * grad_wrt_w

@@ -47,8 +47,10 @@ class Dense(Layer):
             Number of perceptrons in a layer.
         input_dim : int, optional
             The dimensions of the input layer. Only required for the first layer.
-        trainable : bool, optional
-            The weights of this layer will be updated only if this is set to true.
+        optimizer : fromscratchtoml.neural_network.optimizers 
+            The optimizer to use for weight updatation.
+        kernel_regularizer : fromscratchtoml.neural_network.regularizers
+            The regularizer technique to used to penalise weights.
         seed : int, optional
             The seed value for mantaining reproduciblity of random weights.
 
@@ -63,11 +65,10 @@ class Dense(Layer):
         self.kernel_regularizer = kernel_regularizer
 
         if input_dim:
-            # weight initialisation followed as per http://cs231n.github.io/neural-networks-2/
             self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
             self.weights = np.random.randn(input_dim, self.units) * np.sqrt(2.0 / self.units)
 
-    def forward(self, X):
+    def forward(self, X, train=False):
         """
         Forward pass the output of the previous layer by using the current layer's weights and biases.
 
@@ -75,16 +76,15 @@ class Dense(Layer):
         ----------
         X : numpy.ndarray
             The ouput of the previous layer
-
         Returns
         -------
-        numpy.array : The output of the perceptron.
+        numpy.array : The output of the layer.
         """
+
         if len(X.shape) == 1:
             X = np.expand_dims(X, axis=1)
 
         if self.weights is None:
-            # weight initialisation followed as per http://cs231n.github.io/neural-networks-2/
             self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
             self.weights = np.random.randn(X.shape[1], self.units) * np.sqrt(2.0 / self.units)
 
@@ -99,17 +99,18 @@ class Dense(Layer):
 
         Parameters
         ----------
-        delta : numpy.ndarray
-            The accumulated delta used for calculating error gradient with respect to parameters.
+        dEdO : numpy.ndarray
+            The accumulated gradient used for calculating error gradient with respect to parameters.
 
         Returns
         -------
-        numpy.array : The accumulated delta.
+        numpy.array : The accumulated gradient.
         """
 
         self.dEdB = np.sum(dEdO)
         self.dEdW = np.dot(self.input.T, dEdO)
         dEdO = np.dot(dEdO, self.weights.T)
+
         return dEdO
 
     def optimize(self, optimizer):
@@ -119,4 +120,3 @@ class Dense(Layer):
         if self.kernel_regularizer is not None:
             batch_size = self.input.shape[0]
             self.weights -= self.kernel_regularizer.grad(self.weights, batch_size)
-            self.biases -= self.kernel_regularizer.grad(self.biases, batch_size)
