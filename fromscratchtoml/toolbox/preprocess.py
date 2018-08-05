@@ -39,3 +39,15 @@ def vocab_one_hot(Y, vocab_size):
         temp[i] = np.eye(vocab_size)[Y[i]]
 
     return temp
+
+def rgb2gray(images, gamma=1):
+    # https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+    if len(images.shape) == 3:
+        images = np.expand_dims(images, axis=0)
+
+    R = images[:, :, :, 0]
+    G = images[:, :, :, 1]
+    B = images[:, :, :, 2]
+
+    Y = .2126 * (R ** gamma) + .7152 * (G ** gamma) + .0722 * (B ** gamma)
+    return Y
