@@ -90,14 +90,13 @@ class Sequential(BaseModel):
             y = np.argmax(y, axis=len(y.shape) - 1)
 
         y_pred = self.predict(X)
-
         diff_arr = y - y_pred
 
         total_samples = 1
         for dim in range(len(y.shape)):
             total_samples *= y.shape[dim]
 
-        errors = np.count_nonzero(diff_arr) / 2
+        errors = np.count_nonzero(diff_arr)
         return float(100 - (errors / (total_samples * 0.01)))
 
     def fit(self, X, y, epochs, batch_size=None):
@@ -189,7 +188,7 @@ class Sequential(BaseModel):
         Z = X
 
         for layer in self.layers:
-            Z = layer.forward(Z)
+            Z = layer.forward(Z, train=True)
 
         return Z
 
