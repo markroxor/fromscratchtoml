@@ -12,7 +12,7 @@ import numpy as np
 from .exceptions import ParameterRequiredException
 
 import matplotlib
-matplotlib.use('agg')
+# matplotlib.use('agg')
 import matplotlib.pyplot as plt  # noqa:F402
 
 logging.basicConfig()
