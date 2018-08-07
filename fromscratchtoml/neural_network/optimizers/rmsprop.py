@@ -4,6 +4,8 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
+from fromscratchtoml import np
+
 import logging
 
 logging.basicConfig()
@@ -12,7 +14,7 @@ logger.setLevel(logging.INFO)
 
 
 # optimizes/updates the weights
-class StochasticGradientDescent(object):
+class RMSprop(object):
     """
     A sequence of multiple layers.
 
@@ -35,7 +37,7 @@ class StochasticGradientDescent(object):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, learning_rate=0.01, decay=1e-6, momentum=0, nesterov=False):
+    def __init__(self, learning_rate=0.001, decay=0.9):
         """
         Initialising the optimizer parameters.
 
@@ -45,9 +47,8 @@ class StochasticGradientDescent(object):
             the rate of change of weights. The higher the learning rate - more is the change in the parameters.
         """
         self.learning_rate = learning_rate
-        self.momentum = momentum
-        self.v = 0
-        self.nesterov = nesterov
+        self.decay = decay
+        self.accumulated_sq_gradient = 0
 
     def update_weights(self, w, dEdW):
         """
@@ -61,10 +62,5 @@ class StochasticGradientDescent(object):
             The derivative of error with respect to weight.
         """
 
-        if self.nesterov:
-            v_ahead = self.momentum * self.v - self.learning_rate * dEdW
-            return w - self.momentum * self.v + (1 + self.momentum) * v_ahead
-
-        # vanilla momentum
-        self.v = self.momentum * self.v - self.learning_rate * dEdW
-        return w + self.v
+        self.accumulated_sq_gradient = self.decay * self.accumulated_sq_gradient + (1 - self.decay) * np.square(dEdW)
+        return w - self.learning_rate * dEdW / (np.sqrt(self.accumulated_sq_gradient) + 1e-8)
