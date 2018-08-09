@@ -65,8 +65,9 @@ class Dense(Layer):
         self.kernel_regularizer = kernel_regularizer
 
         if input_dim:
-            self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
-            self.weights = np.random.randn(input_dim, self.units) * np.sqrt(2.0 / self.units)
+            # xavier weight initialisation, doesnt work that well with relu
+            self.biases = np.random.randn(1, self.units) * np.sqrt(2. / (self.units + input_dim))
+            self.weights = np.random.randn(input_dim, self.units) * np.sqrt(2. / (self.units + input_dim))
 
     def forward(self, X, train=False):
         """
@@ -85,8 +86,9 @@ class Dense(Layer):
             X = np.expand_dims(X, axis=1)
 
         if self.weights is None:
-            self.biases = np.random.randn(1, self.units) * np.sqrt(2.0 / self.units)
-            self.weights = np.random.randn(X.shape[1], self.units) * np.sqrt(2.0 / self.units)
+            # xavier weight initialisation, doesnt work that well with relu
+            self.biases = np.random.randn(1, self.units) * np.sqrt(2. / (self.units + X.shape[1]))
+            self.weights = np.random.randn(X.shape[1], self.units) * np.sqrt(2. / (self.units + X.shape[1]))
 
         self.input = X
         self.output = np.dot(X, self.weights) + self.biases
@@ -106,9 +108,11 @@ class Dense(Layer):
         -------
         numpy.array : The accumulated gradient.
         """
-
         self.dEdB = np.sum(dEdO)
-        self.dEdW = np.dot(self.input.T, dEdO)
+
+        dOdW = self.input
+        self.dEdW = np.dot(dOdW.T, dEdO)
+
         dEdO = np.dot(dEdO, self.weights.T)
 
         return dEdO
