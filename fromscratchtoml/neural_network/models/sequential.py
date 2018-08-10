@@ -13,6 +13,7 @@ from .. import losses
 from fromscratchtoml.base import BaseModel
 
 import logging
+from copy import deepcopy
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ class Sequential(BaseModel):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1)
     """
-    def __init__(self, verbose=False, vis_each_epoch=False):
+    def __init__(self, verbose=False, vis_each_epoch=False, vis_acc=False):
         """
         Initialising the model parameters.
 
@@ -56,6 +57,7 @@ class Sequential(BaseModel):
         self.layers = []
         self.verbose = verbose
         self.vis_each_epoch = vis_each_epoch
+        self.vis_acc = vis_acc
 
     def compile(self, optimizer, loss):
         """
@@ -120,24 +122,35 @@ class Sequential(BaseModel):
         if batch_size is None:
             batch_size = X.shape[0]
 
+        acc_per_epoch = []
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
+
                 self.__update_batch(batch_X, batch_y)
+
+            if self.vis_acc or self.verbose or epoch == epochs - 1:
+                acc = self.accuracy(X, y)
+                acc_per_epoch.append([epoch, acc])
 
             if self.verbose or epoch == epochs - 1:
                 y_pred = self.predict(X, prob=True)
-                acc = self.accuracy(X, y)
-                print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
-                print(" acc: {:0.2f} ".format(acc), end="")
-
                 loss = self.loss(y_pred, y)
 
+                print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
+                print(" acc: {:0.2f} ".format(acc), end="")
                 print(" loss: {:0.3f} ".format(float(np.sum(loss))))
 
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
+
+        if self.vis_acc:
+            import matplotlib.pyplot as plt
+            import numpy
+            acc_per_epoch = numpy.array(acc_per_epoch)
+            plt.plot(acc_per_epoch[:, 0], acc_per_epoch[:, 1])
+            plt.show()
 
     def __update_batch(self, X, Y):
         """
@@ -170,7 +183,7 @@ class Sequential(BaseModel):
 
         for layer in reversed(self.layers):
             dEdO = layer.back_propogate(dEdO)
-            layer.optimize(optimizer)
+            layer.optimize(deepcopy(optimizer))
 
     def forwardpass(self, X):
         """
