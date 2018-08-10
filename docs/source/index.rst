@@ -13,6 +13,7 @@ Welcome to fromscratchtoml's documentation!
    neural_network/losses
    neural_network/layers/activation
    neural_network/layers/dense
+   neural_network/layers/rnn
    neural_network/optimizers/sgd
    neural_network/activations
    svm/svc

@@ -2,6 +2,7 @@
 data/*
 docs/notebooks/mldata/
 docs/notebook/data
+docs/notebooks/*.pkl
 
 # Sphinx documentation
 doc/
