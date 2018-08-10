@@ -5,8 +5,9 @@
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
 from fromscratchtoml import np
-
 from fromscratchtoml.neural_network.layers import Layer
+
+from copy import deepcopy
 import logging
 
 logging.basicConfig()
@@ -37,7 +38,7 @@ class Dense(Layer):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, units, input_dim=None, optimizer=None, kernel_regularizer=None, seed=None):
+    def __init__(self, units, input_dim=None, kernel_regularizer=None, seed=None):
         """
         Initialising the layer parameters.
 
@@ -47,8 +48,6 @@ class Dense(Layer):
             Number of perceptrons in a layer.
         input_dim : int, optional
             The dimensions of the input layer. Only required for the first layer.
-        optimizer : fromscratchtoml.neural_network.optimizers 
-            The optimizer to use for weight updatation.
         kernel_regularizer : fromscratchtoml.neural_network.regularizers
             The regularizer technique to used to penalise weights.
         seed : int, optional
@@ -60,9 +59,13 @@ class Dense(Layer):
 
         self.units = units
         self.biases = None
+
         self.weights = None
-        self.optimizer = optimizer
+
         self.kernel_regularizer = kernel_regularizer
+
+        self.w_optimizer = None
+        self.b_optimizer = None
 
         if input_dim:
             # xavier weight initialisation, doesnt work that well with relu
@@ -118,8 +121,12 @@ class Dense(Layer):
         return dEdO
 
     def optimize(self, optimizer):
-        self.weights = optimizer.update_weights(self.weights, self.dEdW)
-        self.biases = optimizer.update_weights(self.biases, self.dEdB)
+        if self.w_optimizer is None:
+            self.w_optimizer = deepcopy(optimizer)
+            self.b_optimizer = deepcopy(optimizer)
+
+        self.weights = self.w_optimizer.update_weights(self.weights, self.dEdW)
+        self.biases = self.b_optimizer.update_weights(self.biases, self.dEdB)
 
         if self.kernel_regularizer is not None:
             batch_size = self.input.shape[0]
