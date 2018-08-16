@@ -56,8 +56,9 @@ class Sequential(BaseModel):
         self.layers = []
         self.verbose = verbose
         self.vis_each_epoch = vis_each_epoch
+        self.accuracy_metric = "classify"
 
-    def compile(self, optimizer, loss):
+    def compile(self, optimizer, loss, accuracy_metric = "classify"):
         """
         Sets the optimizer and loss function to be used by the model.
 
@@ -70,6 +71,7 @@ class Sequential(BaseModel):
         """
         self.optimizer = optimizer
         self.loss = getattr(losses, loss)
+        self.accuracy_metric = accuracy_metric
 
     def accuracy(self, X, y):
         """
@@ -89,7 +91,11 @@ class Sequential(BaseModel):
         if len(y.shape) > 1:
             y = np.argmax(y, axis=len(y.shape) - 1)
 
-        y_pred = self.predict(X)
+        if self.accuracy_metric == "classify":
+            y_pred = self.predict(X, prob=False)
+        elif self.accuracy_metric == "regression":
+            y_pred = self.predict(X, prob=True)
+
         diff_arr = y - y_pred
 
         total_samples = 1
@@ -99,7 +105,7 @@ class Sequential(BaseModel):
         errors = np.count_nonzero(diff_arr)
         return float(100 - (errors / (total_samples * 0.01)))
 
-    def fit(self, X, y, epochs, batch_size=None):
+    def fit(self, X, y, epochs, batch_size=1):
         """
         Fits the model.
 
@@ -117,9 +123,6 @@ class Sequential(BaseModel):
         X = np.asarray(X, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
-        if batch_size is None:
-            batch_size = X.shape[0]
-
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
@@ -133,7 +136,6 @@ class Sequential(BaseModel):
                 print(" acc: {:0.2f} ".format(acc), end="")
 
                 loss = self.loss(y_pred, y)
-
                 print(" loss: {:0.3f} ".format(float(np.sum(loss))))
 
                 if self.vis_each_epoch:

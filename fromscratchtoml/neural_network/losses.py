@@ -31,8 +31,6 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
     numpy.array : The error.
     numpy.array : The error's derivative, optional.
     """
-    if len(y_target.shape) == 1:
-        y_target = np.expand_dims(y_target, axis=1)
 
     if return_deriv:
         return np.square(y_predicted - y_target) / (2. * y_target.shape[0]), (y_predicted - y_target) / y_target.shape[0]
@@ -56,8 +54,6 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
     numpy.array : The error.
     numpy.array : The error's derivative, optional.
     """
-    if len(y_target.shape) == 1:
-        y_target = np.expand_dims(y_target, axis=1)
 
     eps = 1e-9
 
