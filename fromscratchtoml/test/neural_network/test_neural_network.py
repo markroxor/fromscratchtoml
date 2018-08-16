@@ -4,6 +4,7 @@
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
 # Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
 
+from fromscratchtoml.test import Gradient_check
 import unittest
 
 from fromscratchtoml import np
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestNN(unittest.TestCase):
+class TestNN(unittest.TestCase, Gradient_check):
     def setUp(self):
         X11 = Distribution.radial_binary(pts=300,
                        mean=[0, 0],
@@ -149,3 +150,41 @@ class TestNN(unittest.TestCase):
 
         expected_weights = np.array([[-2.04528524, 0.59513791], [-0.84020769, -1.03224048]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
+
+    def function(self, h, loss, **kwargs):
+        X = kwargs["X"]
+        y = kwargs["y"]
+
+        model = Sequential()
+        model.add(Dense(2, input_dim=2, seed=1))
+        model.add(Activation('relu'))
+        model.add(Dense(2, seed=3))
+        model.add(Activation('tanh'))
+        model.add(Dense(2, seed=4))
+        model.add(Activation('linear'))
+        model.add(Dense(2, seed=2))
+        model.add(Activation('tan'))
+        model.add(Dense(2, seed=5))
+        model.add(Activation('leaky_relu'))
+        model.add(Dense(2, seed=6))
+        model.add(Activation('sigmoid'))
+
+        model.layers[0].weights[0][0] += h
+        sgd = StochasticGradientDescent(learning_rate=0.01)
+
+        model.compile(optimizer=sgd, loss=loss)
+
+        y_ = model.forwardpass(X)
+        E, dE = model.loss(y_, y, return_deriv=True)
+        
+        for layer in reversed(model.layers):
+            dE = layer.back_propogate(dE)
+
+        return E, model.layers[0].dEdW
+
+    def test_gradient_consistency(self):
+        kwargs = {}
+        kwargs["X"] = self.X_train
+        kwargs["y"] = self.y_train
+        self.assertTrue(self.compute_relative_error(loss="mean_squared_error", **kwargs) < 1e-7)
+        self.assertTrue(self.compute_relative_error(loss="cross_entropy", **kwargs) < 1e-7)

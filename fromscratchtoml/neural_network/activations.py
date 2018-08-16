@@ -53,7 +53,7 @@ class Activations(object):
         numpy.ndarray : sigmoid of x
         """
         x = np.clip(x, -100, 100)
-        _sigmoid = 1.0 / (1.0 + np.exp(-x))
+        _sigmoid = 1. / (1. + np.exp(-x))
 
         if return_deriv:
             return _sigmoid, _sigmoid * (1 - _sigmoid)
@@ -145,12 +145,14 @@ class Activations(object):
         # shifting for numerical stability
         # refer https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative
         x -= np.max(x, axis=-1, keepdims=True)
+        x = np.clip(x, -100, 100)
+
         n = np.exp(x)
         d = np.sum(n, axis=-1, keepdims=True)
         _softmax = n / d
 
         if return_deriv:
-            return _softmax, _softmax * (1 - _softmax)
+            return _softmax, _softmax * (1. - _softmax)
 
         return _softmax
 
