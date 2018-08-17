@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 # optimizes/updates the weights
 class StochasticGradientDescent(object):
     """
-    A sequence of multiple layers.
+    SGD optimizer.
 
     Examples
     --------
@@ -35,7 +35,7 @@ class StochasticGradientDescent(object):
     >>> model.predict(X1, one_hot=True)
     """
 
-    def __init__(self, learning_rate=0.01, decay=1e-6, momentum=0, nesterov=False):
+    def __init__(self, learning_rate=0.01, momentum=0, nesterov=False):
         """
         Initialising the optimizer parameters.
 
