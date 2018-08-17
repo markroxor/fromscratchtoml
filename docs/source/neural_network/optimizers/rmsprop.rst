@@ -1,7 +1,7 @@
-:mod:`neural_network.optimizers.sgd` -- Optimizer
+:mod:`neural_network.optimizers.rmsprop` -- Optimizer
 ==================================================================================
 
-.. automodule:: fromscratchtoml.neural_network.optimizers.sgd
+.. automodule:: fromscratchtoml.neural_network.optimizers.rmsprop
     :synopsis: Optimizer
     :members:
     :inherited-members:
