@@ -8,7 +8,7 @@ import unittest
 
 from fromscratchtoml import np
 from fromscratchtoml.neural_network.models import Sequential
-from fromscratchtoml.neural_network.layers import Dense, Activation, Dropout
+from fromscratchtoml.neural_network.layers import Dense, Activation
 from fromscratchtoml.neural_network.optimizers import StochasticGradientDescent
 from fromscratchtoml.neural_network.regularizers import l1, l2, l1_l2
 
@@ -46,28 +46,22 @@ class TestNN(unittest.TestCase):
 
     def test_dense_l2_sgd_mse(self):
         model = Sequential()
-        lmda = 0.001
-        dropout_rate = 0.
+        lmda = 0.00001
 
         model.add(Dense(10, kernel_regularizer=l2(lmda), input_dim=2, seed=1))
         model.add(Activation('sigmoid'))
-        model.add(Dropout(dropout_rate, seed=6))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=7))
         model.add(Activation('tanh'))
-        model.add(Dropout(dropout_rate, seed=8))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=2))
         model.add(Activation('relu'))
-        model.add(Dropout(dropout_rate, seed=9))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=3))
         model.add(Activation('leaky_relu'))
-        model.add(Dropout(dropout_rate, seed=10))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=4))
         model.add(Activation('linear'))
-        model.add(Dropout(dropout_rate, seed=6))
 
         model.add(Dense(2, kernel_regularizer=l2(lmda), seed=6))
         model.add(Activation('softmax'))
@@ -77,15 +71,15 @@ class TestNN(unittest.TestCase):
 
         model.fit(self.X_train, self.y_train, epochs=15, batch_size=4)
 
-        expected_biases = np.array([[0.82234889, -0.30852266]], dtype=np.float128)
+        expected_biases = np.array([[0.9793678, -0.36743184]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
-        expected_weights = np.array([[-1.21168207, 1.31585794], [-0.10285933, -0.78498722]], dtype=np.float128)
+        expected_weights = np.array([[-1.27984755, 1.40326968], [-0.17451107, -0.87736328]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
 
     def test_dense_l1_sgd_cross_entropy(self):
         model = Sequential()
-        lmda = 0.001
+        lmda = 0.00001
 
         model.add(Dense(10, kernel_regularizer=l1(lmda), input_dim=2, seed=1))
         model.add(Activation('sigmoid'))
@@ -110,10 +104,10 @@ class TestNN(unittest.TestCase):
 
         model.fit(self.X_train, self.y_train, epochs=10, batch_size=2)
 
-        expected_biases = np.array([[0.01003523, -1.89462709]], dtype=np.float128)
+        expected_biases = np.array([[0.9793678, -0.36743184]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
-        expected_weights = np.array([[-2.23959131, -0.33495123], [-1.22481013, -3.02053907]], dtype=np.float128)
+        expected_weights = np.array([[-0.95366761, 1.05023476], [-0.04166344, -1.04320812]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
 
     def test_dense_l1_l2_sgd_cross_entropy(self):
@@ -142,10 +136,11 @@ class TestNN(unittest.TestCase):
         sgd = StochasticGradientDescent(learning_rate=0.05)
         model.compile(optimizer=sgd, loss="cross_entropy")
 
-        model.fit(self.X_train, self.y_train, epochs=10, batch_size=2)
+        model.fit(self.X_train, self.y_train, epochs=9, batch_size=2)
 
-        expected_biases = np.array([[-0.39717598, -0.87858446]], dtype=np.float128)
+        expected_biases = np.array([[0.9793678, -0.36743184]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
-        expected_weights = np.array([[-2.04528524, 0.59513791], [-0.84020769, -1.03224048]], dtype=np.float128)
+        expected_weights = np.array([[-1.78017618, 0.39619561], [-1.18903288, -0.53758714]], dtype=np.float128)
+        print(model.layers[-2].weights)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
