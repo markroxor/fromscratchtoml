@@ -53,7 +53,7 @@ class Activation(Layer):
         """
         self.activation = partial(getattr(Activations, activation))
 
-    def forward(self, X, return_deriv=False):
+    def forward(self, X, train=False):
         """
         Forward pass the output of the previous layer by applying activation function to it.
 
@@ -70,9 +70,6 @@ class Activation(Layer):
         """
         self.input = X
         self.output, self.output_deriv = self.activation(X, return_deriv=True)
-
-        if return_deriv:
-            return self.output, self.output_deriv
 
         return self.output
 
@@ -91,4 +88,5 @@ class Activation(Layer):
         """
 
         dEdO = dEdO * self.output_deriv
+
         return dEdO
