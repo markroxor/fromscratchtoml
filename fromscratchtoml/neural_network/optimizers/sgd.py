@@ -43,6 +43,10 @@ class StochasticGradientDescent(object):
         ----------
         learning_rate : float
             the rate of change of weights. The higher the learning rate - more is the change in the parameters.
+        momentum : float
+            The momentum.
+        nestrov : bool
+            Set to True for NAG.
         """
         self.learning_rate = learning_rate
         self.momentum = momentum
@@ -57,7 +61,7 @@ class StochasticGradientDescent(object):
         ----------
         w : numpy.ndarray
             The weight to be updated.
-        grad_wrt_w : numpy.ndarray
+        dEdW : numpy.ndarray
             The derivative of error with respect to weight.
         """
 

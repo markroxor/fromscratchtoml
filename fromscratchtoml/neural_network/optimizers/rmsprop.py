@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 from fromscratchtoml import np
 
@@ -45,6 +45,8 @@ class RMSprop(object):
         ----------
         learning_rate : float
             the rate of change of weights. The higher the learning rate - more is the change in the parameters.
+        decay : float
+            the leakage of previous accumulated gradient square into current.
         """
         self.learning_rate = learning_rate
         self.decay = decay
@@ -58,7 +60,7 @@ class RMSprop(object):
         ----------
         w : numpy.ndarray
             The weight to be updated.
-        grad_wrt_w : numpy.ndarray
+        dEdW : numpy.ndarray
             The derivative of error with respect to weight.
         """
 
