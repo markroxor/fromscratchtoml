@@ -11,7 +11,7 @@ import numpy as np
 
 from .exceptions import ParameterRequiredException
 
-import matplotlib.pyplot as plt  # noqa:F402
+import matplotlib.pyplot as plt
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
