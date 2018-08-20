@@ -5,7 +5,6 @@
 # Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 from fromscratchtoml import np
-import numpy
 
 from fromscratchtoml.neural_network.layers import Layer
 import logging
@@ -58,7 +57,6 @@ class Dropout(Layer):
         numpy.array : The masked input.
         """
         if len(X.shape) == 1:
-            assert(1==2)
             X = np.expand_dims(X, axis=1)
 
         self.output = X

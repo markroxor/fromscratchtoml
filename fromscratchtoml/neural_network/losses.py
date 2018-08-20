@@ -33,9 +33,10 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
     """
 
     if return_deriv:
-        return np.square(y_predicted - y_target) / (2. * y_target.shape[0]), (y_predicted - y_target) / y_target.shape[0]
+        return np.sum(np.square(y_predicted - y_target)) /\
+        (2. * y_target.shape[0]), (y_predicted - y_target) / y_target.shape[0]
 
-    return np.square(y_predicted - y_target) / (2. * y_target.shape[0])
+    return np.sum(np.square(y_predicted - y_target)) / (2. * y_target.shape[0])
 
 
 def cross_entropy(y_predicted, y_target, return_deriv=False):
@@ -64,6 +65,6 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
 
     if return_deriv:
         deriv = -(y_target / y_predicted) + (1 - y_target) / (1 - y_predicted)
-        return crl / len(y_target), deriv / len(y_target)
+        return np.sum(crl) / len(y_target), deriv / len(y_target)
 
-    return crl / len(y_target)
+    return np.sum(crl) / len(y_target)

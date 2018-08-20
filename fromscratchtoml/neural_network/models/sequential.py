@@ -13,6 +13,7 @@ from .. import losses
 from fromscratchtoml.base import BaseModel
 
 import logging
+from copy import deepcopy
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ class Sequential(BaseModel):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1)
     """
-    def __init__(self, verbose=False, vis_each_epoch=False):
+    def __init__(self, verbose=False, vis_each_epoch=False, vis_loss=False):
         """
         Initialising the model parameters.
 
@@ -57,8 +58,9 @@ class Sequential(BaseModel):
         self.verbose = verbose
         self.vis_each_epoch = vis_each_epoch
         self.accuracy_metric = "classify"
+        self.vis_loss = vis_loss
 
-    def compile(self, optimizer, loss, accuracy_metric = "classify"):
+    def compile(self, optimizer, loss, accuracy_metric="classify"):
         """
         Sets the optimizer and loss function to be used by the model.
 
@@ -91,16 +93,12 @@ class Sequential(BaseModel):
         if len(y.shape) > 1:
             y = np.argmax(y, axis=len(y.shape) - 1)
 
-        if self.accuracy_metric == "classify":
-            y_pred = self.predict(X, prob=False)
-        elif self.accuracy_metric == "regression":
-            y_pred = self.predict(X, prob=True)
-
-        diff_arr = y - y_pred
-
         total_samples = 1
         for dim in range(len(y.shape)):
             total_samples *= y.shape[dim]
+
+        y_pred = self.predict(X, prob=False)
+        diff_arr = y - y_pred
 
         errors = np.count_nonzero(diff_arr)
         return float(100 - (errors / (total_samples * 0.01)))
@@ -123,23 +121,41 @@ class Sequential(BaseModel):
         X = np.asarray(X, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
+        if batch_size is None:
+            batch_size = X.shape[0]
+
+        loss_per_epoch = []
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
                 batch_y = y[current_batch: current_batch + batch_size]
+
                 self.__update_batch(batch_X, batch_y)
 
-            if self.verbose or epoch == epochs - 1:
+            if self.vis_loss:
                 y_pred = self.predict(X, prob=True)
+                loss = self.loss(y_pred, y)
+                loss_per_epoch.append([epoch, loss])
+
+            if self.verbose or epoch == epochs - 1:
                 acc = self.accuracy(X, y)
-                print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" acc: {:0.2f} ".format(acc), end="")
 
+                y_pred = self.predict(X, prob=True)
                 loss = self.loss(y_pred, y)
-                print(" loss: {:0.3f} ".format(float(np.sum(loss))))
+
+                print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
+                print(" loss: {:0.3f} ".format(loss))
 
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
+
+        if self.vis_loss:
+            import matplotlib.pyplot as plt
+            import numpy
+            loss_per_epoch = numpy.array(loss_per_epoch)
+            plt.plot(loss_per_epoch[:, 0], loss_per_epoch[:, 1])
+            plt.show()
 
     def __update_batch(self, X, Y):
         """
@@ -172,7 +188,7 @@ class Sequential(BaseModel):
 
         for layer in reversed(self.layers):
             dEdO = layer.back_propogate(dEdO)
-            layer.optimize(optimizer)
+            layer.optimize(deepcopy(optimizer))
 
     def forwardpass(self, X):
         """

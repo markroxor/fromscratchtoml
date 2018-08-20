@@ -15,6 +15,12 @@ Welcome to fromscratchtoml's documentation!
    neural_network/layers/dense
    neural_network/layers/rnn
    neural_network/optimizers/sgd
+   neural_network/optimizers/adam
+   neural_network/optimizers/adagrad
+   neural_network/optimizers/rmsprop
+   neural_network/regularization/l1
+   neural_network/regularization/l2
+   neural_network/regularization/l1_l2
    neural_network/activations
    svm/svc
    decomposition/decomposition

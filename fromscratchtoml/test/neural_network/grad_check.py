@@ -6,12 +6,12 @@
 
 from fromscratchtoml import np
 
-import unittest
 import logging
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 
 class Gradient_check(object):
 
@@ -23,8 +23,8 @@ class Gradient_check(object):
         self.h = 1e-7
         Ep, _ = self.function(self.h, loss, **kwargs)
         En, _ = self.function(-self.h, loss, **kwargs)
- 
-        dEdW = (np.sum(Ep - En)) / ( 2. * self.h)
+
+        dEdW = (np.sum(Ep - En)) / (2. * self.h)
 
         # analytic solution
         _, dEdW_ = self.function(0, loss, **kwargs)

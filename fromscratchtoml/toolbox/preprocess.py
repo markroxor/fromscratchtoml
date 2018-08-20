@@ -40,6 +40,7 @@ def vocab_one_hot(Y, vocab_size):
 
     return temp
 
+
 def rgb2gray(images, gamma=1):
     # https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
     if len(images.shape) == 3:
