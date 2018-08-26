@@ -33,8 +33,8 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
     """
 
     if return_deriv:
-        return np.sum(np.square(y_predicted - y_target)) /\
-        (2. * y_target.shape[0]), (y_predicted - y_target) / y_target.shape[0]
+        return np.sum(np.square(y_predicted - y_target)) / (2. * y_target.shape[0]), \
+               (y_predicted - y_target) / y_target.shape[0]
 
     return np.sum(np.square(y_predicted - y_target)) / (2. * y_target.shape[0])
 

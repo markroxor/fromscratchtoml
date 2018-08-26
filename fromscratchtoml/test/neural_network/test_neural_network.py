@@ -75,7 +75,7 @@ class TestNN(unittest.TestCase, Gradient_check):
         expected_biases = np.array([[0.9793678, -0.36743184]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_biases, model.layers[-2].biases))
 
-        expected_weights = np.array([[-1.27984755, 1.40326968], [-0.17451107, -0.87736328]], dtype=np.float128)
+        expected_weights = np.array([[-1.23512482, 1.35854696], [-0.19227019, -0.85960415]], dtype=np.float128)
         self.assertTrue(np.allclose(expected_weights, model.layers[-2].weights))
 
     def test_dense_l1_sgd_cross_entropy(self):
@@ -153,16 +153,19 @@ class TestNN(unittest.TestCase, Gradient_check):
         model = Sequential()
         model.add(Dense(2, input_dim=2, seed=1))
         model.add(Activation('relu'))
-        model.add(Dense(2, seed=3))
-        model.add(Activation('tanh'))
-        model.add(Dense(2, seed=4))
-        model.add(Activation('linear'))
-        model.add(Dense(2, seed=2))
-        model.add(Activation('tan'))
-        model.add(Dense(2, seed=5))
-        model.add(Activation('leaky_relu'))
         model.add(Dense(2, seed=6))
+        model.add(Activation('tanh'))
+        model.add(Dense(2, seed=2))
+        model.add(Activation('linear'))
+        model.add(Dense(2, seed=3))
+        model.add(Activation('tan'))
+        model.add(Dense(2, seed=4))
+        model.add(Activation('tanh'))
+        model.add(Dense(2, seed=7))
+        model.add(Activation('leaky_relu'))
+        model.add(Dense(2, seed=5))
         model.add(Activation('sigmoid'))
+        # TODO check sigmoid as well.
 
         model.layers[0].weights[0][0] += h
         sgd = StochasticGradientDescent(learning_rate=0.01)
@@ -181,5 +184,6 @@ class TestNN(unittest.TestCase, Gradient_check):
         kwargs = {}
         kwargs["X"] = self.X_train
         kwargs["y"] = self.y_train
+
         self.assertTrue(self.compute_relative_error(loss="mean_squared_error", **kwargs) < 1e-7)
         self.assertTrue(self.compute_relative_error(loss="cross_entropy", **kwargs) < 1e-7)

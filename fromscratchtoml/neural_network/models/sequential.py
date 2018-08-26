@@ -58,14 +58,9 @@ class Sequential(BaseModel):
         self.verbose = verbose
         self.vis_each_epoch = vis_each_epoch
         self.accuracy_metric = "classify"
-<<<<<<< HEAD
         self.vis_loss = vis_loss
 
     def compile(self, optimizer, loss, accuracy_metric="classify"):
-=======
-
-    def compile(self, optimizer, loss, accuracy_metric = "classify"):
->>>>>>> 2213625794983c65e18b24e2b0aea6f733a469f0
         """
         Sets the optimizer and loss function to be used by the model.
 
@@ -98,16 +93,6 @@ class Sequential(BaseModel):
         if len(y.shape) > 1:
             y = np.argmax(y, axis=len(y.shape) - 1)
 
-<<<<<<< HEAD
-=======
-        if self.accuracy_metric == "classify":
-            y_pred = self.predict(X, prob=False)
-        elif self.accuracy_metric == "regression":
-            y_pred = self.predict(X, prob=True)
-
-        diff_arr = y - y_pred
-
->>>>>>> 2213625794983c65e18b24e2b0aea6f733a469f0
         total_samples = 1
         for dim in range(len(y.shape)):
             total_samples *= y.shape[dim]
