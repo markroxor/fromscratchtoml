@@ -121,7 +121,7 @@ class Sequential(BaseModel):
         X = np.asarray(X, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
-        if batch_size is None:
+        if batch_size is None:  # pragma: no cover
             batch_size = X.shape[0]
 
         loss_per_epoch = []
@@ -132,7 +132,7 @@ class Sequential(BaseModel):
 
                 self.__update_batch(batch_X, batch_y)
 
-            if self.vis_loss:
+            if self.vis_loss:  # pragma: no cover
                 y_pred = self.predict(X, prob=True)
                 loss = self.loss(y_pred, y)
                 loss_per_epoch.append([epoch, loss])
@@ -150,7 +150,7 @@ class Sequential(BaseModel):
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 
-        if self.vis_loss:
+        if self.vis_loss:  # pragma: no cover
             import matplotlib.pyplot as plt
             import numpy
             loss_per_epoch = numpy.array(loss_per_epoch)
