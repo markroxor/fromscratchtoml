@@ -53,7 +53,7 @@ class Activations(object):
         numpy.ndarray : sigmoid of x
         """
         # heavy weight computations ahead!
-        x = x.astype(np.float128)
+        x = x.astype(np.float64)
 
         # clip manually?
         # x = np.clip(x, -100, 100)
@@ -81,7 +81,7 @@ class Activations(object):
         numpy.ndarray : softmax of x
         """
         # heavy weight computations ahead!
-        x = x.astype(np.float128)
+        x = x.astype(np.float64)
 
         # shifting for numerical stability
         # refer https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative
