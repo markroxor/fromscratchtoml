@@ -35,7 +35,7 @@ class Activations(object):
         if return_deriv:
             return x * alpha, alpha
 
-        return x * alpha
+        return x * alpha  # pragma: no cover
 
     @staticmethod
     def sigmoid(x, return_deriv=False):
@@ -63,7 +63,7 @@ class Activations(object):
         if return_deriv:
             return _sigmoid, _sigmoid * (1 - _sigmoid)
 
-        return _sigmoid
+        return _sigmoid  # pragma: no cover
 
     @staticmethod
     def softmax(x, return_deriv=False):
@@ -90,14 +90,14 @@ class Activations(object):
         # clip manually?
         # x = np.clip(x, -10, 10)
 
-        n = np.exp(x,)
+        n = np.exp(x)
         d = np.sum(n, axis=-1, keepdims=True)
         _softmax = n / d
 
         if return_deriv:
             return _softmax, _softmax * (1. - _softmax)  # * x.shape[1] <-- this fixes gradient checking.
 
-        return _softmax
+        return _softmax  # pragma: no cover
 
     @staticmethod
     def tanh(x, return_deriv=False):
@@ -125,7 +125,7 @@ class Activations(object):
             _tanh_deriv = 4 * _tanh_deriv
             return _tanh, _tanh_deriv
 
-        return _tanh
+        return _tanh  # pragma: no cover
 
     @staticmethod
     def relu(x, return_deriv=False):
@@ -144,7 +144,8 @@ class Activations(object):
         """
         if return_deriv:
             return np.clip(x, 0, None), np.greater_equal(x, np.zeros_like(x)).astype(np.int64)
-        return np.clip(x, 0, None)
+
+        return np.clip(x, 0, None)  # pragma: no cover
 
     @staticmethod
     def leaky_relu(x, alpha=0.3, return_deriv=False):
@@ -164,7 +165,7 @@ class Activations(object):
         if return_deriv:
             return np.where(x >= 0, x, x * alpha), np.where(x >= 0, 1, alpha)
 
-        return np.where(x >= 0, x, x * alpha)
+        return np.where(x >= 0, x, x * alpha)  # pragma: no cover
 
     @staticmethod
     def tan(x, return_deriv=False):
@@ -185,4 +186,4 @@ class Activations(object):
         if return_deriv:
             return np.tan(x), (1. / np.cos(x)) ** 2
 
-        return np.tan(x)
+        return np.tan(x)  # pragma: no cover

@@ -138,14 +138,14 @@ class Sequential(BaseModel):
                 loss_per_epoch.append([epoch, loss])
 
             if self.verbose or epoch == epochs - 1:
-                acc = self.accuracy(X, y)
-                print(" acc: {:0.2f} ".format(acc), end="")
 
                 y_pred = self.predict(X, prob=True)
                 loss = self.loss(y_pred, y)
+                acc = self.accuracy(X, y)
 
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
-                print(" loss: {:0.3f} ".format(loss))
+                print(" loss: {:0.3f} ".format(loss), end="")
+                print(" acc1: {:0.2f} ".format(acc))
 
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
