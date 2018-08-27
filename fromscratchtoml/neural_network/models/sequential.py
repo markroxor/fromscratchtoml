@@ -42,7 +42,7 @@ class Sequential(BaseModel):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1)
     """
-    def __init__(self, verbose=False, vis_each_epoch=False, vis_acc=False):
+    def __init__(self, verbose=False, vis_each_epoch=False, vis_loss=False):
         """
         Initialising the model parameters.
 
@@ -57,9 +57,10 @@ class Sequential(BaseModel):
         self.layers = []
         self.verbose = verbose
         self.vis_each_epoch = vis_each_epoch
-        self.vis_acc = vis_acc
+        self.accuracy_metric = "classify"
+        self.vis_loss = vis_loss
 
-    def compile(self, optimizer, loss):
+    def compile(self, optimizer, loss, accuracy_metric="classify"):
         """
         Sets the optimizer and loss function to be used by the model.
 
@@ -72,6 +73,7 @@ class Sequential(BaseModel):
         """
         self.optimizer = optimizer
         self.loss = getattr(losses, loss)
+        self.accuracy_metric = accuracy_metric
 
     def accuracy(self, X, y):
         """
@@ -91,17 +93,17 @@ class Sequential(BaseModel):
         if len(y.shape) > 1:
             y = np.argmax(y, axis=len(y.shape) - 1)
 
-        y_pred = self.predict(X)
-        diff_arr = y - y_pred
-
         total_samples = 1
         for dim in range(len(y.shape)):
             total_samples *= y.shape[dim]
 
+        y_pred = self.predict(X, prob=False)
+        diff_arr = y - y_pred
+
         errors = np.count_nonzero(diff_arr)
         return float(100 - (errors / (total_samples * 0.01)))
 
-    def fit(self, X, y, epochs, batch_size=None):
+    def fit(self, X, y, epochs, batch_size=1):
         """
         Fits the model.
 
@@ -119,10 +121,10 @@ class Sequential(BaseModel):
         X = np.asarray(X, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
-        if batch_size is None:
+        if batch_size is None:  # pragma: no cover
             batch_size = X.shape[0]
 
-        acc_per_epoch = []
+        loss_per_epoch = []
         for epoch in progress(range(epochs)):
             for current_batch in range(0, X.shape[0], batch_size):
                 batch_X = X[current_batch: current_batch + batch_size]
@@ -130,26 +132,29 @@ class Sequential(BaseModel):
 
                 self.__update_batch(batch_X, batch_y)
 
-            if self.vis_acc or self.verbose or epoch == epochs - 1:
-                acc = self.accuracy(X, y)
-                acc_per_epoch.append([epoch, acc])
-
-            if self.verbose or epoch == epochs - 1:
+            if self.vis_loss:  # pragma: no cover
                 y_pred = self.predict(X, prob=True)
                 loss = self.loss(y_pred, y)
+                loss_per_epoch.append([epoch, loss])
+
+            if self.verbose or epoch == epochs - 1:
+
+                y_pred = self.predict(X, prob=True)
+                loss = self.loss(y_pred, y)
+                acc = self.accuracy(X, y)
 
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
-                print(" acc: {:0.2f} ".format(acc), end="")
-                print(" loss: {:0.3f} ".format(float(np.sum(loss))))
+                print(" loss: {:0.3f} ".format(loss), end="")
+                print(" acc: {:0.2f} ".format(acc))
 
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
 
-        if self.vis_acc:
+        if self.vis_loss:  # pragma: no cover
             import matplotlib.pyplot as plt
             import numpy
-            acc_per_epoch = numpy.array(acc_per_epoch)
-            plt.plot(acc_per_epoch[:, 0], acc_per_epoch[:, 1])
+            loss_per_epoch = numpy.array(loss_per_epoch)
+            plt.plot(loss_per_epoch[:, 0], loss_per_epoch[:, 1])
             plt.show()
 
     def __update_batch(self, X, Y):

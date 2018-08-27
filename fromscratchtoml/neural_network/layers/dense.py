@@ -54,7 +54,7 @@ class Dense(Layer):
             The seed value for mantaining reproduciblity of random weights.
 
         """
-        if seed is not None:
+        if seed is not None:  # pragma: no cover
             np.random.seed(seed)
 
         self.units = units

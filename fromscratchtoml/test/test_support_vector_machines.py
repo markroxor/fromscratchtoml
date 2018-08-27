@@ -28,18 +28,6 @@ class TestSVM(unittest.TestCase):
                             [1, 3], [2, 5]])
         self.y = np.array([1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1])
 
-    def model_equal(self, m1, m2):
-        # compares two svc models by comparing their support vectors and
-        # lagrange multipliers
-        self.assertTrue(m1.b, m1.b)
-
-        for s1, s2 in zip(m1.support_vectors, m2.support_vectors):
-            self.assertTrue(np.allclose(s1, s2))
-
-        self.assertTrue(np.allclose(m1.support_vectors_y, m2.support_vectors_y))
-        self.assertTrue(np.allclose(m1.support_lagrange_multipliers,
-                                 m2.support_lagrange_multipliers))
-
     def test_not_fitted(self):
         # ensure that ModelNotFittedError is raised when predict is called
         # before predict.

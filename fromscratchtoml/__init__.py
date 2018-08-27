@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def use(backend):
+def use(backend):  # pragma: no cover
     global np
     if backend == "numpy":
         import numpy as np   # noqa:F401
