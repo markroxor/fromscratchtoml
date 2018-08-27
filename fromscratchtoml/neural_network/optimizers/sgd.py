@@ -67,7 +67,9 @@ class StochasticGradientDescent(object):
 
         if self.nesterov:
             v_ahead = self.momentum * self.v - self.learning_rate * dEdW
-            return w - self.momentum * self.v + (1 + self.momentum) * v_ahead
+            w = w - self.momentum * self.v + (1 + self.momentum) * v_ahead
+            self.v = v_ahead
+            return w
 
         # vanilla momentum
         self.v = self.momentum * self.v - self.learning_rate * dEdW
