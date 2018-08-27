@@ -130,7 +130,7 @@ class Decomposition(object):
                [ 3.39521722e+01, -2.33146835e-15, -3.26128013e-15]])
         """
 
-        if num_components is None:
+        if num_components is None:  # pragma: no cover
             num_components = X.shape[1]
         eigen_vals, eigen_vecs = Decomposition.eigens(X)
 
@@ -140,7 +140,7 @@ class Decomposition(object):
 
         rescaled_x = np.dot(X - X.mean(0), principal_components)
 
-        if return_scaled:
+        if return_scaled:  # pragma: no cover
             return principal_components, rescaled_x
 
         return principal_components

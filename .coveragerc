@@ -9,8 +9,3 @@ omit =
     */site-packages/nose/*
     */test
     */toolbox/__init__.py
-
-exclude_lines =
-    pragma: no cover
-    def __repr__
-    if self.vis_loss:
