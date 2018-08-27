@@ -145,7 +145,7 @@ class Sequential(BaseModel):
 
                 print("\nepoch: {}/{} ".format(epoch + 1, epochs), end="")
                 print(" loss: {:0.3f} ".format(loss), end="")
-                print(" acc1: {:0.2f} ".format(acc))
+                print(" acc: {:0.2f} ".format(acc))
 
                 if self.vis_each_epoch:
                     binary_visualize(X, clf=self, draw_contour=True)
