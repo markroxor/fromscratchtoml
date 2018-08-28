@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 from functools import partial
 
@@ -53,7 +53,7 @@ class Activation(Layer):
         """
         self.activation = partial(getattr(Activations, activation))
 
-    def forward(self, X, return_deriv=False):
+    def forward(self, X, train=False):
         """
         Forward pass the output of the previous layer by applying activation function to it.
 
@@ -70,9 +70,6 @@ class Activation(Layer):
         """
         self.input = X
         self.output, self.output_deriv = self.activation(X, return_deriv=True)
-
-        if return_deriv:
-            return self.output, self.output_deriv
 
         return self.output
 
@@ -91,4 +88,5 @@ class Activation(Layer):
         """
 
         dEdO = dEdO * self.output_deriv
+
         return dEdO

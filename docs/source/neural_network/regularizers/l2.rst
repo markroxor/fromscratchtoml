@@ -1,0 +1,9 @@
+:mod:`neural_network.regularizers.l1` -- Regularizer
+==================================================================================
+
+.. automodule:: fromscratchtoml.neural_network.regularizers.l1
+    :synopsis: Regularizer
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:

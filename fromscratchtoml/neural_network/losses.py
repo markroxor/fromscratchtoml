@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 from fromscratchtoml import np
 
@@ -31,13 +31,12 @@ def mean_squared_error(y_predicted, y_target, return_deriv=False):
     numpy.array : The error.
     numpy.array : The error's derivative, optional.
     """
-    if len(y_target.shape) == 1:
-        y_target = np.expand_dims(y_target, axis=1)
 
     if return_deriv:
-        return np.mean(np.square(y_predicted - y_target)), (y_predicted - y_target)
+        return np.sum(np.square(y_predicted - y_target)) / (2. * y_target.shape[0]), \
+               (y_predicted - y_target) / y_target.shape[0]
 
-    return np.mean(np.square(y_predicted - y_target))
+    return np.sum(np.square(y_predicted - y_target)) / (2. * y_target.shape[0])
 
 
 def cross_entropy(y_predicted, y_target, return_deriv=False):
@@ -56,8 +55,6 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
     numpy.array : The error.
     numpy.array : The error's derivative, optional.
     """
-    if len(y_target.shape) == 1:
-        y_target = np.expand_dims(y_target, axis=1)
 
     eps = 1e-9
 
@@ -68,6 +65,6 @@ def cross_entropy(y_predicted, y_target, return_deriv=False):
 
     if return_deriv:
         deriv = -(y_target / y_predicted) + (1 - y_target) / (1 - y_predicted)
-        return crl / len(y_target), deriv / len(y_target)
+        return np.sum(crl) / len(y_target), deriv / len(y_target)
 
-    return crl / len(y_target)
+    return np.sum(crl) / len(y_target)

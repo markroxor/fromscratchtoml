@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Licensed under the GNU General Public License v3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 import logging
 
@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 # optimizes/updates the weights
 class StochasticGradientDescent(object):
     """
-    A sequence of multiple layers.
+    SGD optimizer.
 
     Examples
     --------
@@ -34,7 +34,8 @@ class StochasticGradientDescent(object):
     >>> model.fit(X1, y1, batch_size=4, epochs=100)
     >>> model.predict(X1, one_hot=True)
     """
-    def __init__(self, learning_rate=0.01):
+
+    def __init__(self, learning_rate=0.01, momentum=0, nesterov=False):
         """
         Initialising the optimizer parameters.
 
@@ -42,10 +43,17 @@ class StochasticGradientDescent(object):
         ----------
         learning_rate : float
             the rate of change of weights. The higher the learning rate - more is the change in the parameters.
+        momentum : float
+            The momentum.
+        nestrov : bool
+            Set to True for NAG.
         """
         self.learning_rate = learning_rate
+        self.momentum = momentum
+        self.v = 0
+        self.nesterov = nesterov
 
-    def update_weights(self, w, grad_wrt_w):
+    def update_weights(self, w, dEdW):
         """
         Updates the parameters.
 
@@ -53,8 +61,16 @@ class StochasticGradientDescent(object):
         ----------
         w : numpy.ndarray
             The weight to be updated.
-        grad_wrt_w : numpy.ndarray
+        dEdW : numpy.ndarray
             The derivative of error with respect to weight.
         """
-        # print(grad_wrt_w)
-        return w - self.learning_rate * grad_wrt_w
+
+        if self.nesterov:
+            v_ahead = self.momentum * self.v - self.learning_rate * dEdW
+            w = w - self.momentum * self.v + (1 + self.momentum) * v_ahead
+            self.v = v_ahead
+            return w
+
+        # vanilla momentum
+        self.v = self.momentum * self.v - self.learning_rate * dEdW
+        return w + self.v

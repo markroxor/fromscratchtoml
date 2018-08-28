@@ -1,8 +1,8 @@
-:mod:`neural_network.optimizers.sgd` -- Neural Network model
+:mod:`neural_network.optimizers.sgd` -- Optimizer
 ==================================================================================
 
 .. automodule:: fromscratchtoml.neural_network.optimizers.sgd
-    :synopsis: Neural Network model
+    :synopsis: Optimizer
     :members:
     :inherited-members:
     :undoc-members:
