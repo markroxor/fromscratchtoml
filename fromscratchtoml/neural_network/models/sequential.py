@@ -211,7 +211,7 @@ class Sequential(BaseModel):
         X = np.asarray(X)
         predictions = self.forwardpass(X)
 
-        if prob is False:
+        if prob == False:
             predictions = np.argmax(predictions, axis=len(predictions.shape) - 1)
 
         return predictions
