@@ -3,25 +3,16 @@ https://markroxor.github.io/fromscratchtoml/
 
 [![Build Status](https://travis-ci.org/markroxor/fromscratchtoml.svg?branch=master)](https://travis-ci.org/markroxor/fromscratchtoml)
 [![Coverage Status](https://coveralls.io/repos/github/markroxor/fromscratchtoml/badge.svg?branch=master)](https://coveralls.io/github/markroxor/fromscratchtoml?branch=master)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jellAIfish/from-scratch-to-ml)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarkroxor%2Ffromscratchtoml.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarkroxor%2Ffromscratchtoml?ref=badge_shield)
 [![PyPI version](https://badge.fury.io/py/fromscratchtoml.svg)](https://badge.fury.io/py/fromscratchtoml)
 
 
 *An intuitive machine learning library for beginners, in python.*  
-This library targets individuals who want to learn machine learning code from scratch keeping _code-readability_ and _simplicity_ over efficiency.
+This library is my code base for storing code of popular machine learning algorithms from scratch while I understand them, keeping _code-readability_ and _simplicity_ over efficiency.
 
-## Goals
- - To document every bit of code and make it easy to understand.
- - To bridge the gap between the theoretical and coding aspects of machine learning algorithms.
- - To write [intuitive blogs as python notebooks](https://markroxor.github.io/fromscratchtoml/showroom/) so as to juxtapose theory and code. Explaining the fundamentals of the algorithm from the very basics.  
- - To minimise the use of external dependencies except the fundamental ones like `numpy` and `matplotlib`.
- - To make sure that the developed algorithms are coherent with already existing machine learning frameworks.
- - And above all - to be a one stop repository for understanding almost all the basic machine learning algorithms.
-
-## CUDA Support
-We are using [cupy](https://cupy.chainer.org/) to take advantage of cuda computing of NVIDIA GPUs.
+## CUDA Support (Unstable!)
+[Cupy](https://cupy.chainer.org/) is used to take advantage of cuda computing of NVIDIA GPUs.
 > CuPy is an open-source matrix library accelerated with NVIDIA CUDA. It also uses CUDA-related libraries including cuBLAS, cuDNN, cuRand, cuSolver, cuSPARSE, cuFFT and NCCL to make full use of the GPU architecture.
 
 The backend for mathematical computations can be switched using -   
@@ -33,7 +24,7 @@ The backend for mathematical computations can be switched using -
 Since Travis (cloud CI) doesn't support cupy. Cupy must be installed manually using -   
 `pip install cupy`
 
-_NOTE_ - Make sure all the input data is passed on as a cupy array. It is recommend using `import cupy as np` everywhere in your code.
+_NOTE_ - To mantain consistency with the backend, it is recommended to use `import fromscratchtoml as np` everywhere in your code.
 
 ## Installation
 #### Python pypi <a name="pypi"></a>
@@ -55,15 +46,7 @@ from source -
 
 ## Tutorials and support
 * Well documented API usage is available at [pydoc](https://www.pydoc.io/pypi/fromscratchtoml-0.0.1/)
-* For discussion and support visit - [the gitter channel](https://gitter.im/markroxor/from-scratch-to-ml)
-* Development discussions and bugs reports can be tracked on [issue tracker](https://github.com/markroxor/fromscratchtoml/issues).
-
-## Future endeavours
-* This library will form a back-bone for teaching and guiding budding machine learning developers via vBlogs.
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarkroxor%2Ffromscratchtoml.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarkroxor%2Ffromscratchtoml?ref=badge_large)
+* Feature requests and bugs reports can be tracked on [issue tracker](https://github.com/markroxor/fromscratchtoml/issues).
 
 ## Motivation
 
@@ -83,3 +66,6 @@ only way to find out is to follow the rules of the game.
 
 > What I cannot create, I do not understand.  
 ~ [Richard Feynman](https://en.wikiquote.org/wiki/Richard_Feynman)
+
+## DISCLAIMER:
+I created this library while understanding the coding aspects of the machine learning algorithms from various sources and blogs around the internet. A non-exhaustive list of those resources can be found at [the Wiki page](https://github.com/markroxor/fromscratchtoml/wiki).
