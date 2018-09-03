@@ -5,6 +5,7 @@
 # Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 import sys
+import os
 import logging
 
 import numpy as np
@@ -17,6 +18,16 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
+class HiddenPrints:
+    # As-it-is from - https://stackoverflow.com/a/45669280/4982729
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout.close()
+        sys.stdout = self._original_stdout
 
 def progress(generator):
     n = len(list(generator))
@@ -41,7 +52,6 @@ def progress(generator):
 
     sys.stdout.write('\r' + bar)
     sys.stdout.flush()
-
 
 def binary_visualize(X, y=None, clf=None, coarse=50, xlabel="x", ylabel="y",
                     title="2D visualization", draw_contour=False, color_seed=1980):
