@@ -1,0 +1,167 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Licensed under The MIT License - https://opensource.org/licenses/MIT
+
+import sys
+from collections import deque
+import random
+import time
+
+import gym
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+from fromscratchtoml.neural_network.layers import Dense, Activation
+from fromscratchtoml.neural_network.optimizers import Adam, RMSprop
+from fromscratchtoml.neural_network.models import Sequential
+from fromscratchtoml.toolbox import HiddenPrints
+
+
+class Experiences(object):
+    def __init__(self, experience_size):
+        self.experiences = deque([] * experience_size, experience_size)
+
+    def remember(self, state, action ,next_state, reward):
+        self.experiences.append((state, action ,next_state, reward))
+
+    def sample(self, n):
+        n = min(len(self.experiences), n)
+        return random.sample(list(self.experiences), n)
+
+
+class Network(object):
+    def __init__(self, num_states, num_actions):
+        self.model = Sequential()
+        self.model.add(Dense(input_dim=num_states, units=32))
+        self.model.add(Activation("relu"))
+        self.model.add(Dense(units=num_actions))
+        self.model.add(Activation("linear"))
+
+        opt = RMSprop(learning_rate=0.005)
+        self.model.compile(optimizer=opt, loss="mean_squared_error")        
+
+    def learn(self, states, actions):
+        with HiddenPrints():
+            self.model.fit(states, actions, epochs=1, batch_size=64)
+        
+    def predict(self, states, prob=False):
+        return self.model.predict(states, prob=prob)
+
+
+class Agent(object):
+    def __init__(self, env, min_explore_prob=0.01, max_explore_prob=1,
+                discount=0.99, num_experiences=100000, explore_prob_decay=0.001):
+        self.explore_prob = max_explore_prob
+        self.max_explore_prob = max_explore_prob
+        self.min_explore_prob = min_explore_prob
+        self.discount = discount
+        self.explore_prob_decay = explore_prob_decay
+
+        state = env.reset()
+
+        self.num_states, self.num_actions = env.observation_space.shape[0], env.action_space.n
+
+        self.rewards = []
+
+        self.network = Network(self.num_states, self.num_actions)
+        # manually initiate network params
+        self.network.model.forwardpass(np.expand_dims(state, axis=0))
+
+        self.experiences = Experiences(num_experiences)
+
+    def act(self, env, state, time_step):
+        if self.explore_prob > np.random.uniform(0, 1):
+            action  = env.action_space.sample()
+        else:
+            action = self.network.predict(np.expand_dims(state, axis=0))[0]
+
+        self.explore_prob = self.min_explore_prob + (self.max_explore_prob - self.min_explore_prob) * \
+                            np.exp(-self.explore_prob_decay * time_step)
+
+        next_state, reward, done, _ = env.step(action)
+
+        if done:
+            next_state = None
+
+        return action, next_state, reward
+
+    def learn_from_experiences(self, experience_batch_size):
+        experience_batch = self.experiences.sample(experience_batch_size)
+
+        X = np.zeros((experience_batch_size, self.num_states))
+        y = np.zeros((experience_batch_size, self.num_actions))
+
+        for i, experience in enumerate(experience_batch):
+            _state, _action ,_next_state, _reward = experience
+
+            X[i] = _state
+            y[i] = self.network.predict(np.expand_dims(_state, axis=0), prob=True)
+            y[i][_action] = _reward
+
+            if _next_state is not None:
+                y[i][_action] += self.discount * \
+                np.max(self.network.predict(np.expand_dims(_next_state, axis=0), prob=True))
+
+        self.network.learn(X, y)
+
+
+class DQN(object):
+    def __init__(self, env_name="CartPole-v0"):
+        self.env = gym.make(env_name)
+        self.agent = Agent(env=self.env)
+        self.rewards = []
+        self.time_step = 0
+
+    def learn(self, num_episodes=sys.maxsize, plot=True, experience_batch_size=64):
+        try:
+            for episode in range(num_episodes):
+                state =  self.env.reset()
+                total_reward = 0
+
+                while True:
+                    self.time_step += 1
+                    action, next_state, reward = self.agent.act(self.env, state, self.time_step)
+                    total_reward += reward
+
+                    self.agent.experiences.remember(state, action, next_state, reward)
+                    self.agent.learn_from_experiences(experience_batch_size)
+
+                    state = next_state
+                    if next_state is None:
+                        break
+        
+                if episode % 100 == 0:
+                    print("-" * 50 + "Episode - ", episode, "-" * 50)
+                print("Reward is ", total_reward)
+
+                self.rewards.append(total_reward)
+
+        except KeyboardInterrupt:
+            print("Learning was stopped by Interrupt!")
+
+        finally:
+            plt.plot(self.rewards)
+
+
+    def play(self, num_episodes=sys.maxsize, lapse=0.1):
+        for episode in range(num_episodes):
+            total_reward = 0
+            state = self.env.reset()
+
+            while True:
+                time.sleep(lapse)
+                self.env.render()
+
+                action, next_state, reward = self.agent.act(self.env, state, sys.maxsize)
+                total_reward += reward
+
+                state = next_state
+                
+                if next_state is None:
+                    break
+
+            print("Reward is ", total_reward)
+            total_reward = 0
