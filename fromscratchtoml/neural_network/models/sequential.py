@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
+# Author - Mohit Rathore <mrmohitrathoremr@gmail.com> <www.markroxor.in>
 # Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 from __future__ import print_function
@@ -228,7 +228,7 @@ class Sequential(BaseModel):
         X = np.asarray(X)
         predictions = self.forwardpass(X)
 
-        if prob == False:
+        if bool(prob) is False:
             predictions = np.argmax(predictions, axis=len(predictions.shape) - 1)
 
         return predictions
