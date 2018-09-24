@@ -5,9 +5,10 @@
 # Licensed under The MIT License - https://opensource.org/licenses/MIT
 
 import sys
-from collections import deque
 import random
 import time
+from copy import deepcopy
+from collections import deque
 
 import gym
 
@@ -53,8 +54,8 @@ class Network(object):
 
 
 class Agent(object):
-    def __init__(self, env, num_experiences, min_explore_prob=0.01, max_explore_prob=1,
-                discount=0.99, explore_prob_decay=0.001):
+    def __init__(self, env, num_experiences=10000, min_explore_prob=0.01,
+                max_explore_prob=1, discount=0.99, explore_prob_decay=0.001):
         self.explore_prob = max_explore_prob
         self.max_explore_prob = max_explore_prob
         self.min_explore_prob = min_explore_prob
@@ -67,9 +68,10 @@ class Agent(object):
 
         self.rewards = []
 
-        self.network = Network(self.num_states, self.num_actions)
-        # manually initiate network params
-        self.network.model.forwardpass(np.expand_dims(state, axis=0))
+        self.learner_network = Network(self.num_states, self.num_actions)
+        self.learner_network.model.forwardpass(np.expand_dims(state, axis=0))
+
+        self.actual_network = deepcopy(self.learner_network)
 
         self.experiences = Experiences(num_experiences)
 
@@ -77,7 +79,7 @@ class Agent(object):
         if self.explore_prob > np.random.uniform(0, 1):
             action  = env.action_space.sample()
         else:
-            action = self.network.predict(np.expand_dims(state, axis=0))[0]
+            action = self.learner_network.predict(np.expand_dims(state, axis=0))[0]
 
         self.explore_prob = self.min_explore_prob + (self.max_explore_prob - self.min_explore_prob) * \
                             np.exp(-self.explore_prob_decay * time_step)
@@ -99,28 +101,51 @@ class Agent(object):
             _state, _action ,_next_state, _reward = experience
 
             X[i] = _state
-            y[i] = self.network.predict(np.expand_dims(_state, axis=0), prob=True)
+            y[i] = self.learner_network.predict(np.expand_dims(_state, axis=0), prob=True)
             y[i][_action] = _reward
 
             if _next_state is not None:
                 y[i][_action] += self.discount * \
-                np.max(self.network.predict(np.expand_dims(_next_state, axis=0), prob=True))
+                self.actual_network.predict(np.expand_dims(_next_state, axis=0), prob=True)[0]\
+                [np.argmax(self.learner_network.predict(np.expand_dims(_next_state, axis=0), prob=True)[0])]
 
-        self.network.learn(X, y)
+        self.learner_network.learn(X, y)
+
+    def actual_is_learner(self):
+        self.actual_network = deepcopy(self.learner_network)
 
 
-class DQN(object):
+class AdDQN(object):
     def __init__(self, env_name="CartPole-v0", num_experiences=100000, seed=None):
         self.env = gym.make(env_name)
         if seed is not None:
             self.env.seed(seed)
-
-        self.agent = Agent(env=self.env, num_experiences=100000)
+            
+        self.agent = Agent(env=self.env, num_experiences=num_experiences)
         self.rewards = []
         self.time_step = 0
+        self.num_experiences = num_experiences
 
-    def learn(self, num_episodes=sys.maxsize, plot=True, experience_batch_size=64):
+    def learn(self, num_episodes=sys.maxsize, experience_batch_size=64):
         try:
+            # Fill the experiences before hand
+            experiences = Experiences(experience_batch_size)
+
+            while len(self.agent.experiences.experiences) > self.num_experiences:
+                state =  self.env.reset()
+
+                while True:
+                    action  = self.env.action_space.sample()
+                    next_state, reward, done, _ = self.env.step(action)
+
+                    experiences.remember(state, action, next_state, reward)
+
+                    state = next_state
+                    if next_state is None:
+                        break
+
+            self.agent.experiences = experiences
+
             for episode in range(num_episodes):
                 state =  self.env.reset()
                 total_reward = 0
@@ -131,6 +156,10 @@ class DQN(object):
                     total_reward += reward
 
                     self.agent.experiences.remember(state, action, next_state, reward)
+
+                    if self.time_step % 1000 == 0:
+                        self.agent.actual_is_learner()
+
                     self.agent.learn_from_experiences(experience_batch_size)
 
                     state = next_state
