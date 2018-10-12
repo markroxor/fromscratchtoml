@@ -3,7 +3,6 @@
 #
 
 
-
 from __future__ import print_function
 from fromscratchtoml import np
 
@@ -228,7 +227,7 @@ class Sequential(BaseModel):
         X = np.asarray(X)
         predictions = self.forwardpass(X)
 
-        if prob == False:
+        if bool(prob) is False:
             predictions = np.argmax(predictions, axis=len(predictions.shape) - 1)
 
         return predictions
