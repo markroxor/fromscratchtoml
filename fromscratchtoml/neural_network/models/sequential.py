@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Author - Mohit Rathore <mrmohitrathoremr@gmail.com>
-# Licensed under The MIT License - https://opensource.org/licenses/MIT
+
+
 
 from __future__ import print_function
 from fromscratchtoml import np
