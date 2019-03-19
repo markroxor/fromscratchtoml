@@ -6,7 +6,7 @@ https://markroxor.github.io/fromscratchtoml/
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jellAIfish/from-scratch-to-ml)
 [![PyPI version](https://badge.fury.io/py/fromscratchtoml.svg)](https://badge.fury.io/py/fromscratchtoml)
-
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/markroxor/fromscratchtoml/master)
 
 *An intuitive machine learning library for beginners, in python.*  
 This library is my code base for storing code of popular machine learning algorithms from scratch while I understand them, keeping _code-readability_ and _simplicity_ over efficiency.
