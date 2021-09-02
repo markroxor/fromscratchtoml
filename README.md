@@ -11,6 +11,86 @@ https://markroxor.github.io/fromscratchtoml/
 *An intuitive machine learning library for beginners, in python.*  
 This library is my code base for storing code of popular machine learning algorithms from scratch while I understand them, keeping _code-readability_ and _simplicity_ over efficiency.
 
+_Example snippet from codebase for fitting SVC :_
+``` python
+    def fit(self, X, y, multiplier_threshold=1e-5):
+        """Fits the svc model on training data.
+        Parameters
+        ----------
+        X : numpy.array
+            The training features.
+        y : numpy.array
+            The training labels.
+        multiplier_threshold : float
+            The threshold for selecting lagrange multipliers.
+        Returns
+        -------
+        kernel_matrix : list of svm.SVC
+            A list of all the classifiers used for multi class classification
+        """
+        X = np.array(X)
+        self.y = y
+        self.n = self.y.shape[0]
+
+        self.uniques, self.ind = np.unique(self.y, return_index=True)
+        self.n_classes = len(self.uniques)
+
+        # Do multi class classification
+        if sorted(self.uniques) != [-1, 1]:
+            y_list = [np.where(self.y == u, 1, -1) for u in self.uniques]
+
+            for y_i in y_list:
+                # Copy the current initializer
+                clf = SVC()
+                clf.kernel = self.kernel
+                clf.C = self.C
+
+                self.classifiers.append(clf.fit(X, y_i))
+            return
+
+        # create a gram matrix by taking the outer product of y
+        gram_matrix_y = np.outer(self.y, self.y)
+        K = self.__create_kernel_matrix(X)
+        gram_matrix_xy = gram_matrix_y * K
+
+        P = cvxopt.matrix(gram_matrix_xy)
+        q = cvxopt.matrix(-np.ones(self.n))
+
+        G1 = cvxopt.spmatrix(-1.0, range(self.n), range(self.n))
+        G2 = cvxopt.spmatrix(1, range(self.n), range(self.n))
+        G = cvxopt.matrix([[G1, G2]])
+
+        h1 = cvxopt.matrix(np.zeros(self.n))
+        h2 = cvxopt.matrix(np.ones(self.n) * self.C)
+        h = cvxopt.matrix([[h1, h2]])
+
+        A = cvxopt.matrix(self.y.astype(np.double)).trans()
+        b = cvxopt.matrix(0.0)
+
+        lagrange_multipliers = np.array(list(cvxopt.solvers.qp(P, q, G, h, A,
+                                                                b)['x']))
+
+        lagrange_multiplier_indices = np.greater_equal(lagrange_multipliers, multiplier_threshold)
+        lagrange_multiplier_indices = list(map(list, lagrange_multiplier_indices.nonzero()))[0]
+
+        self.support_vectors = X[lagrange_multiplier_indices]
+        self.support_vectors_y = self.y[lagrange_multiplier_indices]
+        self.support_lagrange_multipliers = lagrange_multipliers[lagrange_multiplier_indices]
+        self.b = 0
+        self.n_support_vectors = self.support_vectors.shape[0]
+
+        for i in range(self.n_support_vectors):
+            kernel_trick = K[[lagrange_multiplier_indices[i]], lagrange_multiplier_indices]
+
+            self.b += self.support_vectors_y[i] - np.sum(self.support_lagrange_multipliers *
+                      self.support_vectors_y * kernel_trick)
+
+        self.b /= self.n_support_vectors
+
+        self.classifiers = [self]
+        return self
+```
+
 ## CUDA Support (Unstable!)
 [Cupy](https://cupy.chainer.org/) is used to take advantage of cuda computing of NVIDIA GPUs.
 > CuPy is an open-source matrix library accelerated with NVIDIA CUDA. It also uses CUDA-related libraries including cuBLAS, cuDNN, cuRand, cuSolver, cuSPARSE, cuFFT and NCCL to make full use of the GPU architecture.
