@@ -11,7 +11,7 @@ https://markroxor.github.io/fromscratchtoml/
 *An intuitive machine learning library for beginners, in python.*  
 This library is my code base for storing code of popular machine learning algorithms from scratch while I understand them, keeping _code-readability_ and _simplicity_ over efficiency.
 
-_Example snippet from codebase for fitting SVC :_
+_Example [snippet from codebase](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/svm/svc.py#L82) for fitting SVC :_
 ``` python
     def fit(self, X, y, multiplier_threshold=1e-5):
         """Fits the svc model on training data.
