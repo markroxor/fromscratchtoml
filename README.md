@@ -148,5 +148,32 @@ only way to find out is to follow the rules of the game.
 > What I cannot create, I do not understand.  
 ~ [Richard Feynman](https://en.wikiquote.org/wiki/Richard_Feynman)
 
+## Lib-map
+
+### [cluster](https://github.com/markroxor/fromscratchtoml/tree/master/fromscratchtoml/cluster)
+- [dbscan](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/cluster/dbscan.py)
+- [kmeans](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/cluster/kmeans.py)
+
+### [decomposition](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/decomposition/decomposition.py)
+
+### [neighbors](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neighbors)
+- [knn](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neighbors/knn.py)
+
+### [support vector machines](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/svm)
+- [svc](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/svm/svc.py)
+
+### [neural network](https://github.com/markroxor/fromscratchtoml/tree/master/fromscratchtoml/neural_network)
+- [layers/activation](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/layers/activation.py)
+- [layers/rnn](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/layers/rnn.py)
+- [layers/dense](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/layers/dense.py)
+- [layers/dropout](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/layers/dropout.py)
+- [models/sequential](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/models/sequential.py)
+- [optimizers/adam](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/optimizers/adam.py)
+- [optimizers/adagrad](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/optimizers/adagrad.py)
+- [optimizers/rmsprop](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/optimizers/rmsprop.py)
+- [optimizers/sgd](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/optimizers/sgd.py)
+- [regularizers](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/regularizers/__init__.py)
+- [activations](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/activations.py)
+- [losses](https://github.com/markroxor/fromscratchtoml/blob/master/fromscratchtoml/neural_network/losses.py)
 ## DISCLAIMER:
 I created this library while understanding the coding aspects of the machine learning algorithms from various sources and blogs around the internet. A non-exhaustive list of those resources can be found at [the Wiki page](https://github.com/markroxor/fromscratchtoml/wiki).
