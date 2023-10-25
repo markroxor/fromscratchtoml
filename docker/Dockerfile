@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 MAINTAINER Mohit Rathore mrmohitrathoremr@gmail.com
 
 ENV REPOSITORY https://github.com/jellAIfish/fromscratchtoml.git
-ENV BRANCH master
+ENV BRANCH demo
 
 RUN apt-get update
 RUN apt-get install -y python3-pip git
