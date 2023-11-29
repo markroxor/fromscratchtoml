@@ -5,6 +5,8 @@ MAINTAINER Mohit Rathore mrmohitrathoremr@gmail.com
 ENV REPOSITORY https://github.com/jellAIfish/fromscratchtoml.git
 ENV BRANCH demo
 
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 RUN apt-get update
 RUN apt-get install -y python3-pip git
 
@@ -26,5 +28,5 @@ RUN ipython kernel install
 RUN chmod +x /fromscratchtoml/docker/start_jupyter_notebook.sh
 
 # Define the starting command for this container and expose its running port
-CMD sh -c '/fromscratchtoml/docker/start_jupyter_notebook.sh 8080'
+CMD sh -c 'flask run -h 0.0.0.0 -p 8080'
 EXPOSE 8080
