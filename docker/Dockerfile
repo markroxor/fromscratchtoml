@@ -28,5 +28,5 @@ RUN ipython kernel install
 RUN chmod +x /fromscratchtoml/docker/start_jupyter_notebook.sh
 
 # Define the starting command for this container and expose its running port
-CMD sh -c 'flask run -h 0.0.0.0 -p 80'
-EXPOSE 80
+CMD sh -c 'flask run -h 0.0.0.0 -p 8080'
+EXPOSE 8080
