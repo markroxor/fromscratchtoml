@@ -2,7 +2,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/demo")
+@app.route("/demo/")
 def hello_world():
     import subprocess
     subprocess.check_output("python3 demo.py", shell=1)
